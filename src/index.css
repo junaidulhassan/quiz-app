@@ -139,6 +139,69 @@ html, body, #root {
 .start-btn svg { transition: transform 0.2s; }
 .start-btn:hover svg { transform: translateX(3px); }
 
+/* ==========================================================================
+   View Results / Trust ID lookup additions
+   Append this block to index.css
+   ========================================================================== */
+
+.intro-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.view-results-btn {
+  background: transparent;
+  border: none;
+  color: var(--accent, #6366F1);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.view-results-btn:hover {
+  background: color-mix(in srgb, var(--accent, #6366F1) 10%, transparent);
+}
+
+.view-results-btn:focus-visible {
+  outline: 2px solid var(--accent, #6366F1);
+  outline-offset: 2px;
+}
+
+/* Lookup view — reuses .gate-* styles for visual consistency with the
+   details-capture form, plus a back button */
+
+.lookup-back {
+  background: transparent;
+  border: none;
+  color: #6B7280;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 0.4rem 0;
+  margin-bottom: 1rem;
+  align-self: flex-start;
+  transition: color 0.15s ease;
+}
+
+.lookup-back:hover {
+  color: var(--accent, #6366F1);
+}
+
+#lookup-view {
+  display: flex;
+  flex-direction: column;
+}
+
+#lookup-view .gate-submit {
+  margin-top: 0.5rem;
+}
+
 .divider {
   width: 48px;
   height: 1px;

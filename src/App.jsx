@@ -2,32 +2,62 @@ import { useState, useRef, useEffect } from "react";
 import "./index.css";
 import API_BASE_URL from "./api";
 
+const QUIZ_IMAGE_PATH = "/25_QUIZZES_IMG_WEBP";
+const ARCHETYPE_IMAGE_PATH = "/8_ARCHETYPES_IMAGES";
+
+function getQuizImagePath(index) {
+  return `${QUIZ_IMAGE_PATH}/IMG ${index + 1}.webp`;
+}
+
+function getArchetypeImagePath(archetype) {
+  const name = archetype?.short_name || archetype?.name || "";
+  const assetMap = {
+    sage: "SAGE.webp",
+    artificer: "ARTIFICER.webp",
+    titan: "TITAN.webp",
+    vigor: "VIGOR.webp",
+    catalyst: "CATALYST.webp",
+    marshal: "MARSHAL.webp",
+    monolith: "MONOLITH.webp",
+    oculus: "OCULUS.webp",
+  };
+
+  const key = name.trim().toLowerCase();
+  const asset = assetMap[key];
+
+  if (asset) {
+    return `${ARCHETYPE_IMAGE_PATH}/${asset}`;
+  }
+
+  return archetype?.image_url || null;
+}
+
 const QS = [
-  {trait:"O",facet:"Imagination",img:"https://i.ibb.co/FLjqQvL2/IMG-1.webp",q:"When you're stuck on a problem that has a known, working solution. You:",a:[{t:"Try your own approach first, even if it takes longer",v:1},{t:"Use the working solution — keep it simple",v:0}]},
-  {trait:"O",facet:"Curiosity",img:"https://i.ibb.co/q3Kvy1qs/IMG-2.webp",q:"When a friend drags you to a modern art exhibition. Most of the pieces confuse you. You:",a:[{t:"Enjoy the outing but don't think much about the art itself",v:0},{t:"Google the artist on your way home because you are curious",v:1}]},
-  {trait:"O",facet:"Actions",img:"https://i.ibb.co/DP9TZ2kR/IMG-3.webp",q:"How do you react to unfamiliar situations?",a:[{t:"I feel curious and want to explore",v:1},{t:"I feel uncomfortable and avoid them",v:0}]},
-  {trait:"O",facet:"Adventurous",img:"https://i.ibb.co/Vcf5ZnRb/IMG-4.webp",q:"When a friend suggests a restaurant/place you've never heard of, you say:",a:[{t:"Yes — without needing to know much more",v:1},{t:"Let me check my schedule and look it up first",v:0}]},
-  {trait:"O",facet:"Aesthetics",img:"https://i.ibb.co/yFXxg1KV/IMG-5.webp",q:"What do you pay more attention to?",a:[{t:"How functional a thing is",v:0},{t:"How beautiful a thing is",v:1}]},
-  {trait:"C",facet:"Discipline",img:"https://i.ibb.co/yc541xDq/IMG-6.webp",q:"You have a deadline in two weeks. When do you start working on it?",a:[{t:"A few days before deadline",v:0},{t:"Immediately — Within a day or two",v:1}]},
-  {trait:"C",facet:"Orderliness",img:"https://i.ibb.co/Rp6X877x/IMG-7.webp",q:"Your inbox, notifications, emails, you:",a:[{t:"Mostly read and clear them regularly",v:1},{t:"Let them pile up and check only when necessary",v:0}]},
-  {trait:"C",facet:"Dutifulness",img:"https://i.ibb.co/XwcfHmg/IMG-8.webp",q:"I tend to see life through the lens of",a:[{t:"Stories",v:0},{t:"Systems",v:1}]},
-  {trait:"C",facet:"Deliberation",img:"https://i.ibb.co/fVTL4299/IMG-9.webp",q:"When traveling alone, you mostly:",a:[{t:"Will figure out the destination along the way — it's fun that way",v:0},{t:"Ask people or make inquiries — before the journey",v:1}]},
-  {trait:"C",facet:"Reliability",img:"https://i.ibb.co/b9Cq21K/IMG-10.webp",q:"When you commit to something, then a better option comes up. You:",a:[{t:"Stick to your original commitment",v:1},{t:"Adjust your plan if the new option makes more sense",v:0}]},
-  {trait:"E",facet:"Social",img:"https://i.ibb.co/Gf6rq35N/IMG-11.webp",q:"At a gathering, event or party, you:",a:[{t:"Actively engage and talk to people",v:1},{t:"Feel uncomfortable around people and leave early",v:0}]},
-  {trait:"E",facet:"Activity",img:"https://i.ibb.co/cK2Nw262/IMG-12.webp",q:"If a friend calls you out for a party or outing, you are most likely to…",a:[{t:"Find an excuse not to go",v:0},{t:"Dress up for the occasion",v:1}]},
-  {trait:"E",facet:"Assertiveness",img:"https://i.ibb.co/5W9b1NnC/IMG-13.webp",q:"Where do you prefer to spend most of your time?",a:[{t:"Staying inside alone",v:0},{t:"Staying outside — friend's home, public or lively places",v:1}]},
-  {trait:"E",facet:"Excitement-Seeking",img:"https://i.ibb.co/4wSbYJbt/IMG-14.webp",q:"Your weekend is free. You could play it safe or you'd rather:",a:[{t:"Plan with friends — dinner, a bar, a gathering or outdoor activity",v:1},{t:"Prefer staying home — alone",v:0}]},
-  {trait:"E",facet:"Friendliness",img:"https://i.ibb.co/xt6ypQpK/IMG-15.webp",q:"Which is you, honestly:",a:[{t:"I text and call just to talk or say hi",v:1},{t:"I only call if it's urgent. I prefer to text",v:0}]},
-  {trait:"A",facet:"Compliance",img:"https://i.ibb.co/XfvJ6bKZ/IMG-16.webp",q:"When arguing or disagree with someone, what matters more to you?",a:[{t:"Make your point clearly and know where you both stand",v:0},{t:"Find common grounds, even if it takes longer",v:1}]},
-  {trait:"A",facet:"Empathy",img:"https://i.ibb.co/HL0F7tgG/IMG-17.webp",q:"When your friend is visiting from out of town and needs somewhere to stay for a month. You:",a:[{t:"Love the idea — and happy to welcome them",v:1},{t:"Probably say no — You need your space",v:0}]},
-  {trait:"A",facet:"Altruism",img:"https://i.ibb.co/rG6k21vP/IMG-18.webp",q:"When a friend asks a favour you can do, but you don't really want to. You:",a:[{t:"Usually say yes — it matters to them",v:1},{t:"Say no, if it doesn't work for you. Your time is yours",v:0}]},
-  {trait:"A",facet:"Conflict Expression",img:"https://i.ibb.co/1DsKvFH/IMG-19.webp",q:"Someone in your group chat talks very different about you. You:",a:[{t:"Address it where it happened. Public comments deserve public replies",v:0},{t:"Message them privately — you prefer handling things directly but quietly",v:1}]},
-  {trait:"A",facet:"Tender-Mindedness",img:"https://i.ibb.co/9kTPWwXN/IMG-20.webp",q:"Someone returns something they borrowed, slightly damaged. You:",a:[{t:"Expect acknowledgement or replacement of the item",v:0},{t:"Let it go this time — the relationship matters more",v:1}]},
-  {trait:"N",facet:"Anxiety",img:"https://i.ibb.co/hFdrPLTT/IMG-21.webp",q:"When you're waiting on important news — a job, a result, a big decision. You:",a:[{t:"Go through every possible scenarios in your head on a loop",v:1},{t:"Stay occupied and stop worrying — it won't change anything",v:0}]},
-  {trait:"N",facet:"Anger",img:"https://i.ibb.co/Zp7t3jXr/IMG-22.webp",q:"When someone disrespects you in a small way. You:",a:[{t:"Brush it off and move on",v:0},{t:"Feel it immediately and it affects your mood",v:1}]},
-  {trait:"N",facet:"Sensitivity",img:"https://i.ibb.co/F4NBjLQd/IMG-23.webp",q:"You're focused on a task when someone interrupts you unexpectedly. You:",a:[{t:"Pause or respond in the moment — without losing focus",v:0},{t:"Feel distracted and may struggle to regain focus",v:1}]},
-  {trait:"N",facet:"Impulsiveness",img:"https://i.ibb.co/VYdxgH6G/IMG-24.webp",q:"During an argument, you feel a sudden rush of anger. You:",a:[{t:"React immediately or get irritated easily",v:1},{t:"Stay controlled and respond calmly",v:0}]},
-  {trait:"N",facet:"Self-Consciousness",img:"https://i.ibb.co/pvXGzFcJ/img-25.webp",q:"After a long interaction with someone, you feel:",a:[{t:"Neutral or fine most of the time",v:0},{t:"Emotionally low or drained",v:1}]}
+  {trait:"O",facet:"Imagination",img:getQuizImagePath(0),q:"When you're stuck on a problem that has a known, working solution. You:",a:[{t:"Try your own approach first, even if it takes longer",v:1},{t:"Use the working solution — keep it simple",v:0}]},
+  {trait:"O",facet:"Curiosity",img:getQuizImagePath(1),q:"When a friend drags you to a modern art exhibition. Most of the pieces confuse you. You:",a:[{t:"Enjoy the outing but don't think much about the art itself",v:0},{t:"Google the artist on your way home because you are curious",v:1}]},
+  {trait:"O",facet:"Actions",img:getQuizImagePath(2),q:"How do you react to unfamiliar situations?",a:[{t:"I feel curious and want to explore",v:1},{t:"I feel uncomfortable and avoid them",v:0}]},
+  {trait:"O",facet:"Adventurous",img:getQuizImagePath(3),q:"When a friend suggests a restaurant/place you've never heard of, you say:",a:[{t:"Yes — without needing to know much more",v:1},{t:"Let me check my schedule and look it up first",v:0}]},
+  {trait:"O",facet:"Aesthetics",img:getQuizImagePath(4),q:"What do you pay more attention to?",a:[{t:"How functional a thing is",v:0},{t:"How beautiful a thing is",v:1}]},
+  {trait:"C",facet:"Discipline",img:getQuizImagePath(5),q:"You have a deadline in two weeks. When do you start working on it?",a:[{t:"A few days before deadline",v:0},{t:"Immediately — Within a day or two",v:1}]},
+  {trait:"C",facet:"Orderliness",img:getQuizImagePath(6),q:"Your inbox, notifications, emails, you:",a:[{t:"Mostly read and clear them regularly",v:1},{t:"Let them pile up and check only when necessary",v:0}]},
+  {trait:"C",facet:"Dutifulness",img:getQuizImagePath(7),q:"I tend to see life through the lens of",a:[{t:"Stories",v:0},{t:"Systems",v:1}]},
+  {trait:"C",facet:"Deliberation",img:getQuizImagePath(8),q:"When traveling alone, you mostly:",a:[{t:"Will figure out the destination along the way — it's fun that way",v:0},{t:"Ask people or make inquiries — before the journey",v:1}]},
+  {trait:"C",facet:"Reliability",img:getQuizImagePath(9),q:"When you commit to something, then a better option comes up. You:",a:[{t:"Stick to your original commitment",v:1},{t:"Adjust your plan if the new option makes more sense",v:0}]},
+  {trait:"E",facet:"Social",img:getQuizImagePath(10),q:"At a gathering, event or party, you:",a:[{t:"Actively engage and talk to people",v:1},{t:"Feel uncomfortable around people and leave early",v:0}]},
+  {trait:"E",facet:"Activity",img:getQuizImagePath(11),q:"If a friend calls you out for a party or outing, you are most likely to…",a:[{t:"Find an excuse not to go",v:0},{t:"Dress up for the occasion",v:1}]},
+  {trait:"E",facet:"Assertiveness",img:getQuizImagePath(12),q:"Where do you prefer to spend most of your time?",a:[{t:"Staying inside alone",v:0},{t:"Staying outside — friend's home, public or lively places",v:1}]},
+  {trait:"E",facet:"Excitement-Seeking",img:getQuizImagePath(13),q:"Your weekend is free. You could play it safe or you'd rather:",a:[{t:"Plan with friends — dinner, a bar, a gathering or outdoor activity",v:1},{t:"Prefer staying home — alone",v:0}]},
+  {trait:"E",facet:"Friendliness",img:getQuizImagePath(14),q:"Which is you, honestly:",a:[{t:"I text and call just to talk or say hi",v:1},{t:"I only call if it's urgent. I prefer to text",v:0}]},
+  {trait:"A",facet:"Compliance",img:getQuizImagePath(15),q:"When arguing or disagree with someone, what matters more to you?",a:[{t:"Make your point clearly and know where you both stand",v:0},{t:"Find common grounds, even if it takes longer",v:1}]},
+  {trait:"A",facet:"Empathy",img:getQuizImagePath(16),q:"When your friend is visiting from out of town and needs somewhere to stay for a month. You:",a:[{t:"Love the idea — and happy to welcome them",v:1},{t:"Probably say no — You need your space",v:0}]},
+  {trait:"A",facet:"Altruism",img:getQuizImagePath(17),q:"When a friend asks a favour you can do, but you don't really want to. You:",a:[{t:"Usually say yes — it matters to them",v:1},{t:"Say no, if it doesn't work for you. Your time is yours",v:0}]},
+  {trait:"A",facet:"Conflict Expression",img:getQuizImagePath(18),q:"Someone in your group chat talks very different about you. You:",a:[{t:"Address it where it happened. Public comments deserve public replies",v:0},{t:"Message them privately — you prefer handling things directly but quietly",v:1}]},
+  {trait:"A",facet:"Tender-Mindedness",img:getQuizImagePath(19),q:"Someone returns something they borrowed, slightly damaged. You:",a:[{t:"Expect acknowledgement or replacement of the item",v:0},{t:"Let it go this time — the relationship matters more",v:1}]},
+  {trait:"N",facet:"Anxiety",img:getQuizImagePath(20),q:"When you're waiting on important news — a job, a result, a big decision. You:",a:[{t:"Go through every possible scenarios in your head on a loop",v:1},{t:"Stay occupied and stop worrying — it won't change anything",v:0}]},
+  {trait:"N",facet:"Anger",img:getQuizImagePath(21),q:"When someone disrespects you in a small way. You:",a:[{t:"Brush it off and move on",v:0},{t:"Feel it immediately and it affects your mood",v:1}]},
+  {trait:"N",facet:"Sensitivity",img:getQuizImagePath(22),q:"You're focused on a task when someone interrupts you unexpectedly. You:",a:[{t:"Pause or respond in the moment — without losing focus",v:0},{t:"Feel distracted and may struggle to regain focus",v:1}]},
+  {trait:"N",facet:"Impulsiveness",img:getQuizImagePath(23),q:"During an argument, you feel a sudden rush of anger. You:",a:[{t:"React immediately or get irritated easily",v:1},{t:"Stay controlled and respond calmly",v:0}]},
+  {trait:"N",facet:"Self-Consciousness",img:getQuizImagePath(24),q:"After a long interaction with someone, you feel:",a:[{t:"Neutral or fine most of the time",v:0},{t:"Emotionally low or drained",v:1}]}
 ];
 
 const BADGE_CLASS = {O:"q-badge-O",C:"q-badge-C",E:"q-badge-E",A:"q-badge-A",N:"q-badge-N"};
@@ -52,6 +82,11 @@ export default function App() {
   const [dupNotice, setDupNotice] = useState(false);
   const [tooltip, setTooltip] = useState("Copy to clipboard");
 
+  // --- Trust ID lookup state ---
+  const [lookupId, setLookupId] = useState("");
+  const [lookupError, setLookupError] = useState("");
+  const [lookupLoading, setLookupLoading] = useState(false);
+
   const nextTimeout = useRef(null);
 
   useEffect(() => {
@@ -60,6 +95,18 @@ export default function App() {
 
   function startQuiz() {
     setView("quiz");
+  }
+
+  function goToLookup() {
+    setLookupId("");
+    setLookupError("");
+    setLookupLoading(false);
+    setView("lookup");
+  }
+
+  function backToIntro() {
+    setLookupError("");
+    setView("intro");
   }
 
   function selectOption(i) {
@@ -144,6 +191,43 @@ export default function App() {
     }
   }
 
+  async function submitLookup() {
+    const id = lookupId.trim();
+    if (!id) {
+      setLookupError("Please enter your Trust ID");
+      return;
+    }
+
+    setLookupError("");
+    setLookupLoading(true);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/result/${encodeURIComponent(id)}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        if (res.status === 404) {
+          throw new Error("No result found for that Trust ID. Please check and try again.");
+        }
+        throw new Error(err.detail || "Server error (" + res.status + ")");
+      }
+
+      const data = await res.json();
+      setDupNotice(false);
+      setResultData(data);
+      setView("results");
+    } catch (err) {
+      setLookupError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setLookupLoading(false);
+    }
+  }
+
   function copyResID() {
     if (!resultData) return;
     navigator.clipboard.writeText(resultData.trust_id).then(() => {
@@ -172,6 +256,7 @@ export default function App() {
   const pct = Math.round(((cur + 1) / QS.length) * 100);
 
   const accentColor = resultData ? resultData.archetype.colors[0] : "#6366F1";
+  const archetypeHeroImage = resultData ? getArchetypeImagePath(resultData.archetype) : null;
 
   return (
     <div className="shell" style={{ "--accent": accentColor }}>
@@ -192,11 +277,42 @@ export default function App() {
             <span className="pill pill-N">✦ Entertainer</span>
             <span className="pill pill-C">✦ Politician</span>
           </div>
-          <button className="start-btn" onClick={startQuiz}>
-            Begin the quiz
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+          <div className="intro-actions">
+            <button className="start-btn" onClick={startQuiz}>
+              Begin the quiz
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <button className="view-results-btn" onClick={goToLookup}>
+              View my results
+            </button>
+          </div>
+        </div>
+      )}
+
+      {view === "lookup" && (
+        <div id="lookup-view" className="shell">
+          <button className="lookup-back" onClick={backToIntro}>← Back</button>
+          <h1 className="gate-title">Find your <em>results</em></h1>
+          <p className="gate-subtitle">Enter the Trust ID you received when you completed the quiz to view your report again.</p>
+
+          <div className="gate-field-full">
+            <label className="gate-label" htmlFor="lookup-id">Trust ID <span>*</span></label>
+            <input
+              className="gate-input"
+              id="lookup-id"
+              type="text"
+              placeholder="e.g. TR-8F3K2Q"
+              value={lookupId}
+              onChange={(e) => setLookupId(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") submitLookup(); }}
+            />
+            <div className="gate-error" style={{ display: lookupError ? "block" : "none" }}>{lookupError}</div>
+          </div>
+
+          <button className="gate-submit" onClick={submitLookup} disabled={lookupLoading}>
+            {lookupLoading ? "Looking up…" : "View results  →"}
           </button>
         </div>
       )}
@@ -337,8 +453,8 @@ export default function App() {
               <h1 className="res-archetype-name">{resultData.archetype.short_name}</h1>
               <p className="res-tagline">{resultData.archetype.tagline}</p>
             </div>
-            {resultData.archetype.image_url && (
-              <img className="res-hero-img" src={resultData.archetype.image_url} alt="Archetype illustration" />
+            {archetypeHeroImage && (
+              <img className="res-hero-img" src={archetypeHeroImage} alt="Archetype illustration" />
             )}
           </div>
 
