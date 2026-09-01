@@ -62,32 +62,71 @@ const QS = [
 
 const BADGE_CLASS = {O:"q-badge-O",C:"q-badge-C",E:"q-badge-E",A:"q-badge-A",N:"q-badge-N"};
 const BADGE_LABEL = {O:"Openness",C:"Conscientiousness",E:"Extraversion",A:"Agreeableness",N:"Neuroticism"};
+const STORAGE_KEY = "quiz_app_state_v1";
+
+function loadStoredState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.answers)) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
 
 export default function App() {
-  const [view, setView] = useState("intro");
-  const [cur, setCur] = useState(0);
-  const [answers, setAnswers] = useState(new Array(QS.length).fill(null));
+  const savedState = useRef(loadStoredState());
+
+  const [view, setView] = useState(savedState.current?.view || "intro");
+  const [cur, setCur] = useState(savedState.current?.cur ?? 0);
+  const [answers, setAnswers] = useState(savedState.current?.answers ?? new Array(QS.length).fill(null));
   const [bannerLoading, setBannerLoading] = useState(true);
 
-  const [fname, setFname] = useState("");
-  const [sname, setSname] = useState("");
-  const [email, setEmail] = useState("");
-  const [errFname, setErrFname] = useState(false);
-  const [errSname, setErrSname] = useState(false);
-  const [errEmail, setErrEmail] = useState(false);
-  const [emailErrMsg, setEmailErrMsg] = useState("Please enter a valid email address");
-  const [submitting, setSubmitting] = useState(false);
+  const [fname, setFname] = useState(savedState.current?.fname || "");
+  const [sname, setSname] = useState(savedState.current?.sname || "");
+  const [email, setEmail] = useState(savedState.current?.email || "");
+  const [errFname, setErrFname] = useState(savedState.current?.errFname || false);
+  const [errSname, setErrSname] = useState(savedState.current?.errSname || false);
+  const [errEmail, setErrEmail] = useState(savedState.current?.errEmail || false);
+  const [emailErrMsg, setEmailErrMsg] = useState(savedState.current?.emailErrMsg || "Please enter a valid email address");
+  const [submitting, setSubmitting] = useState(savedState.current?.submitting || false);
 
-  const [resultData, setResultData] = useState(null);
-  const [dupNotice, setDupNotice] = useState(false);
-  const [tooltip, setTooltip] = useState("Copy to clipboard");
+  const [resultData, setResultData] = useState(savedState.current?.resultData || null);
+  const [dupNotice, setDupNotice] = useState(savedState.current?.dupNotice || false);
+  const [tooltip, setTooltip] = useState(savedState.current?.tooltip || "Copy to clipboard");
 
   // --- Trust ID lookup state ---
-  const [lookupId, setLookupId] = useState("");
-  const [lookupError, setLookupError] = useState("");
-  const [lookupLoading, setLookupLoading] = useState(false);
+  const [lookupId, setLookupId] = useState(savedState.current?.lookupId || "");
+  const [lookupError, setLookupError] = useState(savedState.current?.lookupError || "");
+  const [lookupLoading, setLookupLoading] = useState(savedState.current?.lookupLoading || false);
 
   const nextTimeout = useRef(null);
+
+  useEffect(() => {
+    const state = {
+      view,
+      cur,
+      answers,
+      fname,
+      sname,
+      email,
+      errFname,
+      errSname,
+      errEmail,
+      emailErrMsg,
+      submitting,
+      resultData,
+      dupNotice,
+      tooltip,
+      lookupId,
+      lookupError,
+      lookupLoading,
+    };
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }, [view, cur, answers, fname, sname, email, errFname, errSname, errEmail, emailErrMsg, submitting, resultData, dupNotice, tooltip, lookupId, lookupError, lookupLoading]);
 
   useEffect(() => {
     return () => { if (nextTimeout.current) clearTimeout(nextTimeout.current); };
