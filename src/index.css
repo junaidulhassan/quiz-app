@@ -62,6 +62,40 @@ html, body, #root {
   min-height: 100vh;
 }
 
+.home-fab {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.home-fab:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
+}
+
+.home-fab:focus-visible {
+  outline: 2px solid var(--O);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.home-fab-logo {
+  width: 54px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 10px rgba(26, 23, 20, 0.08));
+}
+
 .shell {
   width: 100%;
   max-width: 640px;
