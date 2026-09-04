@@ -162,6 +162,8 @@ export default function App() {
     if (cur > 0) {
       setCur(cur - 1);
       setBannerLoading(true);
+    } else {
+      setView("intro");
     }
   }
 
@@ -393,7 +395,7 @@ export default function App() {
             </div>
           </div>
           <div className="nav-row">
-            <button className="nav-back" disabled={cur === 0} onClick={goBack}>← Back</button>
+            <button className="nav-back" onClick={goBack}>← Back</button>
             <button className="nav-next" disabled={answers[cur] === null} onClick={() => goNext()}>
               {cur === QS.length - 1 ? "See my results →" : "Next →"}
             </button>

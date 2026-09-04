@@ -11,7 +11,7 @@ const ARCH_CONFIG = {
   Sage: "#7C6FF7",
   Artificer: "#2BBFBF",
   Titan: "#EF4444",
-  Seer: "#84CC16",
+  Oculus: "#84CC16",
   Marshal: "#A855F7",
   Vigor: "#CA8A04",
   Catalyst: "#FB923C",
