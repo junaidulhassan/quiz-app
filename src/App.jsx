@@ -503,7 +503,7 @@ export default function App() {
 
           <div className="res-desc">
             {resultData.archetype.desc.split("<br><br>").map((p, i) => (
-              <p key={i}>{p}</p>
+              <p key={i} dangerouslySetInnerHTML={{ __html: p }} />
             ))}
           </div>
 
