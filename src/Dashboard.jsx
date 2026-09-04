@@ -65,7 +65,7 @@ export default function Dashboard() {
 
   const [selectedIds, setSelectedIds] = useState([]);
 
-  const [pricePerUser, setPricePerUser] = useState(17178);
+  const [pricePerUser, setPricePerUser] = useState(0);
   const [currencySymbol, setCurrencySymbol] = useState("₦");
 
   const [modalRespondent, setModalRespondent] = useState(null);

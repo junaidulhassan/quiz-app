@@ -662,3 +662,49 @@ body {
   .page-heading { font-size: 22px; }
   .donut-legend-grid { grid-template-columns: 1fr; }
 }
+
+/* --- Mobile horizontal swipe fix for tables --- */
+
+.table-card {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* smooth momentum swipe on iOS */
+  scrollbar-width: thin;             /* slim scrollbar on Firefox */
+}
+
+.table-card .data-table {
+  min-width: 720px;   /* forces table wider than viewport so it CAN scroll */
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Same fix for the facet rankings table on Analytics page */
+.chart-card {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chart-card .facet-tbl {
+  min-width: 560px;
+  width: 100%;
+}
+
+/* Optional: subtle scroll shadow hint so users know it's swipeable */
+.table-card,
+.chart-card {
+  background:
+    linear-gradient(to right, var(--bg-card, #fff) 30%, rgba(255,255,255,0)),
+    linear-gradient(to right, rgba(255,255,255,0), var(--bg-card, #fff) 70%) 100% 0,
+    linear-gradient(to right, rgba(0,0,0,0.08), rgba(255,255,255,0)),
+    linear-gradient(to left, rgba(0,0,0,0.08), rgba(255,255,255,0)) 100% 0;
+  background-repeat: no-repeat;
+  background-color: var(--bg-card, #fff);
+  background-size: 40px 100%, 40px 100%, 12px 100%, 12px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+
+@media (max-width: 768px) {
+  .table-card .data-table,
+  .chart-card .facet-tbl {
+    min-width: 640px; /* slightly tighter on small screens, still scrollable */
+  }
+}

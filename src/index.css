@@ -858,3 +858,69 @@ html, body, #root {
   .q-card { padding: 1.5rem; }
   .archetype-card { padding: 1.5rem; }
 }
+/* ==========================================================================
+   MOBILE RESPONSIVE FIX — Results view
+   Append this block to the very end of index.css
+   Root cause: --content-left-margin / --img-right-offset (-8rem) and the
+   min-width: 900px on .res-id-box push content off-screen on narrow
+   viewports. This resets those to 0 / auto below 700px.
+   ========================================================================== */
+
+@media (max-width: 700px) {
+  #results-view {
+    --content-left-margin: 0;
+    --img-right-offset: 0;
+  }
+
+  .shell {
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* Trust ID banner */
+  .res-id-top-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+  .res-id-important {
+    margin-left: 0;
+    line-height: 1.4;
+    font-size: 14px;
+  }
+  .res-id-date {
+    margin-right: 0;
+    text-align: left;
+  }
+  .res-id-box {
+    min-width: 0;      /* was 900px — this was the main overflow culprit */
+    width: 100%;
+    margin-left: 0;
+    padding: 12px 14px;
+    flex-wrap: wrap;
+  }
+  .res-id-code {
+    font-size: 13px;
+  }
+
+  /* Hero */
+  .res-hero {
+    margin-left: 0;
+  }
+
+  /* Quote + description */
+  .res-quote,
+  .res-desc {
+    margin-left: 0;
+    max-width: 100%;
+  }
+
+  /* Bottom grid */
+  .res-bottom {
+    margin-left: 0;
+  }
+  .res-side-box,
+  .res-cta {
+    min-width: 0;      /* was 280px — also forced overflow on narrow screens */
+    width: 100%;
+  }
+}
