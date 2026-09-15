@@ -331,28 +331,6 @@ export default function App() {
     });
   }
 
-  async function shareResult() {
-    const shareText = "I just found out what my ideal Career looks like 👀 Try it and see if yours is accurate.";
-    const shareUrl = window.location.origin + window.location.pathname;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: shareText, url: shareUrl });
-      } catch (err) {
-        // user cancelled the native share sheet — nothing to do
-      }
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
-      setTooltip("Copied!");
-      setTimeout(() => setTooltip("Copy to clipboard"), 2000);
-    } catch (err) {
-      // clipboard unavailable — nothing further we can do
-    }
-  }
-
   function openSocialPopup(url) {
     window.open(url, "_blank", "noopener,noreferrer,width=600,height=600");
   }
@@ -679,8 +657,7 @@ export default function App() {
                 <p className="res-side-label">IDEAL PARTNER</p>
                 <p className="res-side-value">{resultData.archetype.ideal_partner || "—"}</p>
               </div>
-              <button className="res-cta" onClick={shareResult}>✦ <span>{resultData.archetype.cta_label || "Learn More"}</span></button>
-              <button className="res-cta res-cta-secondary" onClick={() => setPartnerShareOpen(true)}>🤝 <span>Find Your Idea Partner</span></button>
+              <button className="res-cta" onClick={() => setPartnerShareOpen(true)}>✦ <span>Find Your Idea Partner</span></button>
             </div>
           </div>
 

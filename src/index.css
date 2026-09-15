@@ -833,13 +833,6 @@ html, body, #root {
 }
 .res-cta:hover { opacity: 0.88; transform: translateY(-1px); }
 
-.res-cta-secondary {
-  background: #fff;
-  color: var(--ink);
-  border: 1px solid var(--border);
-}
-.res-cta-secondary:hover { opacity: 1; background: var(--cream); }
-
 /* ── Find Your Idea Partner popup ── */
 .partner-share-overlay {
   position: fixed;
@@ -1032,13 +1025,6 @@ html, body, #root {
   .q-card { padding: 1.5rem; }
   .archetype-card { padding: 1.5rem; }
 }
-/* ==========================================================================
-   MOBILE RESPONSIVE FIX — Results view
-   Append this block to the very end of index.css
-   Root cause: --content-left-margin / --img-right-offset (-8rem) and the
-   min-width: 900px on .res-id-box push content off-screen on narrow
-   viewports. This resets those to 0 / auto below 700px.
-   ========================================================================== */
 
 @media (max-width: 700px) {
   #results-view {
