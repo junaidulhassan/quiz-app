@@ -137,6 +137,10 @@ export default function App() {
   const [dupNotice, setDupNotice] = useState(effectiveSaved?.dupNotice || false);
   const [tooltip, setTooltip] = useState(effectiveSaved?.tooltip || "Copy to clipboard");
 
+  // --- Partner share popup state (not persisted — always starts closed) ---
+  const [partnerShareOpen, setPartnerShareOpen] = useState(false);
+  const [partnerLinkCopied, setPartnerLinkCopied] = useState(false);
+
   // --- Trust ID lookup state ---
   const [lookupId, setLookupId] = useState(effectiveSaved?.lookupId || "");
   const [lookupError, setLookupError] = useState(effectiveSaved?.lookupError || "");
@@ -349,6 +353,33 @@ export default function App() {
     }
   }
 
+  function openSocialPopup(url) {
+    window.open(url, "_blank", "noopener,noreferrer,width=600,height=600");
+  }
+
+  function shareViaWhatsapp() {
+    const text = `${partnerShareText} ${partnerShareUrl}`;
+    openSocialPopup(`https://wa.me/?text=${encodeURIComponent(text)}`);
+  }
+
+  function shareViaFacebook() {
+    openSocialPopup(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(partnerShareUrl)}`);
+  }
+
+  function shareViaX() {
+    openSocialPopup(`https://twitter.com/intent/tweet?text=${encodeURIComponent(partnerShareText)}&url=${encodeURIComponent(partnerShareUrl)}`);
+  }
+
+  async function copyPartnerLink() {
+    try {
+      await navigator.clipboard.writeText(partnerShareUrl);
+      setPartnerLinkCopied(true);
+      setTimeout(() => setPartnerLinkCopied(false), 2000);
+    } catch (err) {
+      // clipboard unavailable — nothing further we can do
+    }
+  }
+
   function retake() {
     setDirection(1);
     setCur(0);
@@ -371,6 +402,11 @@ export default function App() {
 
   const accentColor = resultData ? resultData.archetype.colors[0] : "#6366F1";
   const archetypeHeroImage = resultData ? getArchetypeImagePath(resultData.archetype) : null;
+
+  const partnerShareUrl = resultData
+    ? `${window.location.origin}/take-assessment?ref=${encodeURIComponent(resultData.trust_id)}`
+    : `${window.location.origin}/take-assessment`;
+  const partnerShareText = "I just took this career assessment — take it too and let's see how we match up as an idea partnership 👀";
 
   return (
     <div className="shell" style={{ "--accent": accentColor }}>
@@ -644,6 +680,7 @@ export default function App() {
                 <p className="res-side-value">{resultData.archetype.ideal_partner || "—"}</p>
               </div>
               <button className="res-cta" onClick={shareResult}>✦ <span>{resultData.archetype.cta_label || "Learn More"}</span></button>
+              <button className="res-cta res-cta-secondary" onClick={() => setPartnerShareOpen(true)}>🤝 <span>Find Your Idea Partner</span></button>
             </div>
           </div>
 
@@ -677,6 +714,59 @@ export default function App() {
           </div>
 
           <button className="retake-btn" style={{ display: "inline-flex" }} onClick={retake}>↩ Retake quiz</button>
+        </div>
+      )}
+
+      {partnerShareOpen && (
+        <div className="partner-share-overlay" onClick={(e) => { if (e.target === e.currentTarget) setPartnerShareOpen(false); }}>
+          <div className="partner-share-box">
+            <button className="partner-share-close" onClick={() => setPartnerShareOpen(false)} aria-label="Close">×</button>
+            <h2 className="partner-share-title">Find Your Idea Partner</h2>
+            <p className="partner-share-subtitle">Share your assessment link so they can take the same quiz.</p>
+
+            <div className="partner-share-options">
+              <button className="partner-share-option" onClick={shareViaWhatsapp}>
+                <span className="partner-share-icon partner-share-icon-whatsapp">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="22" height="22" fill="#fff">
+                    <path d="M16.02 3C9.4 3 4 8.4 4 15.02c0 2.35.66 4.55 1.8 6.43L4 29l7.72-1.75a12.9 12.9 0 0 0 4.3.74C22.6 28 28 22.6 28 15.98 28 9.4 22.6 3 16.02 3zm0 22.9c-1.53 0-3-.4-4.28-1.15l-.3-.18-4.58 1.04 1.06-4.47-.2-.32a10.32 10.32 0 0 1-1.6-5.8c0-5.7 4.62-10.32 10.32-10.32 2.76 0 5.35 1.08 7.3 3.03a10.24 10.24 0 0 1 3.02 7.3c0 5.7-4.62 10.87-10.74 10.87zm5.9-7.73c-.32-.16-1.9-.94-2.2-1.04-.3-.11-.5-.16-.72.16-.22.32-.83 1.04-1.02 1.25-.19.22-.37.24-.7.08-.32-.16-1.36-.5-2.6-1.6-.96-.86-1.6-1.9-1.8-2.23-.18-.32-.02-.5.14-.65.14-.14.32-.37.48-.55.16-.19.21-.32.32-.54.1-.22.05-.4-.03-.56-.08-.16-.72-1.74-.99-2.38-.26-.63-.53-.54-.72-.55h-.62c-.22 0-.56.08-.85.4-.3.32-1.1 1.08-1.1 2.63 0 1.55 1.13 3.04 1.29 3.25.16.22 2.22 3.39 5.38 4.76.75.32 1.34.52 1.8.66.76.24 1.44.2 1.98.13.6-.09 1.9-.78 2.17-1.53.27-.75.27-1.4.19-1.53-.08-.13-.29-.21-.61-.37z"/>
+                  </svg>
+                </span>
+                <span>WhatsApp</span>
+              </button>
+              <button className="partner-share-option" onClick={shareViaFacebook}>
+                <span className="partner-share-icon partner-share-icon-facebook">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="22" height="22" fill="#fff">
+                    <path d="M28 16c0-6.63-5.37-12-12-12S4 9.37 4 16c0 5.99 4.39 10.96 10.13 11.86v-8.39h-3.05V16h3.05v-2.65c0-3.01 1.79-4.67 4.53-4.67 1.31 0 2.68.24 2.68.24v2.95h-1.51c-1.49 0-1.95.92-1.95 1.87V16h3.32l-.53 3.47h-2.79v8.39C23.61 26.96 28 21.99 28 16z"/>
+                  </svg>
+                </span>
+                <span>Facebook</span>
+              </button>
+              <button className="partner-share-option" onClick={shareViaX}>
+                <span className="partner-share-icon partner-share-icon-x">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20" fill="#fff">
+                    <path d="M18.9 14.3 27.6 4h-2.1l-7.5 8.9L11.9 4H4.4l9.1 13.2L4.4 28h2.1l7.9-9.4L20.7 28h7.5l-9.3-13.7Zm-2.8 3.3-.9-1.3L7 6h3.3l5.9 8.4.9 1.3 7.6 10.9h-3.3l-6.3-9Z"/>
+                  </svg>
+                </span>
+                <span>X</span>
+              </button>
+              <button className="partner-share-option" onClick={copyPartnerLink}>
+                <span className="partner-share-icon partner-share-icon-copy">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#fff" strokeWidth="1.8" width="20" height="20">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                  </svg>
+                </span>
+                <span>{partnerLinkCopied ? "Link copied!" : "Copy Link"}</span>
+              </button>
+            </div>
+
+            <div className="partner-share-link-row">
+              <span className="partner-share-link-text">{partnerShareUrl}</span>
+              <button className="partner-share-link-copy" onClick={copyPartnerLink}>
+                {partnerLinkCopied ? "Copied ✓" : "Copy"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

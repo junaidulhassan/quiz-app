@@ -833,6 +833,125 @@ html, body, #root {
 }
 .res-cta:hover { opacity: 0.88; transform: translateY(-1px); }
 
+.res-cta-secondary {
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--border);
+}
+.res-cta-secondary:hover { opacity: 1; background: var(--cream); }
+
+/* ── Find Your Idea Partner popup ── */
+.partner-share-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 18, 15, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+.partner-share-box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  box-sizing: border-box;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+.partner-share-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--ink-muted);
+  padding: 4px;
+}
+.partner-share-close:hover { color: var(--ink); }
+.partner-share-title {
+  font-family: var(--font-champ);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+}
+.partner-share-subtitle {
+  font-family: var(--font-sfpro);
+  font-size: 14px;
+  color: var(--ink-muted);
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+.partner-share-options {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.partner-share-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-sfpro);
+  font-size: 12px;
+  color: var(--ink);
+}
+.partner-share-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+}
+.partner-share-option:hover .partner-share-icon { transform: translateY(-2px); }
+.partner-share-icon-whatsapp { background: #25D366; }
+.partner-share-icon-facebook { background: #1877F2; }
+.partner-share-icon-x { background: #000; }
+.partner-share-icon-copy { background: var(--accent); }
+.partner-share-link-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 10px;
+}
+.partner-share-link-text {
+  flex: 1;
+  font-family: var(--font-sfpro);
+  font-size: 12px;
+  color: var(--ink-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.partner-share-link-copy {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--font-sfpro);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.partner-share-link-copy:hover { opacity: 0.88; }
+
 .res-data-store { display: none; }
 
 .retake-btn {
