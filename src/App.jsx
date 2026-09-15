@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 import API_BASE_URL from "./api";
 
@@ -64,6 +65,20 @@ const BADGE_CLASS = {O:"q-badge-O",C:"q-badge-C",E:"q-badge-E",A:"q-badge-A",N:"
 const BADGE_LABEL = {O:"Openness",C:"Conscientiousness",E:"Extraversion",A:"Agreeableness",N:"Neuroticism"};
 const STORAGE_KEY = "quiz_app_state_v1";
 
+// Maps internal quiz "view" state to its shareable/bookmarkable route, and back.
+const VIEW_TO_PATH = {
+  intro: "/take-assessment",
+  lookup: "/take-assessment",
+  quiz: "/take-assessment/active",
+  gate: "/take-assessment/active",
+  results: "/take-assessment/results",
+};
+const PATH_TO_VIEW = {
+  "/take-assessment": "intro",
+  "/take-assessment/active": "quiz",
+  "/take-assessment/results": "results",
+};
+
 function loadStoredState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -78,8 +93,15 @@ function loadStoredState() {
 
 export default function App() {
   const savedState = useRef(loadStoredState());
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [view, setView] = useState(savedState.current?.view || "intro");
+  const [view, setView] = useState(() => {
+    if (savedState.current?.view) return savedState.current.view;
+    const routeView = PATH_TO_VIEW[location.pathname];
+    if (routeView === "results" && !savedState.current?.resultData) return "lookup";
+    return routeView || "intro";
+  });
   const [cur, setCur] = useState(savedState.current?.cur ?? 0);
   const [answers, setAnswers] = useState(savedState.current?.answers ?? new Array(QS.length).fill(null));
   const [bannerLoading, setBannerLoading] = useState(true);
@@ -131,6 +153,14 @@ export default function App() {
   useEffect(() => {
     return () => { if (nextTimeout.current) clearTimeout(nextTimeout.current); };
   }, []);
+
+  useEffect(() => {
+    const targetPath = VIEW_TO_PATH[view] || "/take-assessment";
+    if (location.pathname !== targetPath) {
+      navigate(targetPath, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view]);
 
   function startQuiz() {
     setView("quiz");
@@ -275,6 +305,28 @@ export default function App() {
       setTooltip("Copied!");
       setTimeout(() => setTooltip("Copy to clipboard"), 2000);
     });
+  }
+
+  async function shareResult() {
+    const shareText = "I just found out what my ideal Career looks like 👀 Try it and see if yours is accurate.";
+    const shareUrl = window.location.origin + window.location.pathname;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: shareText, url: shareUrl });
+      } catch (err) {
+        // user cancelled the native share sheet — nothing to do
+      }
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(`${shareText} ${shareUrl}`);
+      setTooltip("Copied!");
+      setTimeout(() => setTooltip("Copy to clipboard"), 2000);
+    } catch (err) {
+      // clipboard unavailable — nothing further we can do
+    }
   }
 
   function retake() {
@@ -561,7 +613,7 @@ export default function App() {
                 <p className="res-side-label">IDEAL PARTNER</p>
                 <p className="res-side-value">{resultData.archetype.ideal_partner || "—"}</p>
               </div>
-              <button className="res-cta">✦ <span>{resultData.archetype.cta_label || "Learn More"}</span></button>
+              <button className="res-cta" onClick={shareResult}>✦ <span>{resultData.archetype.cta_label || "Learn More"}</span></button>
             </div>
           </div>
 

@@ -34,6 +34,9 @@ createRoot(document.getElementById("root")).render(
       <HomeButton />
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/take-assessment" element={<App />} />
+        <Route path="/take-assessment/active" element={<App />} />
+        <Route path="/take-assessment/results" element={<App />} />
         <Route path="/login" element={<Login />} />
         <Route
           path="/dashboard"
