@@ -112,7 +112,7 @@ export default function Dashboard() {
   useEffect(() => {
     const session = getSession();
     if (!session) {
-      navigate("/login");
+      navigate("/lsysadmin/login");
       return;
     }
     fetchRespondents();
@@ -121,7 +121,7 @@ export default function Dashboard() {
   function logoutDashboard() {
     if (window.confirm("Are you sure you want to log out?")) {
       localStorage.removeItem("dashboard_session");
-      navigate("/login");
+      navigate("/lsysadmin/login");
     }
   }
 

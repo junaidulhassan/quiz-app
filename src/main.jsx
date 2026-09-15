@@ -37,7 +37,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/take-assessment" element={<App />} />
         <Route path="/take-assessment/active" element={<App />} />
         <Route path="/take-assessment/results" element={<App />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/lsysadmin/login" element={<Login />} />
         <Route
           path="/dashboard"
           element={

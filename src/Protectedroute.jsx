@@ -8,7 +8,7 @@ function getSession() {
 export default function ProtectedRoute({ children }) {
   const session = getSession();
   if (!session || !session.token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/lsysadmin/login" replace />;
   }
   return children;
 }
