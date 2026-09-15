@@ -96,33 +96,51 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // The bare home URL always starts fresh — cached mid-quiz/results progress
+  // must never hijack an intentional visit to hyeve.net, nor be silently
+  // resumed later just because it's still sitting in localStorage.
+  const isFreshHomeLanding =
+    location.pathname === "/" && !!savedState.current?.view && savedState.current.view !== "intro";
+  const effectiveSaved = isFreshHomeLanding ? null : savedState.current;
+
   const [view, setView] = useState(() => {
-    if (savedState.current?.view) return savedState.current.view;
+    if (location.pathname === "/") return "intro";
+
+    // For a deep link (e.g. reloading mid-quiz), only restore the cached
+    // view if it actually maps back to the URL the user is on.
+    const savedView = effectiveSaved?.view;
+    const savedPath = savedView ? VIEW_TO_PATH[savedView] : null;
+    if (savedView && savedPath === location.pathname) {
+      if (savedView === "results" && !effectiveSaved?.resultData) return "lookup";
+      return savedView;
+    }
+
     const routeView = PATH_TO_VIEW[location.pathname];
-    if (routeView === "results" && !savedState.current?.resultData) return "lookup";
+    if (routeView === "results" && !effectiveSaved?.resultData) return "lookup";
     return routeView || "intro";
   });
-  const [cur, setCur] = useState(savedState.current?.cur ?? 0);
-  const [answers, setAnswers] = useState(savedState.current?.answers ?? new Array(QS.length).fill(null));
+  const [cur, setCur] = useState(effectiveSaved?.cur ?? 0);
+  const [answers, setAnswers] = useState(effectiveSaved?.answers ?? new Array(QS.length).fill(null));
   const [bannerLoading, setBannerLoading] = useState(true);
+  const [direction, setDirection] = useState(1);
 
-  const [fname, setFname] = useState(savedState.current?.fname || "");
-  const [sname, setSname] = useState(savedState.current?.sname || "");
-  const [email, setEmail] = useState(savedState.current?.email || "");
-  const [errFname, setErrFname] = useState(savedState.current?.errFname || false);
-  const [errSname, setErrSname] = useState(savedState.current?.errSname || false);
-  const [errEmail, setErrEmail] = useState(savedState.current?.errEmail || false);
-  const [emailErrMsg, setEmailErrMsg] = useState(savedState.current?.emailErrMsg || "Please enter a valid email address");
-  const [submitting, setSubmitting] = useState(savedState.current?.submitting || false);
+  const [fname, setFname] = useState(effectiveSaved?.fname || "");
+  const [sname, setSname] = useState(effectiveSaved?.sname || "");
+  const [email, setEmail] = useState(effectiveSaved?.email || "");
+  const [errFname, setErrFname] = useState(effectiveSaved?.errFname || false);
+  const [errSname, setErrSname] = useState(effectiveSaved?.errSname || false);
+  const [errEmail, setErrEmail] = useState(effectiveSaved?.errEmail || false);
+  const [emailErrMsg, setEmailErrMsg] = useState(effectiveSaved?.emailErrMsg || "Please enter a valid email address");
+  const [submitting, setSubmitting] = useState(effectiveSaved?.submitting || false);
 
-  const [resultData, setResultData] = useState(savedState.current?.resultData || null);
-  const [dupNotice, setDupNotice] = useState(savedState.current?.dupNotice || false);
-  const [tooltip, setTooltip] = useState(savedState.current?.tooltip || "Copy to clipboard");
+  const [resultData, setResultData] = useState(effectiveSaved?.resultData || null);
+  const [dupNotice, setDupNotice] = useState(effectiveSaved?.dupNotice || false);
+  const [tooltip, setTooltip] = useState(effectiveSaved?.tooltip || "Copy to clipboard");
 
   // --- Trust ID lookup state ---
-  const [lookupId, setLookupId] = useState(savedState.current?.lookupId || "");
-  const [lookupError, setLookupError] = useState(savedState.current?.lookupError || "");
-  const [lookupLoading, setLookupLoading] = useState(savedState.current?.lookupLoading || false);
+  const [lookupId, setLookupId] = useState(effectiveSaved?.lookupId || "");
+  const [lookupError, setLookupError] = useState(effectiveSaved?.lookupError || "");
+  const [lookupLoading, setLookupLoading] = useState(effectiveSaved?.lookupLoading || false);
 
   const nextTimeout = useRef(null);
 
@@ -185,11 +203,12 @@ export default function App() {
     if (nextTimeout.current) clearTimeout(nextTimeout.current);
     nextTimeout.current = setTimeout(() => {
       goNext(next);
-    }, 100);
+    }, 280);
   }
 
   function goBack() {
     if (cur > 0) {
+      setDirection(-1);
       setCur(cur - 1);
       setBannerLoading(true);
     } else {
@@ -201,6 +220,7 @@ export default function App() {
     const a = latestAnswers || answers;
     if (a[cur] === null) return;
     if (cur < QS.length - 1) {
+      setDirection(1);
       setCur(cur + 1);
       setBannerLoading(true);
     } else {
@@ -330,6 +350,7 @@ export default function App() {
   }
 
   function retake() {
+    setDirection(1);
     setCur(0);
     setAnswers(new Array(QS.length).fill(null));
     setDupNotice(false);
@@ -420,30 +441,39 @@ export default function App() {
             <span className="progress-label">{pct}%</span>
           </div>
           <div className="q-card">
-            <div className="q-banner">
-              <img
-                src={q.img}
-                alt={q.facet + " illustration"}
-                className={bannerLoading ? "loading" : ""}
-                onLoad={() => setBannerLoading(false)}
-              />
-            </div>
-            <div className="q-meta">
-              <span className={"q-badge " + BADGE_CLASS[q.trait]}>{BADGE_LABEL[q.trait]}</span>
-              <span className="q-facet-tag">· {q.facet}</span>
-            </div>
-            <p className="q-text">{q.q}</p>
-            <div className="options">
-              {q.a.map((opt, i) => (
-                <button
-                  key={i}
-                  className={"opt" + (answers[cur] === i ? " selected" : "")}
-                  onClick={() => selectOption(i)}
-                >
-                  <span className="opt-key">{["A", "B"][i]}</span>
-                  <span className="opt-text">{opt.t}</span>
-                </button>
-              ))}
+            <div key={cur} className={"q-card-body " + (direction === -1 ? "slide-back" : "slide-next")}>
+              <div className="q-banner">
+                <img
+                  src={q.img}
+                  alt={q.facet + " illustration"}
+                  className={bannerLoading ? "loading" : ""}
+                  onLoad={() => setBannerLoading(false)}
+                />
+              </div>
+              <div className="q-meta">
+                <span className={"q-badge " + BADGE_CLASS[q.trait]}>{BADGE_LABEL[q.trait]}</span>
+                <span className="q-facet-tag">· {q.facet}</span>
+              </div>
+              <p className="q-text">{q.q}</p>
+              <div className="options">
+                {q.a.map((opt, i) => (
+                  <button
+                    key={i}
+                    className={"opt" + (answers[cur] === i ? " selected" : "")}
+                    onClick={() => selectOption(i)}
+                  >
+                    <span className="opt-key">{["A", "B"][i]}</span>
+                    <span className="opt-text">{opt.t}</span>
+                    {answers[cur] === i && (
+                      <span className="opt-check">
+                        <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                          <path d="M3.5 8.5l3 3 6-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
           <div className="nav-row">
