@@ -27,6 +27,70 @@ function niceMax(value) {
   return 10 * magnitude;
 }
 
+/**
+ * Monotone cubic interpolation (Fritsch–Carlson) through a set of points, sorted by x.
+ * Returns an SVG path `d` string (M + C commands) that passes exactly through every
+ * point with a smooth curve, but — unlike a plain Catmull-Rom spline — never dips
+ * below or overshoots above the two points bounding any segment. That matters here
+ * because `total_users` is a running total: it only ever goes up or stays flat, and a
+ * naive smoothing curve could visually imply a dip that never actually happened.
+ */
+function monotoneSplinePath(points) {
+  const n = points.length;
+  if (n === 0) return "";
+  if (n === 1) return `M${points[0][0].toFixed(2)} ${points[0][1].toFixed(2)}`;
+  if (n === 2) {
+    return `M${points[0][0].toFixed(2)} ${points[0][1].toFixed(2)} L${points[1][0].toFixed(2)} ${points[1][1].toFixed(2)}`;
+  }
+
+  const xs = points.map((p) => p[0]);
+  const ys = points.map((p) => p[1]);
+  const dx = new Array(n - 1);
+  const slope = new Array(n - 1);
+  for (let i = 0; i < n - 1; i++) {
+    dx[i] = xs[i + 1] - xs[i];
+    slope[i] = dx[i] === 0 ? 0 : (ys[i + 1] - ys[i]) / dx[i];
+  }
+
+  const m = new Array(n);
+  m[0] = slope[0];
+  m[n - 1] = slope[n - 2];
+  for (let i = 1; i < n - 1; i++) {
+    if (slope[i - 1] === 0 || slope[i] === 0 || (slope[i - 1] < 0) !== (slope[i] < 0)) {
+      m[i] = 0; // local extremum — flatten the tangent so the curve doesn't overshoot it
+    } else {
+      m[i] = (slope[i - 1] + slope[i]) / 2;
+    }
+  }
+  // Fritsch–Carlson limiter: rescale tangents that would otherwise push the curve
+  // outside the [y[i], y[i+1]] band for a segment.
+  for (let i = 0; i < n - 1; i++) {
+    if (slope[i] === 0) {
+      m[i] = 0;
+      m[i + 1] = 0;
+      continue;
+    }
+    const a = m[i] / slope[i];
+    const b = m[i + 1] / slope[i];
+    const h = Math.hypot(a, b);
+    if (h > 3) {
+      const t = 3 / h;
+      m[i] = t * a * slope[i];
+      m[i + 1] = t * b * slope[i];
+    }
+  }
+
+  let d = `M${xs[0].toFixed(2)} ${ys[0].toFixed(2)}`;
+  for (let i = 0; i < n - 1; i++) {
+    const cp1x = xs[i] + dx[i] / 3;
+    const cp1y = ys[i] + (m[i] * dx[i]) / 3;
+    const cp2x = xs[i + 1] - dx[i] / 3;
+    const cp2y = ys[i + 1] - (m[i + 1] * dx[i]) / 3;
+    d += ` C${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${xs[i + 1].toFixed(2)} ${ys[i + 1].toFixed(2)}`;
+  }
+  return d;
+}
+
 function formatChange(change) {
   if (!change) return null;
   if (change.is_new) return { text: "New", sign: "up" };
@@ -80,7 +144,7 @@ function ChangeTile({ id, change }) {
  * the dashboard.
  */
 export default function UserGrowthChart({ version, onError }) {
-  const [range, setRange] = useState("today");
+  const [range, setRange] = useState("30d");
   const [series, setSeries] = useState(null);
   const [seriesFailed, setSeriesFailed] = useState(false);
   const [changes, setChanges] = useState(null);
@@ -145,9 +209,11 @@ export default function UserGrowthChart({ version, onError }) {
     const xFor = (i) => (n === 1 ? plotW / 2 : (i / (n - 1)) * plotW);
     const yFor = (v) => PLOT_H - (v / max) * PLOT_H;
     const pts = points.map((p, i) => [xFor(i), yFor(p.total_users)]);
-    const line = pts.map(([x, y], i) => `${i === 0 ? "M" : "L"}${x.toFixed(2)} ${y.toFixed(2)}`).join(" ");
+    const line = monotoneSplinePath(pts);
+    // Area fill: the same smooth top edge, then straight down to the baseline and
+    // back — the bottom of a filled area is conventionally flat, not curved.
     const area = pts.length
-      ? `M${pts[0][0].toFixed(2)} ${PLOT_H} ` + pts.map(([x, y]) => `L${x.toFixed(2)} ${y.toFixed(2)}`).join(" ") + ` L${pts[pts.length - 1][0].toFixed(2)} ${PLOT_H} Z`
+      ? `M${pts[0][0].toFixed(2)} ${PLOT_H} L${line.slice(1)} L${pts[pts.length - 1][0].toFixed(2)} ${PLOT_H} Z`
       : "";
     return { path: line, areaPath: area, coords: pts, maxY: max };
   }, [points, plotW]);

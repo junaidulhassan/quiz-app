@@ -5,6 +5,8 @@ import API_BASE_URL from "./api";
 import { authFetch, clearSession, getSession, SessionExpiredError } from "./session";
 import ArchetypeDistribution from "./ArchetypeDistribution";
 import UserGrowthChart from "./UserGrowthChart";
+import TraitScoreSpread from "./TraitScoreSpread";
+import WeeklyActivity from "./WeeklyActivity";
 const DATA_PTS_PER_USER = 67;
 const SETTINGS_KEY = "dashboard_settings_v1";
 
@@ -771,6 +773,12 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
+
+            <div className="analytics-grid">
+              <TraitScoreSpread respondents={respondents} />
+              <WeeklyActivity respondents={respondents} />
+            </div>
+
             <div className="chart-card">
               <div className="chart-card-title">Facet Rankings — Average Score</div>
               <table className="facet-tbl">

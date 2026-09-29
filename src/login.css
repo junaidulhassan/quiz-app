@@ -202,3 +202,21 @@
 @media (max-width: 420px) {
   .login-card { padding: 1.75rem 1.5rem; }
 }
+.password-checklist {
+  list-style: none;
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.password-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--txt-faint);
+  transition: color 0.15s;
+}
+.password-checklist li svg { flex-shrink: 0; color: var(--txt-faint); transition: color 0.15s; }
+.password-checklist li.met { color: #16A34A; }
+.password-checklist li.met svg { color: #16A34A; }

@@ -896,3 +896,66 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .growth-dot { transition: none; }
 }
+
+/* --- Generic CSS-only hover tooltip for bar charts (Trait Score Spread, Weekly Activity) --- */
+[data-tip] { position: relative; cursor: default; }
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--txt-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 9px;
+  border-radius: 6px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+  z-index: 4;
+}
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after { opacity: 1; }
+
+/* --- Trait Score Spread (histogram per trait) --- */
+.spread-list { display: flex; flex-direction: column; gap: 1.35rem; }
+.spread-row-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 8px; flex-wrap: wrap; gap: 4px;
+}
+.spread-row-name { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--txt-primary); }
+.spread-row-peak { font-size: 11px; color: var(--txt-faint); }
+.spread-bars { display: flex; align-items: flex-end; gap: 6px; height: 72px; }
+.spread-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; gap: 4px; min-width: 0; }
+.spread-bar {
+  width: 100%;
+  max-width: 34px;
+  border-radius: 4px 4px 0 0;
+  transition: opacity 0.12s, transform 0.12s;
+  outline: none;
+}
+.spread-bar:hover, .spread-bar:focus-visible { opacity: 0.8; }
+.spread-bar-label { font-size: 10px; color: var(--txt-faint); }
+
+/* --- Weekly Activity Pattern (day-of-week bar chart) --- */
+.weekly-bars { display: flex; align-items: flex-end; gap: 10px; height: 160px; padding: 0 4px; }
+.weekly-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; gap: 8px; min-width: 0; }
+.weekly-bar {
+  width: 100%;
+  max-width: 40px;
+  border-radius: 4px 4px 0 0;
+  background: var(--btn);
+  transition: opacity 0.12s;
+  outline: none;
+}
+.weekly-bar:hover, .weekly-bar:focus-visible { opacity: 0.8; }
+.weekly-bar-label { font-size: 11.5px; color: var(--txt-secondary); font-weight: 500; }
+
+@media (max-width: 520px) {
+  .spread-bars { height: 58px; }
+  .spread-bar-label { font-size: 9px; }
+  .weekly-bars { height: 130px; gap: 6px; }
+}

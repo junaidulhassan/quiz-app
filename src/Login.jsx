@@ -5,6 +5,8 @@ import API_BASE_URL from "./api";
 import { getSession, saveSession } from "./session";
 
 const MIN_PASSWORD_LENGTH = 8;
+// Mirrors the backend's SPECIAL_CHARS in app/schemas.py — keep these in sync.
+const SPECIAL_CHARS = "!@#$%^&*()_+-=[]{}|;:'\",.<>/?~`\\";
 
 function formatCountdown(seconds) {
   const m = Math.floor(seconds / 60);
@@ -12,10 +14,21 @@ function formatCountdown(seconds) {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
+/** The same rules as the backend, each tagged with whether `pw` currently satisfies it —
+ * powers both the live checklist under the field and the submit-time error message. */
+function passwordRequirements(pw) {
+  return [
+    { key: "length", label: `At least ${MIN_PASSWORD_LENGTH} characters`, met: pw.length >= MIN_PASSWORD_LENGTH },
+    { key: "lower", label: "One lowercase letter", met: /[a-z]/.test(pw) },
+    { key: "upper", label: "One uppercase letter", met: /[A-Z]/.test(pw) },
+    { key: "special", label: "One special character (e.g. ! @ # $ % & *)", met: [...pw].some((c) => SPECIAL_CHARS.includes(c)) },
+  ];
+}
+
 function validateNewPassword(pw) {
-  if (pw.length < MIN_PASSWORD_LENGTH) return `New password must be at least ${MIN_PASSWORD_LENGTH} characters`;
   if (pw.trim() !== pw) return "New password must not start or end with a space";
-  if (!/[a-zA-Z]/.test(pw) || !/\d/.test(pw)) return "New password must contain both letters and numbers";
+  const missing = passwordRequirements(pw).filter((r) => !r.met).map((r) => r.label);
+  if (missing.length) return "New password needs " + missing.join(", ") + ".";
   return "";
 }
 
@@ -247,8 +260,7 @@ export default function Login() {
           <>
             <div className="login-heading">Change password</div>
             <div className="login-subtext">
-              Enter your username, current password, and a new password (at least {MIN_PASSWORD_LENGTH} characters,
-              with letters and numbers).
+              Enter your username, current password, and a new password meeting the requirements below.
             </div>
 
             <form onSubmit={handleChangePassword} noValidate>
@@ -292,7 +304,24 @@ export default function Login() {
                     onChange={(e) => setNewPassword(e.target.value)}
                     autoComplete="new-password"
                     maxLength={72}
+                    aria-describedby="cp-password-requirements"
                   />
+                  {newPassword.length > 0 && (
+                    <ul id="cp-password-requirements" className="password-checklist" aria-live="polite">
+                      {passwordRequirements(newPassword).map((r) => (
+                        <li key={r.key} className={r.met ? "met" : ""}>
+                          <svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true">
+                            {r.met ? (
+                              <path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                            ) : (
+                              <circle cx="8" cy="8" r="3" fill="currentColor" />
+                            )}
+                          </svg>
+                          {r.label}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <div className="login-field">
                   <label className="login-label" htmlFor="cp-confirm-password">Confirm new password</label>
