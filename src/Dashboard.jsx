@@ -1,8 +1,12 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./dashboard.css";
 import API_BASE_URL from "./api";
+import { authFetch, clearSession, getSession, SessionExpiredError } from "./session";
+import ArchetypeDistribution from "./ArchetypeDistribution";
+import UserGrowthChart from "./UserGrowthChart";
 const DATA_PTS_PER_USER = 67;
+const SETTINGS_KEY = "dashboard_settings_v1";
 
 const TRAIT_COLORS = { O: "#FF3D7F", C: "#3B82F6", E: "#F59E0B", A: "#22C55E", N: "#A855F7" };
 const TRAIT_NAMES = { O: "Openness", C: "Conscientiousness", E: "Extraversion", A: "Agreeableness", N: "Neuroticism" };
@@ -40,89 +44,171 @@ function formatCompact(n) {
   return n.toLocaleString();
 }
 
-function getSession() {
-  const session = localStorage.getItem("dashboard_session");
-  return session ? JSON.parse(session) : null;
+/** Quote a CSV cell, and neutralize values Excel would run as a formula (=, +, -, @). */
+function csvCell(value) {
+  let s = value === null || value === undefined ? "" : String(value);
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
+  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+function loadSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}") || {};
+  } catch {
+    return {};
+  }
+}
+
+/** Page numbers to show: first, last, and a window around the current page, with gaps as null. */
+function pageWindow(current, total) {
+  const pages = new Set([1, total, current - 1, current, current + 1]);
+  const sorted = [...pages].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
+  const out = [];
+  sorted.forEach((p, i) => {
+    if (i > 0 && p - sorted[i - 1] > 1) out.push(null);
+    out.push(p);
+  });
+  return out;
+}
+
+function monthBounds(offset) {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), now.getMonth() + offset, 1).getTime();
+  const end = new Date(now.getFullYear(), now.getMonth() + offset + 1, 1).getTime();
+  return [start, end];
+}
+
+async function requestRespondents() {
+  const response = await authFetch("/respondents");
+  const data = await response.json();
+  return data.map((r) => ({
+    id: r.id,
+    trustId: r.trust_id,
+    firstName: r.first_name,
+    surname: r.last_name,
+    email: r.email,
+    archetype: r.archetype,
+    scores: r.scores || {},
+    facetScores: r.facet_scores || {},
+    answers: r.answers || [],
+    date: r.date,
+    submittedAt: r.submitted_at ? new Date(r.submitted_at).getTime() : 0,
+  }));
 }
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [savedSettings] = useState(loadSettings);
 
   const [activePage, setActivePage] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [respondents, setRespondents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+  const [busy, setBusy] = useState(false);
+  // Bumped whenever the records change, so charts that query the server re-fetch.
+  const [dataVersion, setDataVersion] = useState(0);
 
   const [globalSearch, setGlobalSearch] = useState("");
   const [archFilter, setArchFilter] = useState("");
   const [monthFilter, setMonthFilter] = useState("");
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [rowsPerPage, setRowsPerPage] = useState(savedSettings.rowsPerPage || 25);
   const [sortKey, setSortKey] = useState("date");
   const [sortDir, setSortDir] = useState(-1);
 
   const [selectedIds, setSelectedIds] = useState([]);
 
-  const [pricePerUser, setPricePerUser] = useState(0);
-  const [currencySymbol, setCurrencySymbol] = useState("₦");
+  const [pricePerUser, setPricePerUser] = useState(savedSettings.pricePerUser ?? 0);
+  const [currencySymbol, setCurrencySymbol] = useState(savedSettings.currencySymbol ?? "₦");
 
   const [modalRespondent, setModalRespondent] = useState(null);
   const [exportSearch, setExportSearch] = useState("");
 
   const [toast, setToast] = useState("");
   const [toastVisible, setToastVisible] = useState(false);
+  const toastTimer = useRef(null);
+
+  const username = getSession()?.username || "";
 
   const showToast = useCallback((msg) => {
     setToast(msg);
     setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 2500);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToastVisible(false), 2800);
   }, []);
 
-  const fetchRespondents = useCallback(async () => {
-    setLoading(true);
-    try {
-      const session = getSession();
-      const response = await fetch(`${API_BASE_URL}/respondents`, {
-        headers: session?.token ? { Authorization: `Bearer ${session.token}` } : {},
-      });
-      if (!response.ok) throw new Error(`API error: ${response.status}`);
-      const data = await response.json();
-      const mapped = data.map((r) => ({
-        id: r.id,
-        firstName: r.first_name,
-        surname: r.last_name,
-        email: r.email,
-        archetype: r.archetype,
-        scores: r.scores,
-        facetScores: r.facet_scores,
-        answers: r.answers,
-        date: r.date,
-      }));
-      setRespondents(mapped);
-      showToast(`Loaded ${mapped.length} respondent${mapped.length !== 1 ? "s" : ""}`);
-    } catch (err) {
-      showToast("Error loading data from server");
-    } finally {
-      setLoading(false);
-    }
-  }, [showToast]);
+  useEffect(() => () => clearTimeout(toastTimer.current), []);
 
   useEffect(() => {
-    const session = getSession();
-    if (!session) {
-      navigate("/lsysadmin/login");
+    try {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ rowsPerPage, pricePerUser, currencySymbol }));
+    } catch {
+      // storage unavailable — settings just won't persist
+    }
+  }, [rowsPerPage, pricePerUser, currencySymbol]);
+
+  const handleApiError = useCallback((err, fallback) => {
+    if (err instanceof SessionExpiredError) {
+      navigate("/lsysadmin/login", { replace: true, state: { message: err.message } });
       return;
     }
-    fetchRespondents();
-  }, [navigate, fetchRespondents]);
+    showToast(err.message || fallback);
+  }, [navigate, showToast]);
 
-  function logoutDashboard() {
-    if (window.confirm("Are you sure you want to log out?")) {
-      localStorage.removeItem("dashboard_session");
-      navigate("/lsysadmin/login");
+  const applyLoaded = useCallback((mapped, quiet) => {
+    setLoadError("");
+    setRespondents(mapped);
+    setDataVersion((v) => v + 1);
+    setSelectedIds((prev) => prev.filter((id) => mapped.some((r) => r.id === id)));
+    setLoading(false);
+    if (!quiet) showToast(`Loaded ${mapped.length} respondent${mapped.length !== 1 ? "s" : ""}`);
+  }, [showToast]);
+
+  const applyLoadFailed = useCallback((err) => {
+    if (!(err instanceof SessionExpiredError)) setLoadError(err.message || "Error loading data from server");
+    setLoading(false);
+    handleApiError(err, "Error loading data from server");
+  }, [handleApiError]);
+
+  useEffect(() => {
+    let cancelled = false;
+    requestRespondents().then(
+      (mapped) => { if (!cancelled) applyLoaded(mapped, false); },
+      (err) => { if (!cancelled) applyLoadFailed(err); }
+    );
+    return () => { cancelled = true; };
+  }, [applyLoaded, applyLoadFailed]);
+
+  function fetchRespondents() {
+    setLoading(true);
+    setLoadError("");
+    return requestRespondents().then((mapped) => applyLoaded(mapped, false), applyLoadFailed);
+  }
+
+  useEffect(() => {
+    if (!modalRespondent && !sidebarOpen) return undefined;
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        setModalRespondent(null);
+        setSidebarOpen(false);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [modalRespondent, sidebarOpen]);
+
+  async function logoutDashboard() {
+    if (!window.confirm("Are you sure you want to log out?")) return;
+    const token = getSession()?.token;
+    clearSession();
+    if (token) {
+      // Revoke the token server-side too; if the network fails it still expires on its own.
+      fetch(`${API_BASE_URL}/auth/logout`, { method: "POST", headers: { Authorization: `Bearer ${token}` } }).catch(() => {});
     }
+    navigate("/lsysadmin/login", { replace: true });
   }
 
   function toggleSidebar() {
@@ -138,38 +224,45 @@ export default function Dashboard() {
   }
 
   const filteredData = useMemo(() => {
-    const q = globalSearch.toLowerCase();
+    const q = globalSearch.trim().toLowerCase();
+    const range = monthFilter === "This Month" ? monthBounds(0) : monthFilter === "Last Month" ? monthBounds(-1) : null;
     let data = respondents.filter((r) => {
-      const matchQ = !q || `${r.firstName} ${r.surname} ${r.email} ${r.id} ${r.archetype}`.toLowerCase().includes(q);
+      const matchQ = !q || `${r.firstName} ${r.surname} ${r.email} ${r.trustId} ${r.archetype}`.toLowerCase().includes(q);
       const matchA = !archFilter || r.archetype === archFilter;
-      return matchQ && matchA;
+      const matchM = !range || (r.submittedAt >= range[0] && r.submittedAt < range[1]);
+      return matchQ && matchA && matchM;
     });
 
     const map = {
-      name: (r) => r.firstName,
-      id: (r) => r.id,
+      name: (r) => `${r.firstName} ${r.surname}`.toLowerCase(),
+      id: (r) => r.trustId,
       email: (r) => r.email,
       arch: (r) => r.archetype,
-      date: (r) => r.date,
+      date: (r) => r.submittedAt,
     };
     const fn = map[sortKey];
     if (fn) {
       data = [...data].sort((a, b) => {
         const av = fn(a);
         const bv = fn(b);
-        return av < bv ? sortDir : av > bv ? -sortDir : 0;
+        return av < bv ? -sortDir : av > bv ? sortDir : 0;
       });
     }
     return data;
-  }, [respondents, globalSearch, archFilter, sortKey, sortDir]);
+  }, [respondents, globalSearch, archFilter, monthFilter, sortKey, sortDir]);
 
   function handleSort(key) {
     if (sortKey === key) {
       setSortDir((d) => d * -1);
     } else {
       setSortKey(key);
-      setSortDir(-1);
+      setSortDir(key === "date" ? -1 : 1);
     }
+  }
+
+  function sortIndicator(key) {
+    if (sortKey !== key) return " ↕";
+    return sortDir === 1 ? " ↑" : " ↓";
   }
 
   function clearFilters() {
@@ -179,10 +272,14 @@ export default function Dashboard() {
     setCurrentPage(1);
   }
 
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / rowsPerPage));
+  const safePage = Math.min(currentPage, totalPages);
+  const pageStart = (safePage - 1) * rowsPerPage;
+  const pageData = filteredData.slice(pageStart, pageStart + rowsPerPage);
+
   function toggleSelectAll(checked) {
-    const start = (currentPage - 1) * rowsPerPage;
-    const pageIds = filteredData.slice(start, start + rowsPerPage).map((r) => r.id);
-    setSelectedIds(checked ? pageIds : []);
+    const pageIds = pageData.map((r) => r.id);
+    setSelectedIds((prev) => (checked ? [...new Set([...prev, ...pageIds])] : prev.filter((id) => !pageIds.includes(id))));
   }
 
   function toggleRowSelect(id) {
@@ -193,34 +290,80 @@ export default function Dashboard() {
     setSelectedIds([]);
   }
 
-  function bulkDelete() {
-    if (!selectedIds.length) return;
-    if (!window.confirm(`Delete ${selectedIds.length} selected respondent${selectedIds.length > 1 ? "s" : ""}? This cannot be undone.`)) return;
-    setRespondents((prev) => prev.filter((r) => !selectedIds.includes(r.id)));
-    showToast(`${selectedIds.length} respondent${selectedIds.length > 1 ? "s" : ""} deleted`);
-    setSelectedIds([]);
+  function removeFromView(ids) {
+    const gone = new Set(ids);
+    setRespondents((prev) => prev.filter((r) => !gone.has(r.id)));
+    setDataVersion((v) => v + 1);
+    setSelectedIds((prev) => prev.filter((x) => !gone.has(x)));
+    setModalRespondent((m) => (m && gone.has(m.id) ? null : m));
   }
 
-  function deleteRespondent(id) {
-    if (!window.confirm("Delete this respondent?")) return;
-    setRespondents((prev) => prev.filter((r) => r.id !== id));
-    setSelectedIds((prev) => prev.filter((x) => x !== id));
-    showToast("Respondent deleted");
+  async function bulkDelete() {
+    if (!selectedIds.length || busy) return;
+    const n = selectedIds.length;
+    if (!window.confirm(`Permanently delete ${n} selected respondent${n > 1 ? "s" : ""}? This cannot be undone.`)) return;
+    setBusy(true);
+    try {
+      const res = await authFetch("/respondents/delete", { method: "POST", body: JSON.stringify({ ids: selectedIds }) });
+      const { deleted } = await res.json();
+      removeFromView(selectedIds);
+      showToast(`${deleted} respondent${deleted !== 1 ? "s" : ""} deleted`);
+    } catch (err) {
+      handleApiError(err, "Could not delete the selected respondents");
+    } finally {
+      setBusy(false);
+    }
   }
 
-  function clearAllData() {
-    if (!window.confirm("Delete all records? This cannot be undone.")) return;
-    setRespondents([]);
-    setSelectedIds([]);
-    showToast("All data cleared");
+  async function deleteRespondent(r) {
+    if (busy) return;
+    if (!window.confirm(`Permanently delete ${r.firstName} ${r.surname}'s record? This cannot be undone.`)) return;
+    setBusy(true);
+    try {
+      await authFetch(`/respondents/${encodeURIComponent(r.id)}`, { method: "DELETE" });
+      removeFromView([r.id]);
+      showToast("Respondent deleted");
+    } catch (err) {
+      if (!(err instanceof SessionExpiredError) && /not found/i.test(err.message)) {
+        removeFromView([r.id]); // already gone on the server — sync the view
+      }
+      handleApiError(err, "Could not delete respondent");
+    } finally {
+      setBusy(false);
+    }
   }
 
-  const totalPages = Math.max(1, Math.ceil(filteredData.length / rowsPerPage));
-  const pageStart = (currentPage - 1) * rowsPerPage;
-  const pageData = filteredData.slice(pageStart, pageStart + rowsPerPage);
+  async function clearAllData() {
+    if (busy) return;
+    if (!respondents.length) {
+      showToast("There are no records to delete");
+      return;
+    }
+    const answer = window.prompt(
+      `This permanently deletes ALL ${respondents.length} respondent records from the database. It cannot be undone.\n\nType DELETE to confirm.`
+    );
+    if (answer === null) return;
+    if (answer.trim() !== "DELETE") {
+      showToast("Not deleted — you must type DELETE to confirm");
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await authFetch("/respondents?confirm=DELETE_ALL", { method: "DELETE" });
+      const { deleted } = await res.json();
+      setRespondents([]);
+      setDataVersion((v) => v + 1);
+      setSelectedIds([]);
+      showToast(`All data cleared (${deleted} deleted)`);
+    } catch (err) {
+      handleApiError(err, "Could not clear data");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   const recentUsers = useMemo(() => {
-    return [...respondents].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 5);
+    return [...respondents].sort((a, b) => b.submittedAt - a.submittedAt).slice(0, 5);
   }, [respondents]);
 
   const archCount = useMemo(() => {
@@ -230,10 +373,10 @@ export default function Dashboard() {
   }, [respondents]);
 
   const traitAverages = useMemo(() => {
-    const total = respondents.length;
     const result = {};
     ["O", "C", "E", "A", "N"].forEach((t) => {
-      result[t] = total ? (respondents.reduce((s, r) => s + r.scores[t], 0) / total).toFixed(1) : null;
+      const vals = respondents.map((r) => r.scores[t]).filter((v) => typeof v === "number");
+      result[t] = vals.length ? (vals.reduce((s, v) => s + v, 0) / vals.length).toFixed(1) : null;
     });
     return result;
   }, [respondents]);
@@ -248,7 +391,7 @@ export default function Dashboard() {
   }, [respondents]);
 
   const sortedFacets = useMemo(() => {
-    return FACETS.filter((f) => facetAverages[f]).sort((a, b) => parseFloat(facetAverages[b]) - parseFloat(facetAverages[a]));
+    return FACETS.filter((f) => facetAverages[f] !== null).sort((a, b) => parseFloat(facetAverages[b]) - parseFloat(facetAverages[a]));
   }, [facetAverages]);
 
   function exportCSV(rows) {
@@ -259,62 +402,63 @@ export default function Dashboard() {
     }
     const headers = ["TrustID", "FirstName", "Surname", "Email", "Archetype", "O", "C", "E", "A", "N", "Date", ...Array.from({ length: 25 }, (_, i) => `Q${i + 1}`), ...FACETS];
     const csv = [
-      headers.join(","),
+      headers.map(csvCell).join(","),
       ...data.map((r) =>
         [
-          r.id, r.firstName, r.surname, r.email, r.archetype,
+          r.trustId, r.firstName, r.surname, r.email, r.archetype,
           r.scores.O, r.scores.C, r.scores.E, r.scores.A, r.scores.N,
-          r.date, ...r.answers, ...FACETS.map((f) => r.facetScores?.[f] || 0),
-        ].join(",")
+          r.date, ...Array.from({ length: 25 }, (_, i) => r.answers[i] ?? ""), ...FACETS.map((f) => r.facetScores?.[f] ?? 0),
+        ].map(csvCell).join(",")
       ),
-    ].join("\n");
+    ].join("\r\n");
+    const url = URL.createObjectURL(new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
     const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
+    a.href = url;
     a.download = `ocean_data_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
     a.click();
-    showToast("CSV downloaded");
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showToast(`CSV downloaded (${data.length} row${data.length !== 1 ? "s" : ""})`);
   }
 
   const exportMatches = useMemo(() => {
-    const q = exportSearch.toLowerCase();
+    const q = exportSearch.trim().toLowerCase();
     if (!q) return [];
-    return respondents.filter((r) => `${r.firstName} ${r.surname} ${r.id}`.toLowerCase().includes(q)).slice(0, 6);
+    return respondents.filter((r) => `${r.firstName} ${r.surname} ${r.trustId} ${r.email}`.toLowerCase().includes(q)).slice(0, 6);
   }, [exportSearch, respondents]);
 
   function copyToClipboard(text, msg) {
-    navigator.clipboard.writeText(text).then(() => showToast(msg));
+    if (!navigator.clipboard) {
+      showToast("Clipboard not available — select and copy manually");
+      return;
+    }
+    navigator.clipboard.writeText(text).then(() => showToast(msg), () => showToast("Could not copy to clipboard"));
   }
-
-  const semiDonutPaths = useMemo(() => {
-    const total = respondents.length;
-    if (!total) return null;
-    const cx = 150, cy = 150, r = 120;
-    const entries = Object.entries(archCount).sort((a, b) => b[1] - a[1]);
-    const totalArc = Math.PI;
-    let startAngle = Math.PI;
-    const paths = [];
-    entries.forEach(([arch, count]) => {
-      const sweep = (count / total) * totalArc;
-      const endAngle = startAngle + sweep;
-      const x1 = cx + r * Math.cos(startAngle);
-      const y1 = cy + r * Math.sin(startAngle);
-      const x2 = cx + r * Math.cos(endAngle);
-      const y2 = cy + r * Math.sin(endAngle);
-      const largeArc = sweep > Math.PI ? 1 : 0;
-      const color = ARCH_CONFIG[arch] || "#999";
-      paths.push(`M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`);
-      startAngle = endAngle;
-    });
-    return { entries, paths };
-  }, [respondents, archCount]);
 
   const totalDataPoints = respondents.length * DATA_PTS_PER_USER;
   const totalRevenue = respondents.length * pricePerUser;
 
   const maxArchCount = Math.max(...Object.values(archCount), 1);
 
+  const tableStatusRow = (colSpan, emptyText) => {
+    if (loading && !respondents.length) {
+      return <tr><td colSpan={colSpan} className="table-status">Loading respondents…</td></tr>;
+    }
+    if (loadError && !respondents.length) {
+      return (
+        <tr><td colSpan={colSpan} className="table-status table-status-error">
+          {loadError}
+          <button className="filter-btn" style={{ marginLeft: "10px" }} onClick={() => fetchRespondents()}>Retry</button>
+        </td></tr>
+      );
+    }
+    return <tr><td colSpan={colSpan} className="table-status">{emptyText}</td></tr>;
+  };
+
   return (
     <div className="dash-root">
+      {sidebarOpen && <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} aria-hidden="true"></div>}
       <aside className={"sidebar" + (sidebarOpen ? " open" : "")} id="sidebar">
         <div className="sidebar-logo">
           <div className="sidebar-logo-title">HYEVE</div>
@@ -359,19 +503,19 @@ export default function Dashboard() {
             Settings
           </button>
         </nav>
-        <div className="sidebar-footer">v1.0 · OCEAN Quiz</div>
+        <div className="sidebar-footer">{username ? `Signed in as ${username} · ` : ""}v1.1 · OCEAN Quiz</div>
       </aside>
 
       <div className="main">
         <header className="topbar">
-          <button className="menu-toggle" onClick={toggleSidebar}>
+          <button className="menu-toggle" onClick={toggleSidebar} aria-label="Toggle menu">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
           <div className="search-bar">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" placeholder="Search by name, email, ID…" value={globalSearch} onChange={(e) => { setGlobalSearch(e.target.value); setCurrentPage(1); }} />
+            <input type="search" aria-label="Search respondents" placeholder="Search by name, email, Trust ID…" value={globalSearch} onChange={(e) => { setGlobalSearch(e.target.value); setCurrentPage(1); if (e.target.value && activePage !== "respondents") setActivePage("respondents"); }} />
           </div>
-          <button className="topbar-btn" onClick={() => exportCSV()}>
+          <button className="topbar-btn" onClick={() => exportCSV()} disabled={!respondents.length}>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M2.99969 17.0002C2.99969 17.9302 2.99969 18.3952 3.10192 18.7767C3.37932 19.8119 4.18796 20.6206 5.22324 20.898C5.60474 21.0002 6.06972 21.0002 6.99969 21.0002L16.9997 21.0002C17.9297 21.0002 18.3947 21.0002 18.7762 20.898C19.8114 20.6206 20.6201 19.8119 20.8975 18.7767C20.9997 18.3952 20.9997 17.9302 20.9997 17.0002"></path>
               <path d="M16.4998 11.5002C16.4998 11.5002 13.1856 16.0002 11.9997 16.0002C10.8139 16.0002 7.49976 11.5002 7.49976 11.5002M11.9997 15.0002V3.00016"></path>
@@ -430,31 +574,7 @@ export default function Dashboard() {
             </div>
 
             <div className="chart-row">
-              <div className="chart-card">
-                <div className="chart-card-title">Archetype Distribution</div>
-                <div className="semi-donut-wrap">
-                  <svg className="semi-donut-svg" viewBox="0 0 300 160">
-                    <path d="M 30 150 A 120 120 0 0 1 270 150" fill="none" stroke="#E8E8E8" strokeWidth="28" />
-                    {semiDonutPaths && semiDonutPaths.entries.map(([arch], i) => (
-                      <path key={arch} d={semiDonutPaths.paths[i]} fill="none" stroke={ARCH_CONFIG[arch] || "#999"} strokeWidth="28" strokeLinecap="butt" />
-                    ))}
-                    {!semiDonutPaths && (
-                      <path d="M 30 150 A 120 120 0 0 1 270 150" fill="none" stroke="#E0E0E0" strokeWidth="28" strokeLinecap="round" />
-                    )}
-                  </svg>
-                  <div className="donut-legend-grid">
-                    {semiDonutPaths ? semiDonutPaths.entries.map(([arch, count]) => (
-                      <div className="legend-row" key={arch}>
-                        <div className="legend-dot" style={{ background: ARCH_CONFIG[arch] || "#999" }}></div>
-                        <span className="legend-name">{arch}</span>
-                        <span className="legend-count">{count}</span>
-                      </div>
-                    )) : (
-                      <div style={{ fontSize: "12px", color: "var(--txt-faint)", gridColumn: "1/-1" }}>No data yet</div>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <ArchetypeDistribution colors={ARCH_CONFIG} version={dataVersion} onError={handleApiError} />
               <div className="chart-card">
                 <div className="chart-card-title">Average Trait Scores</div>
                 <div className="trait-bar-list">
@@ -473,6 +593,8 @@ export default function Dashboard() {
               </div>
             </div>
 
+            <UserGrowthChart version={dataVersion} onError={handleApiError} />
+
             <div className="section-header">
               <div className="section-title">Recent Users</div>
               <button className="view-all-btn" onClick={() => goToPage("respondents")}>
@@ -487,7 +609,7 @@ export default function Dashboard() {
                 </thead>
                 <tbody>
                   {recentUsers.length === 0 ? (
-                    <tr><td colSpan="4" style={{ textAlign: "center", padding: "2.5rem", color: "var(--txt-faint)" }}>No respondents yet — user data will appear here</td></tr>
+                    tableStatusRow(4, "No respondents yet — user data will appear here")
                   ) : recentUsers.map((r) => (
                     <tr key={r.id}>
                       <td className="td-name">{r.firstName} {r.surname}</td>
@@ -512,18 +634,18 @@ export default function Dashboard() {
             <h1 className="page-heading">User Management</h1>
             <div className={"bulk-bar" + (selectedIds.length ? " visible" : "")}>
               <span><span className="bulk-count">{selectedIds.length}</span> selected</span>
-              <button className="bulk-btn bulk-delete" onClick={bulkDelete}>
+              <button className="bulk-btn bulk-delete" onClick={bulkDelete} disabled={busy}>
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-                Delete Selected
+                {busy ? "Deleting…" : "Delete Selected"}
               </button>
               <button className="bulk-btn bulk-clear" onClick={clearSelection}>Clear selection</button>
             </div>
             <div className="filter-bar">
-              <select className="filter-select" value={archFilter} onChange={(e) => { setArchFilter(e.target.value); setCurrentPage(1); }}>
+              <select className="filter-select" aria-label="Filter by archetype" value={archFilter} onChange={(e) => { setArchFilter(e.target.value); setCurrentPage(1); }}>
                 <option value="">All Archetypes</option>
                 {ARCH_KEYS.map((a) => <option key={a}>{a}</option>)}
               </select>
-              <select className="filter-select" value={monthFilter} onChange={(e) => setMonthFilter(e.target.value)}>
+              <select className="filter-select" aria-label="Filter by date" value={monthFilter} onChange={(e) => { setMonthFilter(e.target.value); setCurrentPage(1); }}>
                 <option value="">All Time</option>
                 <option>This Month</option>
                 <option>Last Month</option>
@@ -541,33 +663,40 @@ export default function Dashboard() {
                       <input
                         type="checkbox"
                         className="select-all-cb"
+                        aria-label="Select all on this page"
                         checked={pageData.length > 0 && pageData.every((r) => selectedIds.includes(r.id))}
                         onChange={(e) => toggleSelectAll(e.target.checked)}
                       />
                     </th>
-                    <th onClick={() => handleSort("id")}>Trust ID ↕</th>
-                    <th onClick={() => handleSort("name")}>Name ↕</th>
-                    <th onClick={() => handleSort("email")}>Email</th>
-                    <th onClick={() => handleSort("arch")}>Archetype ↕</th>
+                    <th className="th-sort" onClick={() => handleSort("id")}>Trust ID{sortIndicator("id")}</th>
+                    <th className="th-sort" onClick={() => handleSort("name")}>Name{sortIndicator("name")}</th>
+                    <th className="th-sort" onClick={() => handleSort("email")}>Email{sortIndicator("email")}</th>
+                    <th className="th-sort" onClick={() => handleSort("arch")}>Archetype{sortIndicator("arch")}</th>
                     <th>O</th><th>C</th><th>E</th><th>A</th><th>N</th>
-                    <th onClick={() => handleSort("date")}>Date ↕</th>
+                    <th className="th-sort" onClick={() => handleSort("date")}>Date{sortIndicator("date")}</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {respondents.length === 0 ? (
-                    <tr><td colSpan="11" style={{ textAlign: "center", padding: "3rem", color: "var(--txt-faint)" }}>No data — user data will appear here</td></tr>
+                    tableStatusRow(12, "No data — user data will appear here")
+                  ) : pageData.length === 0 ? (
+                    <tr><td colSpan="12" className="table-status">
+                      No respondents match these filters.
+                      <button className="filter-btn" style={{ marginLeft: "10px" }} onClick={clearFilters}>Clear filters</button>
+                    </td></tr>
                   ) : pageData.map((r) => (
                     <tr key={r.id}>
                       <td className="cb-wrap">
-                        <input type="checkbox" className="row-cb" checked={selectedIds.includes(r.id)} onChange={() => toggleRowSelect(r.id)} />
+                        <input type="checkbox" className="row-cb" aria-label={`Select ${r.firstName} ${r.surname}`} checked={selectedIds.includes(r.id)} onChange={() => toggleRowSelect(r.id)} />
                       </td>
-                      <td className="td-id" title={r.id}>{r.id.slice(0, 10)}…</td>
+                      <td className="td-id" title={r.trustId}>{r.trustId}</td>
                       <td className="td-name">{r.firstName} {r.surname}</td>
                       <td className="td-email">{r.email}</td>
                       <td><span className={"arch-pill arch-" + r.archetype}>{r.archetype}</span></td>
                       {["O", "C", "E", "A", "N"].map((t) => {
                         const s = r.scores[t];
+                        if (typeof s !== "number") return <td key={t}>—</td>;
                         const band = s <= 4.0 ? "Low" : s <= 6.0 ? "Mid" : "High";
                         const cls = s <= 4.0 ? "score-low" : s <= 6.0 ? "score-mid" : "score-high";
                         return <td key={t}><span className={"score-pill " + cls}>{band}</span></td>;
@@ -578,7 +707,7 @@ export default function Dashboard() {
                           <button className="act-view" onClick={() => setModalRespondent(r)}>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>view
                           </button>
-                          <button className="act-danger" onClick={() => deleteRespondent(r.id)}>
+                          <button className="act-danger" onClick={() => deleteRespondent(r)} disabled={busy} aria-label={`Delete ${r.firstName} ${r.surname}`} title="Delete">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
                           </button>
                         </div>
@@ -592,9 +721,13 @@ export default function Dashboard() {
                   {filteredData.length === 0 ? "" : `Showing ${pageStart + 1}–${Math.min(pageStart + rowsPerPage, filteredData.length)} of ${filteredData.length}`}
                 </span>
                 <div className="page-btns">
-                  {Array.from({ length: totalPages }, (_, i) => (
-                    <button key={i} className={"page-btn" + (i + 1 === currentPage ? " active" : "")} onClick={() => setCurrentPage(i + 1)}>{i + 1}</button>
+                  <button className="page-btn" disabled={safePage <= 1} onClick={() => setCurrentPage(safePage - 1)} aria-label="Previous page">‹</button>
+                  {pageWindow(safePage, totalPages).map((p, i) => p === null ? (
+                    <span key={"gap" + i} className="page-gap">…</span>
+                  ) : (
+                    <button key={p} className={"page-btn" + (p === safePage ? " active" : "")} onClick={() => setCurrentPage(p)} aria-current={p === safePage ? "page" : undefined}>{p}</button>
                   ))}
+                  <button className="page-btn" disabled={safePage >= totalPages} onClick={() => setCurrentPage(safePage + 1)} aria-label="Next page">›</button>
                 </div>
               </div>
             </div>
@@ -676,14 +809,14 @@ export default function Dashboard() {
               </div>
               <div className="setting-row">
                 <div><div className="setting-label">Filtered results only</div><div className="setting-sub">Exports currently filtered rows</div></div>
-                <button className="topbar-btn" onClick={() => exportCSV(filteredData)}>Export Filtered</button>
+                <button className="topbar-btn" onClick={() => exportCSV(filteredData)}>Export Filtered ({filteredData.length})</button>
               </div>
             </div>
             <div className="settings-card">
               <h3>Find &amp; Copy Trust ID</h3>
               <input
                 className="setting-input"
-                placeholder="Search by name or ID…"
+                placeholder="Search by name, email or Trust ID…"
                 style={{ width: "100%", marginBottom: "0.75rem" }}
                 value={exportSearch}
                 onChange={(e) => setExportSearch(e.target.value)}
@@ -694,8 +827,8 @@ export default function Dashboard() {
                 )}
                 {exportMatches.map((r) => (
                   <div className="export-search-result" key={r.id}>
-                    <span>{r.firstName} {r.surname} · <span style={{ fontFamily: "monospace", color: "var(--txt-faint)" }}>{r.id.slice(0, 14)}…</span></span>
-                    <button className="act-view" onClick={() => copyToClipboard(r.id, "ID copied")}>Copy ID</button>
+                    <span>{r.firstName} {r.surname} · <span style={{ fontFamily: "monospace", color: "var(--txt-faint)" }}>{r.trustId}</span></span>
+                    <button className="act-view" onClick={() => copyToClipboard(r.trustId, "Trust ID copied")}>Copy ID</button>
                   </div>
                 ))}
               </div>
@@ -710,11 +843,11 @@ export default function Dashboard() {
               <h3>Revenue &amp; Pricing</h3>
               <div className="setting-row">
                 <div><div className="setting-label">Price per respondent</div><div className="setting-sub">Used to calculate Total Revenue</div></div>
-                <input type="number" className="setting-input" style={{ width: "110px" }} value={pricePerUser} onChange={(e) => setPricePerUser(parseFloat(e.target.value) || 0)} />
+                <input type="number" className="setting-input" style={{ width: "110px" }} value={pricePerUser} min="0" step="any" onChange={(e) => setPricePerUser(Math.max(0, parseFloat(e.target.value) || 0))} />
               </div>
               <div className="setting-row">
                 <div><div className="setting-label">Currency symbol</div></div>
-                <input type="text" className="setting-input" style={{ width: "55px" }} value={currencySymbol} onChange={(e) => setCurrencySymbol(e.target.value)} />
+                <input type="text" className="setting-input" style={{ width: "55px" }} maxLength={4} value={currencySymbol} onChange={(e) => setCurrencySymbol(e.target.value)} />
               </div>
             </div>
             <div className="settings-card">
@@ -732,11 +865,11 @@ export default function Dashboard() {
               <h3>Data Management</h3>
               <div className="setting-row">
                 <div><div className="setting-label">Reload from server</div><div className="setting-sub">Fetches the latest respondent data from the API</div></div>
-                <button className="topbar-btn" onClick={fetchRespondents}>Reload</button>
+                <button className="topbar-btn" onClick={() => fetchRespondents()} disabled={loading}>{loading ? "Loading…" : "Reload"}</button>
               </div>
               <div className="setting-row">
-                <div><div className="setting-label">Clear all data</div><div className="setting-sub">Removes all respondent records from this view</div></div>
-                <button className="danger-btn" onClick={clearAllData}>Clear All</button>
+                <div><div className="setting-label">Clear all data</div><div className="setting-sub">Permanently deletes every respondent record from the database</div></div>
+                <button className="danger-btn" onClick={clearAllData} disabled={busy}>Clear All</button>
               </div>
             </div>
           </div>
@@ -745,15 +878,15 @@ export default function Dashboard() {
 
       {modalRespondent && (
         <div className="modal-overlay open" onClick={(e) => { if (e.target === e.currentTarget) setModalRespondent(null); }}>
-          <div className="modal">
-            <button className="modal-close" onClick={() => setModalRespondent(null)}>×</button>
+          <div className="modal" role="dialog" aria-modal="true" aria-label={`${modalRespondent.firstName} ${modalRespondent.surname}`}>
+            <button className="modal-close" onClick={() => setModalRespondent(null)} aria-label="Close">×</button>
             <div className="modal-name">{modalRespondent.firstName} {modalRespondent.surname}</div>
             <div className="modal-meta">{modalRespondent.email} · {modalRespondent.date}</div>
             <div className="modal-section">
               <div className="modal-sec-label">Trust ID</div>
               <div className="modal-id-box">
-                <span>{modalRespondent.id}</span>
-                <button className="copy-icon-btn" onClick={() => copyToClipboard(modalRespondent.id, "Trust ID copied")}>
+                <span>{modalRespondent.trustId}</span>
+                <button className="copy-icon-btn" onClick={() => copyToClipboard(modalRespondent.trustId, "Trust ID copied")} aria-label="Copy Trust ID">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                 </button>
               </div>
@@ -769,10 +902,10 @@ export default function Dashboard() {
                   <div className="modal-trait-row" key={t}>
                     <div className="modal-trait-header">
                       <span className="modal-trait-name">{TRAIT_NAMES[t]}</span>
-                      <span className="modal-trait-score">{modalRespondent.scores[t]}/10</span>
+                      <span className="modal-trait-score">{modalRespondent.scores[t] ?? "—"}/10</span>
                     </div>
                     <div className="modal-bar-track">
-                      <div className="modal-bar-fill" style={{ width: Math.round((modalRespondent.scores[t] / 10) * 100) + "%", background: TRAIT_COLORS[t] }}></div>
+                      <div className="modal-bar-fill" style={{ width: Math.round(((modalRespondent.scores[t] || 0) / 10) * 100) + "%", background: TRAIT_COLORS[t] }}></div>
                     </div>
                   </div>
                 ))}
@@ -790,7 +923,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className={"toast" + (toastVisible ? " show" : "")}>{toast}</div>
+      <div className={"toast" + (toastVisible ? " show" : "")} role="status" aria-live="polite">{toast}</div>
     </div>
   );
 }

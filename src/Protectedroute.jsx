@@ -1,13 +1,8 @@
 import { Navigate } from "react-router-dom";
-
-function getSession() {
-  const session = localStorage.getItem("dashboard_session");
-  return session ? JSON.parse(session) : null;
-}
+import { getSession } from "./session";
 
 export default function ProtectedRoute({ children }) {
-  const session = getSession();
-  if (!session || !session.token) {
+  if (!getSession()) {
     return <Navigate to="/lsysadmin/login" replace />;
   }
   return children;
