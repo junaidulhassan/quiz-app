@@ -2,12 +2,7 @@ import { useMemo } from "react";
 
 const DAY_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-/**
- * Submissions grouped by day of week — a behavioral/cyclical pattern (which days
- * people take the quiz) rather than a duplicate of the Growth chart's cumulative
- * total-over-time trend. Computed live from the same respondent list already
- * loaded for the dashboard, in the viewer's local time zone.
- */
+
 export default function WeeklyActivity({ respondents }) {
   const { days, maxCount, busiest, total } = useMemo(() => {
     const counts = new Array(7).fill(0);
