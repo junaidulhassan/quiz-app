@@ -7,6 +7,7 @@ import ArchetypeDistribution from "./ArchetypeDistribution";
 import UserGrowthChart from "./UserGrowthChart";
 import TraitScoreSpread from "./TraitScoreSpread";
 import WeeklyActivity from "./WeeklyActivity";
+import PartnerShareStats from "./PartnerShareStats";
 const DATA_PTS_PER_USER = 67;
 const SETTINGS_KEY = "dashboard_settings_v1";
 
@@ -596,6 +597,8 @@ export default function Dashboard() {
             </div>
 
             <UserGrowthChart version={dataVersion} onError={handleApiError} />
+
+            <PartnerShareStats colors={ARCH_CONFIG} version={dataVersion} onError={handleApiError} />
 
             <div className="section-header">
               <div className="section-title">Recent Users</div>

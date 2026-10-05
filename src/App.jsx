@@ -335,20 +335,34 @@ export default function App() {
     window.open(url, "_blank", "noopener,noreferrer,width=600,height=600");
   }
 
+  function trackPartnerShare(channel) {
+    if (!resultData?.trust_id) return;
+    fetch(`${API_BASE_URL}/share`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trust_id: resultData.trust_id, channel }),
+      keepalive: true,
+    }).catch(() => {});
+  }
+
   function shareViaWhatsapp() {
+    trackPartnerShare("whatsapp");
     const text = `${partnerShareText} ${partnerShareUrl}`;
     openSocialPopup(`https://wa.me/?text=${encodeURIComponent(text)}`);
   }
 
   function shareViaFacebook() {
+    trackPartnerShare("facebook");
     openSocialPopup(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(partnerShareUrl)}`);
   }
 
   function shareViaX() {
+    trackPartnerShare("x");
     openSocialPopup(`https://twitter.com/intent/tweet?text=${encodeURIComponent(partnerShareText)}&url=${encodeURIComponent(partnerShareUrl)}`);
   }
 
   async function copyPartnerLink() {
+    trackPartnerShare("copy");
     try {
       await navigator.clipboard.writeText(partnerShareUrl);
       setPartnerLinkCopied(true);
