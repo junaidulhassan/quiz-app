@@ -1,0 +1,112 @@
+.ad-chart {
+  position: relative;
+}
+
+.ad-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.ad-grid {
+  stroke: #0000000f;
+  stroke-width: 1;
+}
+
+.ad-axis {
+  fill: var(--ad-gray);
+  font-size: 11px;
+}
+
+.ad-bar {
+  fill: var(--ad-purple);
+  opacity: 0.85;
+  transition: opacity 0.12s ease;
+}
+
+.ad-bar.is-active {
+  opacity: 1;
+}
+
+.ad-line {
+  fill: none;
+  stroke: var(--ad-purple);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.ad-area {
+  fill: var(--ad-purple);
+  opacity: 0.12;
+}
+
+.ad-crosshair {
+  stroke: #0000004d;
+  stroke-dasharray: 3 3;
+}
+
+.ad-dot {
+  fill: var(--ad-purple);
+  stroke: #ffffff;
+  stroke-width: 2;
+}
+
+.ad-tooltip {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  padding: 6px 10px;
+  background: var(--ad-text);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 12px;
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 10px));
+  white-space: nowrap;
+}
+
+.ad-tooltip span {
+  opacity: 0.75;
+}
+
+.ad-ranked {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ad-ranked-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.ad-ranked-head small {
+  font-weight: 400;
+  color: var(--ad-gray);
+}
+
+.ad-ranked-track {
+  height: 8px;
+  overflow: hidden;
+  background: #e4e4e7;
+  border-radius: 99px;
+}
+
+.ad-ranked-track span {
+  display: block;
+  height: 100%;
+  background: var(--ad-purple);
+  border-radius: 99px;
+}
+
+.is-refreshing {
+  opacity: 0.6;
+}

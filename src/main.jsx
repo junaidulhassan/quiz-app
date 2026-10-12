@@ -1,10 +1,13 @@
-import { StrictMode } from "react";
+import { StrictMode, Suspense, lazy } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 import App from "./App.jsx";
 import Login from "./Login.jsx";
 import Dashboard from "./Dashboard.jsx";
 import ProtectedRoute from "./Protectedroute.jsx";
+
+const Env2App = lazy(() => import("./env2/routes/Env2App.jsx"));
+const AdminApp = lazy(() => import("./admin/routes/AdminApp.jsx"));
 
 function HomeButton() {
   const navigate = useNavigate();
@@ -44,6 +47,22 @@ createRoot(document.getElementById("root")).render(
             <ProtectedRoute>
               <Dashboard />
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/*"
+          element={
+            <Suspense fallback={null}>
+              <AdminApp />
+            </Suspense>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Suspense fallback={null}>
+              <Env2App />
+            </Suspense>
           }
         />
       </Routes>

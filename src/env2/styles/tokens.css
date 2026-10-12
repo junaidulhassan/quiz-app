@@ -1,0 +1,162 @@
+@font-face {
+  font-family: "HvGoogleSans";
+  src: url("/fonts/GoogleSansFlex_120pt-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HvGoogleSans";
+  src: url("/fonts/GoogleSansFlex_120pt-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HvGoogleSans";
+  src: url("/fonts/GoogleSansFlex_120pt-SemiBold.ttf") format("truetype");
+  font-weight: 600 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "HvBricolage";
+  src: url("/fonts/BricolageGrotesque-SemiBold.woff2") format("woff2"),
+    url("/fonts/BricolageGrotesque-SemiBold.woff") format("woff");
+  font-weight: 600;
+  font-display: swap;
+}
+
+:root {
+  --hv-bg: #e9e9e9;
+  --hv-card-bg: #f6f6f7;
+  --hv-card-border: #ffffff;
+  --hv-input-bg: #ffffff;
+  --hv-input-border: #0000001f;
+  --hv-border-hover: #cfcfd2;
+  --hv-text-dark: #14141a;
+  --hv-text-gray: #5b5d67;
+  --hv-text-placeholder: #9a9aa2;
+  --hv-purple: #774cff;
+  --hv-purple-hover: #6539f0;
+  --hv-purple-active: #5a2fe0;
+  --hv-badge-bg: #ede9fe;
+  --hv-red: #ef4444;
+  --hv-red-bg: #fdeaea;
+  --hv-green: #15803d;
+  --hv-green-bg: #d1fae5;
+  --hv-radius-card: 20px;
+  --hv-radius-field: 12px;
+  --hv-radius-button: 12px;
+  --hv-radius-pill: 999px;
+  --hv-sidebar-width: 296px;
+  --hv-sidebar-border: #ececed;
+  --hv-risk-low: var(--hv-green);
+  --hv-risk-low-bg: var(--hv-green-bg);
+  --hv-risk-medium: #d97706;
+  --hv-risk-medium-bg: #fef3c7;
+  --hv-risk-high: #dc2626;
+  --hv-risk-high-bg: #fee2e2;
+  --hv-risk-lifestyle-high: #b45309;
+  --hv-cat-property: #ec4899;
+  --hv-cat-payments: #3b82f6;
+  --hv-cat-maintenance: #8b5cf6;
+  --hv-cat-lifestyle: #f59e0b;
+  --hv-cat-arguments: #10b981;
+  --hv-cat-bills: #3b82f6;
+  --hv-cat-hygiene: #10b981;
+  --hv-cat-noise: #f59e0b;
+  --hv-cat-privacy: #8b5cf6;
+  --hv-font: "HvGoogleSans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body.hv-env2 {
+  background: var(--hv-bg);
+}
+
+body.hv-env2 .home-fab {
+  display: none;
+}
+
+.hv-root {
+  min-height: 100vh;
+  background: var(--hv-bg);
+  color: var(--hv-text-dark);
+  font-family: var(--hv-font);
+  font-variation-settings: "opsz" 120;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.hv-root *,
+.hv-root *::before,
+.hv-root *::after {
+  box-sizing: border-box;
+}
+
+.hv-root button,
+.hv-root input,
+.hv-root select {
+  font-family: inherit;
+}
+
+.hv-root a:focus-visible,
+.hv-root button:focus-visible {
+  outline: 2px solid var(--hv-purple);
+  outline-offset: 2px;
+}
+
+.hv-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.hv-fullscreen-loader,
+.hv-page-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.hv-fullscreen-loader {
+  min-height: 100vh;
+}
+
+.hv-spinner {
+  width: 17px;
+  height: 17px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: hv-spin 700ms linear infinite;
+  flex: 0 0 auto;
+}
+
+.hv-spinner.is-dark {
+  width: 24px;
+  height: 24px;
+  border-color: rgba(20, 20, 26, 0.15);
+  border-top-color: var(--hv-purple);
+}
+
+@keyframes hv-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hv-root *,
+  .hv-toast {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
