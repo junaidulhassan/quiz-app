@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import AuthShell from "../../components/AuthShell.jsx";
 import Spinner from "../../components/Spinner.jsx";
 import { SelectField, TextField } from "../../components/TextField.jsx";
@@ -213,6 +213,9 @@ export default function PropertyManagerSetup() {
             </option>
           ))}
         </SelectField>
+        <p className="hv-hint">
+          By finishing setup you agree to the <Link to="/landlord-terms">Landlord Terms and Acknowledgment</Link>.
+        </p>
         <button type="submit" className="hv-btn hv-btn-primary hv-btn-block" disabled={submitting}>
           {submitting && <Spinner />}
           {submitting ? "Finishing setup…" : "Finish Setup"}

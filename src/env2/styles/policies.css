@@ -64,6 +64,7 @@
   margin-bottom: 6px;
 }
 
+.hv-policy-card p a,
 .hv-policy-section a,
 .hv-policy-links a {
   color: var(--hv-purple);
@@ -72,7 +73,8 @@
 
 .hv-policy-links {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 10px 20px;
   margin-top: 32px;
   padding-top: 20px;
   border-top: 1px solid var(--hv-sidebar-border);
@@ -91,4 +93,10 @@
   .hv-policy-card h1 {
     font-size: 26px;
   }
+}
+
+.hv-policy-section h3 {
+  margin: 18px 0 8px;
+  font-size: 15px;
+  font-weight: 600;
 }

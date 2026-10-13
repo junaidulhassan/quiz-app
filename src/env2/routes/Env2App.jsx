@@ -14,8 +14,8 @@ import NotFound from "../pages/auth/NotFound.jsx";
 import PropertyManagerSetup from "../pages/auth/PropertyManagerSetup.jsx";
 import SelectRole from "../pages/auth/SelectRole.jsx";
 import VerifyEmail from "../pages/auth/VerifyEmail.jsx";
-import DataPolicy from "../pages/policies/DataPolicy.jsx";
-import ServiceTerms from "../pages/policies/ServiceTerms.jsx";
+import PolicyPage from "../pages/policies/PolicyPage.jsx";
+import { POLICIES } from "../pages/policies/content/index.js";
 import History from "../pages/lookup/History.jsx";
 import QrScan from "../pages/lookup/QrScan.jsx";
 import RoommateProfile from "../pages/lookup/RoommateProfile.jsx";
@@ -52,8 +52,9 @@ export default function Env2App() {
             <Route path="login" element={<GuestOnly><Login /></GuestOnly>} />
             <Route path="create-account" element={<GuestOnly><CreateAccount /></GuestOnly>} />
             <Route path="forgot-password" element={<GuestOnly><ForgotPassword /></GuestOnly>} />
-            <Route path="privacy" element={<DataPolicy />} />
-            <Route path="terms" element={<ServiceTerms />} />
+            {POLICIES.map((policy) => (
+              <Route key={policy.path} path={policy.path} element={<PolicyPage policy={policy} />} />
+            ))}
             <Route path="check-email" element={<CheckEmail />} />
             <Route path="verify-email" element={<VerifyEmail />} />
             <Route path="create-new-password" element={<CreateNewPassword />} />

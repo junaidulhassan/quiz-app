@@ -100,7 +100,11 @@ export default function Search() {
             {error && <p className="hv-error">{error}</p>}
           </div>
           <p className="hv-search-terms">
-            By continuing, I accept the <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>
+            By continuing, I accept the <Link to="/terms">Terms</Link>, the{" "}
+            <Link to={mode.key === "tenant" ? "/landlord-terms" : "/roommate-terms"}>
+              {mode.key === "tenant" ? "Landlord Terms" : "Roommate Terms"}
+            </Link>{" "}
+            and the <Link to="/privacy">Privacy Policy</Link>
           </p>
           <button type="submit" className="hv-btn hv-btn-primary hv-btn-block">
             Search Profile

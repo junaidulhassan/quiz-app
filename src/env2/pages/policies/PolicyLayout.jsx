@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeftIcon } from "../../components/Icons.jsx";
 import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import { LEGAL } from "../../config/company.js";
+import { POLICY_LINKS } from "./content/index.js";
 
 export function Section({ title, children }) {
   return (
@@ -12,7 +13,7 @@ export function Section({ title, children }) {
   );
 }
 
-export default function PolicyLayout({ title, intro, children }) {
+export default function PolicyLayout({ title, children }) {
   useDocumentTitle(`${title} — Hyeve`);
   return (
     <main className="hv-policy-page">
@@ -26,11 +27,13 @@ export default function PolicyLayout({ title, intro, children }) {
         </div>
         <h1>{title}</h1>
         <p className="hv-policy-updated">Last updated: {LEGAL.updated}</p>
-        {intro && <p className="hv-policy-intro">{intro}</p>}
         {children}
-        <nav className="hv-policy-links" aria-label="Legal pages">
-          <Link to="/privacy">Privacy Policy</Link>
-          <Link to="/terms">Terms of Service</Link>
+        <nav className="hv-policy-links" aria-label="Policies">
+          {POLICY_LINKS.map((link) => (
+            <Link key={link.to} to={link.to}>
+              {link.label}
+            </Link>
+          ))}
         </nav>
       </article>
     </main>
