@@ -433,3 +433,8 @@
     font-size: 32px;
   }
 }
+
+.hv-search-terms a {
+  color: var(--hv-purple);
+  font-weight: 500;
+}

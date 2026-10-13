@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import AuthShell from "../../components/AuthShell.jsx";
+import GoogleAuth from "../../components/GoogleAuth.jsx";
 import Spinner from "../../components/Spinner.jsx";
 import { PasswordField, TextField } from "../../components/TextField.jsx";
 import useAuth from "../../hooks/useAuth.js";
@@ -77,6 +78,7 @@ export default function CreateAccount() {
     <AuthShell backTo="/take-assessment" backLabel="Back to home">
       <h1 className="hv-heading">Create Account</h1>
       <p className="hv-subtext">Set up your Hyeve account to get started.</p>
+      <GoogleAuth text="signup_with" />
       <form onSubmit={submit} noValidate>
         <TextField
           label="Full name"
@@ -118,6 +120,9 @@ export default function CreateAccount() {
           {submitting ? "Creating account…" : "Create account"}
         </button>
       </form>
+      <p className="hv-bottom-text hv-subtle">
+        By creating an account you agree to our <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>.
+      </p>
       <p className="hv-bottom-text">
         Already have an account? <Link to="/login">Log in</Link>
       </p>

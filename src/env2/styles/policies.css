@@ -1,0 +1,94 @@
+.hv-policy-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 36px 24px 80px;
+}
+
+.hv-policy-card {
+  width: 100%;
+  max-width: 760px;
+  padding: 32px 36px 36px;
+  background: var(--hv-card-bg);
+  border: 1.5px solid var(--hv-card-border);
+  border-radius: 20px;
+  box-shadow: 0 1px 4px #0000000a;
+}
+
+.hv-logo-mark.is-left {
+  margin: 0 0 16px;
+}
+
+.hv-policy-card h1 {
+  margin: 0 0 6px;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.hv-policy-updated {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--hv-text-gray);
+}
+
+.hv-policy-intro {
+  margin: 0 0 8px;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.hv-policy-section h2 {
+  margin: 28px 0 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.hv-policy-section p,
+.hv-policy-section li {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #2c2c35;
+}
+
+.hv-policy-section p {
+  margin: 0 0 10px;
+}
+
+.hv-policy-section ul {
+  margin: 0 0 10px;
+  padding-left: 20px;
+}
+
+.hv-policy-section li {
+  margin-bottom: 6px;
+}
+
+.hv-policy-section a,
+.hv-policy-links a {
+  color: var(--hv-purple);
+  font-weight: 500;
+}
+
+.hv-policy-links {
+  display: flex;
+  gap: 20px;
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--hv-sidebar-border);
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .hv-policy-page {
+    padding: 20px 12px 48px;
+  }
+
+  .hv-policy-card {
+    padding: 22px 18px 28px;
+  }
+
+  .hv-policy-card h1 {
+    font-size: 26px;
+  }
+}

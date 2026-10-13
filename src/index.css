@@ -1226,3 +1226,23 @@ html, body, #root {
   .res-access { margin-left: 0; padding: 1rem 1rem 1rem 1.15rem; }
   .res-access-actions > * { flex: 1 1 100%; }
 }
+
+.gate-consent {
+  margin: 0 0 14px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--ink-muted);
+}
+.gate-consent a,
+.intro-legal a {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.intro-legal {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 12px;
+  color: var(--ink-muted);
+}

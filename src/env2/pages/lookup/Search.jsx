@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SearchIcon } from "../../components/Icons.jsx";
 import Spinner from "../../components/Spinner.jsx";
 import useToast from "../../hooks/useToast.js";
@@ -99,7 +99,9 @@ export default function Search() {
             </div>
             {error && <p className="hv-error">{error}</p>}
           </div>
-          <p className="hv-search-terms">By continuing, I accept the Terms and Policy</p>
+          <p className="hv-search-terms">
+            By continuing, I accept the <Link to="/terms">Terms</Link> and <Link to="/privacy">Privacy Policy</Link>
+          </p>
           <button type="submit" className="hv-btn hv-btn-primary hv-btn-block">
             Search Profile
           </button>

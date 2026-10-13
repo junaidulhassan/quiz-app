@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthShell from "../../components/AuthShell.jsx";
+import GoogleAuth from "../../components/GoogleAuth.jsx";
 import Spinner from "../../components/Spinner.jsx";
 import { PasswordField, TextField } from "../../components/TextField.jsx";
 import useAuth from "../../hooks/useAuth.js";
@@ -47,6 +48,7 @@ export default function Login() {
     <AuthShell backTo="/take-assessment" backLabel="Back to home">
       <h1 className="hv-heading">Welcome Back</h1>
       <p className="hv-subtext">Log in to look up tenants and roommates.</p>
+      <GoogleAuth text="signin_with" />
       <form onSubmit={submit} noValidate>
         <TextField
           label="Email address"

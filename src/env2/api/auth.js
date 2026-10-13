@@ -2,6 +2,8 @@ import { request } from "./client.js";
 
 export const signup = (body) => request("/auth/signup", { method: "POST", body, auth: false });
 export const login = (body) => request("/auth/login", { method: "POST", body, auth: false });
+export const googleLogin = (credential) =>
+  request("/auth/google", { method: "POST", body: { credential }, auth: false });
 export const logout = () => request("/auth/logout", { method: "POST" });
 export const forgotPassword = (email) =>
   request("/auth/forgot-password", { method: "POST", body: { email }, auth: false });

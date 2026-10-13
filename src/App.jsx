@@ -437,6 +437,9 @@ export default function App() {
           <p className="intro-account">
             Property manager, landlord or looking for a roommate? <Link to="/login">Log in to Hyeve</Link>
           </p>
+          <p className="intro-legal">
+            <Link to="/privacy">Privacy Policy</Link> · <Link to="/terms">Terms of Service</Link>
+          </p>
         </div>
       )}
 
@@ -564,6 +567,11 @@ export default function App() {
             />
             <div className="gate-error" style={{ display: errEmail ? "block" : "none" }}>{emailErrMsg}</div>
           </div>
+
+          <p className="gate-consent">
+            By continuing, you agree to our <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link>.
+            You understand that Hyeve account holders can look you up by your email or Trust ID and see your result insights.
+          </p>
 
           <button className="gate-submit" onClick={submitGate} disabled={submitting}>
             {submitting ? "Submitting…" : "Get result  →"}

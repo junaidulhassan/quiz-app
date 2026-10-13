@@ -543,3 +543,43 @@
 .hv-bottom-text.hv-subtle a {
   font-weight: 500;
 }
+
+.hv-google-section {
+  margin-bottom: 4px;
+}
+
+.hv-google {
+  display: flex;
+  justify-content: center;
+  min-height: 44px;
+}
+
+.hv-google-status {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--hv-text-gray);
+  text-align: center;
+}
+
+.hv-google-section .hv-form-error {
+  margin-bottom: 0;
+}
+
+.hv-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hv-text-gray);
+}
+
+.hv-divider::before,
+.hv-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #00000014;
+}
