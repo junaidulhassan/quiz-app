@@ -36,14 +36,14 @@ export default function AuditLog() {
   };
 
   return (
-    <div className="ad-card ad-table-card ad-audit">
-      <div className="ad-card-head">
+    <div className="adm-card adm-table-card adm-audit">
+      <div className="adm-card-head">
         <h3>Audit log</h3>
         <Badge value="Read only" tone="gray" />
       </div>
-      <div className="ad-filterbar is-inline">
+      <div className="adm-filterbar is-inline">
         <input
-          className="ad-input"
+          className="adm-input"
           value={search}
           onChange={(event) => {
             setSearch(event.target.value);

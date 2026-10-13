@@ -6,18 +6,18 @@ export default function Pagination({ page, pageSize, total, onChange }) {
   const to = Math.min(total, page * pageSize);
 
   return (
-    <div className="ad-pagination">
+    <div className="adm-pagination">
       <span>
         {formatNumber(from)}–{formatNumber(to)} of {formatNumber(total)}
       </span>
       <div>
-        <button type="button" className="ad-btn is-small" disabled={page <= 1} onClick={() => onChange(page - 1)}>
+        <button type="button" className="adm-btn is-small" disabled={page <= 1} onClick={() => onChange(page - 1)}>
           Previous
         </button>
-        <span className="ad-page-label">
+        <span className="adm-page-label">
           Page {page} of {pages}
         </span>
-        <button type="button" className="ad-btn is-small" disabled={page >= pages} onClick={() => onChange(page + 1)}>
+        <button type="button" className="adm-btn is-small" disabled={page >= pages} onClick={() => onChange(page + 1)}>
           Next
         </button>
       </div>

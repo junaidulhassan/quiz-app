@@ -17,26 +17,26 @@ export default function AdminShell() {
 
   if (status === "loading") {
     return (
-      <div className="ad-fullscreen">
+      <div className="adm-fullscreen">
         <LoadingBlock label="Loading dashboard…" />
       </div>
     );
   }
   if (status === "error") {
     return (
-      <div className="ad-fullscreen">
+      <div className="adm-fullscreen">
         <ErrorBlock message={error} onRetry={() => window.location.reload()} />
       </div>
     );
   }
 
   return (
-    <div className="ad-shell">
+    <div className="adm-shell">
       <Sidebar open={menuOpen} onNavigate={() => setMenuOpen(false)} />
-      {menuOpen && <div className="ad-scrim" onClick={() => setMenuOpen(false)} />}
-      <div className="ad-main">
+      {menuOpen && <div className="adm-scrim" onClick={() => setMenuOpen(false)} />}
+      <div className="adm-main">
         <Topbar onMenu={() => setMenuOpen(true)} />
-        <main className="ad-view">
+        <main className="adm-view">
           <Outlet context={{ toast: { show } }} />
         </main>
       </div>

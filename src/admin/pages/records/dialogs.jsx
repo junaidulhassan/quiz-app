@@ -31,15 +31,15 @@ function FormDialog({ title, onClose, onSubmit, submitLabel, children }) {
       <form onSubmit={submit} noValidate>
         {children}
         {error && (
-          <p className="ad-form-error" role="alert">
+          <p className="adm-form-error" role="alert">
             {error}
           </p>
         )}
-        <div className="ad-modal-actions">
-          <button type="button" className="ad-btn" onClick={onClose} disabled={busy}>
+        <div className="adm-modal-actions">
+          <button type="button" className="adm-btn" onClick={onClose} disabled={busy}>
             Cancel
           </button>
-          <button type="submit" className="ad-btn is-primary" disabled={busy}>
+          <button type="submit" className="adm-btn is-primary" disabled={busy}>
             {busy && <Spinner light />}
             {submitLabel}
           </button>
@@ -51,7 +51,7 @@ function FormDialog({ title, onClose, onSubmit, submitLabel, children }) {
 
 function Field({ label, children }) {
   return (
-    <label className="ad-field">
+    <label className="adm-field">
       <span>{label}</span>
       {children}
     </label>
@@ -96,7 +96,7 @@ export function VerificationDialog({ row, onClose, onDone }) {
         onDone("Verification updated");
       }}
     >
-      <p className="ad-modal-text">Set the verification state for {row.name}.</p>
+      <p className="adm-modal-text">Set the verification state for {row.name}.</p>
       <Field label="Verification">
         <select value={value} onChange={(event) => setValue(event.target.value)}>
           {VERIFICATION.map((option) => (
@@ -122,7 +122,7 @@ export function RoleDialog({ row, onClose, onDone }) {
         onDone("Role updated");
       }}
     >
-      <p className="ad-modal-text">
+      <p className="adm-modal-text">
         {row.name} is currently <strong>{row.role}</strong>. Role changes take effect immediately and are recorded in the audit log.
       </p>
       <Field label="Role">
@@ -155,7 +155,7 @@ export function InviteAdminDialog({ onClose, onDone }) {
       <Field label="Temporary password">
         <input type="password" value={form.password} onChange={set("password")} autoComplete="new-password" />
       </Field>
-      <p className="ad-hint">At least 8 characters with upper and lower case letters and a special character.</p>
+      <p className="adm-hint">At least 8 characters with upper and lower case letters and a special character.</p>
       <Field label="Role">
         <select value={form.role} onChange={set("role")}>
           {ROLES.map((option) => (

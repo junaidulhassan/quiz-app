@@ -18,7 +18,7 @@ export default function Reports() {
   return (
     <>
       <PageHeader label="Reports & Analytics" sub="Trends across sign-ups, assessments and searches." />
-      <div className="ad-tabs" role="tablist" aria-label="Date range">
+      <div className="adm-tabs" role="tablist" aria-label="Date range">
         {REPORT_RANGES.map((item) => (
           <button
             key={item.key}
@@ -35,12 +35,12 @@ export default function Reports() {
       {status === "loading" && !data && <LoadingBlock />}
       {status === "error" && <ErrorBlock message={error} onRetry={reload} />}
       {data && (
-        <div className={`ad-grid-2${status === "loading" ? " is-refreshing" : ""}`}>
+        <div className={`adm-grid-2${status === "loading" ? " is-refreshing" : ""}`}>
           {data.metrics.map((metric) => (
-            <div key={metric.key} className="ad-card">
-              <div className="ad-card-head">
+            <div key={metric.key} className="adm-card">
+              <div className="adm-card-head">
                 <h3>{metric.label}</h3>
-                <div className="ad-card-total">
+                <div className="adm-card-total">
                   <b>{formatNumber(metric.total)}</b>
                   <span>in range</span>
                 </div>

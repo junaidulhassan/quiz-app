@@ -35,7 +35,7 @@ export default function AreaChart({ data, title }) {
   const activePoint = hovered === null ? null : points[hovered];
 
   return (
-    <div className="ad-chart">
+    <div className="adm-chart">
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         role="img"
@@ -47,26 +47,26 @@ export default function AreaChart({ data, title }) {
           const y = PAD.top + innerHeight - (tick / max) * innerHeight;
           return (
             <g key={tick}>
-              <line className="ad-grid" x1={PAD.left} x2={WIDTH - PAD.right} y1={y} y2={y} />
-              <text className="ad-axis" x={PAD.left - 8} y={y + 4} textAnchor="end">
+              <line className="adm-grid" x1={PAD.left} x2={WIDTH - PAD.right} y1={y} y2={y} />
+              <text className="adm-axis" x={PAD.left - 8} y={y + 4} textAnchor="end">
                 {formatNumber(tick)}
               </text>
             </g>
           );
         })}
-        <path className="ad-area" d={area} />
-        <path className="ad-line" d={line} />
+        <path className="adm-area" d={area} />
+        <path className="adm-line" d={line} />
         {data.map((point, index) =>
           index % step === 0 ? (
-            <text key={point.label} className="ad-axis" x={points[index].x} y={HEIGHT - 8} textAnchor="middle">
+            <text key={point.label} className="adm-axis" x={points[index].x} y={HEIGHT - 8} textAnchor="middle">
               {shortLabel(point.label)}
             </text>
           ) : null
         )}
         {activePoint && (
           <g>
-            <line className="ad-crosshair" x1={activePoint.x} x2={activePoint.x} y1={PAD.top} y2={PAD.top + innerHeight} />
-            <circle className="ad-dot" cx={activePoint.x} cy={activePoint.y} r="4.5" />
+            <line className="adm-crosshair" x1={activePoint.x} x2={activePoint.x} y1={PAD.top} y2={PAD.top + innerHeight} />
+            <circle className="adm-dot" cx={activePoint.x} cy={activePoint.y} r="4.5" />
           </g>
         )}
         <rect x="0" y="0" width={WIDTH} height={HEIGHT} fill="transparent" />

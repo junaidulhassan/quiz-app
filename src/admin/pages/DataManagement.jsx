@@ -42,9 +42,9 @@ function ExportTab({ permissions, toast }) {
   if (status === "error") return <ErrorBlock message={error} onRetry={reload} />;
 
   return (
-    <div className="ad-card">
+    <div className="adm-card">
       <h3>Export dataset</h3>
-      <div className="ad-export-row">
+      <div className="adm-export-row">
         <select value={dataset} onChange={(event) => setDataset(event.target.value)} aria-label="Dataset">
           {data.items.map((item) => (
             <option key={item.key} value={item.key}>
@@ -52,13 +52,13 @@ function ExportTab({ permissions, toast }) {
             </option>
           ))}
         </select>
-        <label className="ad-check">
+        <label className="adm-check">
           <input type="checkbox" checked={mask} onChange={(event) => setMask(event.target.checked)} />
           Mask emails and phone numbers
         </label>
         <button
           type="button"
-          className="ad-btn is-primary"
+          className="adm-btn is-primary"
           onClick={run}
           disabled={!permissions.export || busy}
           title={permissions.export ? undefined : "Not permitted for your role"}
@@ -67,7 +67,7 @@ function ExportTab({ permissions, toast }) {
           Export CSV
         </button>
       </div>
-      <p className="ad-hint">Exports exclude passwords and quiz answers. Every export is written to the audit log.</p>
+      <p className="adm-hint">Exports exclude passwords and quiz answers. Every export is written to the audit log.</p>
     </div>
   );
 }
@@ -97,9 +97,9 @@ function DeletedTab({ permissions, toast }) {
   };
 
   return (
-    <div className="ad-card ad-table-card">
-      <div className="ad-table-wrap">
-        <table className="ad-table">
+    <div className="adm-card adm-table-card">
+      <div className="adm-table-wrap">
+        <table className="adm-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -107,7 +107,7 @@ function DeletedTab({ permissions, toast }) {
               <th>Role</th>
               <th>Deleted</th>
               <th>Time left</th>
-              <th className="ad-actions-head">Actions</th>
+              <th className="adm-actions-head">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -118,10 +118,10 @@ function DeletedTab({ permissions, toast }) {
                 <td>{row.role}</td>
                 <td>{formatDate(row.deleted)}</td>
                 <td>{row.restorable ? `${row.days_left} days` : "Past restore window"}</td>
-                <td className="ad-actions">
+                <td className="adm-actions">
                   <button
                     type="button"
-                    className="ad-btn is-small"
+                    className="adm-btn is-small"
                     disabled={!permissions.edit || !row.restorable}
                     onClick={() => setDialog({ type: "restore", row })}
                   >
@@ -129,7 +129,7 @@ function DeletedTab({ permissions, toast }) {
                   </button>
                   <button
                     type="button"
-                    className="ad-btn is-small is-danger"
+                    className="adm-btn is-small is-danger"
                     disabled={!permissions.del}
                     onClick={() => setDialog({ type: "purge", row })}
                   >
@@ -166,10 +166,10 @@ function DeletedTab({ permissions, toast }) {
 
 function RetentionTab() {
   return (
-    <div className="ad-card ad-list">
+    <div className="adm-card adm-list">
       <h3>Retention policy</h3>
       {RETENTION.map(([name, rule]) => (
-        <div key={name} className="ad-list-row">
+        <div key={name} className="adm-list-row">
           <span>
             {name}
             <small>{rule}</small>
@@ -188,7 +188,7 @@ export default function DataManagement() {
   return (
     <>
       <PageHeader label="Data Management" sub="Every export and removal is audited. Personal data is minimised by default." />
-      <div className="ad-tabs" role="tablist">
+      <div className="adm-tabs" role="tablist">
         {TABS.map((name) => (
           <button key={name} type="button" role="tab" aria-selected={tab === name} className={tab === name ? "is-on" : ""} onClick={() => setTab(name)}>
             {name}

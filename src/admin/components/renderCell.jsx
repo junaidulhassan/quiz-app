@@ -2,7 +2,7 @@ import { formatDate, formatDateTime, formatNumber, formatRelative } from "../uti
 import Badge from "./Badge.jsx";
 
 export default function renderCell(column, value) {
-  if (value === null || value === undefined || value === "") return <span className="ad-muted">—</span>;
+  if (value === null || value === undefined || value === "") return <span className="adm-muted">—</span>;
   switch (column.type) {
     case "badge":
       return <Badge value={value} />;

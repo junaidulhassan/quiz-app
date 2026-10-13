@@ -2,7 +2,7 @@ import Spinner from "./Spinner.jsx";
 
 export function LoadingBlock({ label = "Loading…" }) {
   return (
-    <div className="ad-state" role="status">
+    <div className="adm-state" role="status">
       <Spinner />
       <span>{label}</span>
     </div>
@@ -11,7 +11,7 @@ export function LoadingBlock({ label = "Loading…" }) {
 
 export function EmptyBlock({ title, text, action }) {
   return (
-    <div className="ad-state">
+    <div className="adm-state">
       <h3>{title}</h3>
       {text && <p>{text}</p>}
       {action}
@@ -21,11 +21,11 @@ export function EmptyBlock({ title, text, action }) {
 
 export function ErrorBlock({ message, onRetry }) {
   return (
-    <div className="ad-state is-error" role="alert">
+    <div className="adm-state is-error" role="alert">
       <h3>Something went wrong</h3>
       <p>{message}</p>
       {onRetry && (
-        <button type="button" className="ad-btn" onClick={onRetry}>
+        <button type="button" className="adm-btn" onClick={onRetry}>
           Try again
         </button>
       )}

@@ -2,14 +2,14 @@ import renderCell from "./renderCell.jsx";
 
 export default function RecordTable({ columns, rows, actions, onRowClick }) {
   return (
-    <div className="ad-table-wrap">
-      <table className="ad-table">
+    <div className="adm-table-wrap">
+      <table className="adm-table">
         <thead>
           <tr>
             {columns.map((column) => (
               <th key={column.field}>{column.label}</th>
             ))}
-            {actions && <th className="ad-actions-head">Actions</th>}
+            {actions && <th className="adm-actions-head">Actions</th>}
           </tr>
         </thead>
         <tbody>
@@ -21,12 +21,12 @@ export default function RecordTable({ columns, rows, actions, onRowClick }) {
                 </td>
               ))}
               {actions && (
-                <td className="ad-actions" onClick={(event) => event.stopPropagation()}>
+                <td className="adm-actions" onClick={(event) => event.stopPropagation()}>
                   {actions(row).map((action) => (
                     <button
                       key={action.label}
                       type="button"
-                      className={`ad-btn is-small${action.danger ? " is-danger" : ""}`}
+                      className={`adm-btn is-small${action.danger ? " is-danger" : ""}`}
                       onClick={action.onClick}
                       disabled={action.disabled}
                       title={action.disabled ? "Not permitted for your role" : undefined}

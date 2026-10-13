@@ -13,11 +13,11 @@ import PageHeader from "./PageHeader.jsx";
 
 function ChartCard({ title, total, caption, children }) {
   return (
-    <div className="ad-card">
-      <div className="ad-card-head">
+    <div className="adm-card">
+      <div className="adm-card-head">
         <h3>{title}</h3>
         {total !== undefined && (
-          <div className="ad-card-total">
+          <div className="adm-card-total">
             <b>{formatNumber(total)}</b>
             <span>{caption}</span>
           </div>
@@ -30,14 +30,14 @@ function ChartCard({ title, total, caption, children }) {
 
 function RecentList({ title, items, empty, to, render }) {
   return (
-    <div className="ad-card ad-list">
-      <div className="ad-card-head">
+    <div className="adm-card adm-list">
+      <div className="adm-card-head">
         <h3>{title}</h3>
         {to && <Link to={to}>View all</Link>}
       </div>
-      {items.length === 0 && <p className="ad-muted">{empty}</p>}
+      {items.length === 0 && <p className="adm-muted">{empty}</p>}
       {items.map((item) => (
-        <div key={item.id} className="ad-list-row">
+        <div key={item.id} className="adm-list-row">
           {render(item)}
         </div>
       ))}
@@ -58,12 +58,12 @@ export default function Overview() {
       {status === "error" && <ErrorBlock message={error} onRetry={reload} />}
       {data && (
         <>
-          <div className="ad-stat-grid">
+          <div className="adm-stat-grid">
             {data.stats.map((stat) => (
               <StatCard key={stat.key} label={stat.label} value={stat.value} />
             ))}
           </div>
-          <div className="ad-grid-2">
+          <div className="adm-grid-2">
             <ChartCard title="User growth" total={sum(data.charts.user_growth)} caption="new accounts, last 30 days">
               <AreaChart data={data.charts.user_growth} title="New accounts per day" />
             </ChartCard>
@@ -74,10 +74,10 @@ export default function Overview() {
               <BarChart data={data.charts.searches} title="Profile searches per day" />
             </ChartCard>
             <ChartCard title="Archetype distribution">
-              {data.charts.archetypes.length ? <RankedBars data={data.charts.archetypes} /> : <p className="ad-muted">No assessments yet.</p>}
+              {data.charts.archetypes.length ? <RankedBars data={data.charts.archetypes} /> : <p className="adm-muted">No assessments yet.</p>}
             </ChartCard>
           </div>
-          <div className="ad-grid-3">
+          <div className="adm-grid-3">
             <RecentList
               title="Recent registrations"
               items={data.recent_registrations}

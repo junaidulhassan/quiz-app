@@ -19,22 +19,22 @@ export default function Topbar({ onMenu }) {
   };
 
   return (
-    <header className="ad-topbar">
-      <button type="button" className="ad-icon-btn ad-menu-btn" onClick={onMenu} aria-label="Open menu">
+    <header className="adm-topbar">
+      <button type="button" className="adm-icon-btn adm-menu-btn" onClick={onMenu} aria-label="Open menu">
         <MenuIcon />
       </button>
       {canSearch && (
-        <form className="ad-global-search" onSubmit={submit} role="search">
+        <form className="adm-global-search" onSubmit={submit} role="search">
           <SearchIcon width={16} height={16} />
           <input value={term} onChange={(event) => setTerm(event.target.value)} placeholder="Search users by name, email or Trust ID…" aria-label="Search users" />
         </form>
       )}
-      <div className="ad-topbar-end">
-        <div className="ad-me">
+      <div className="adm-topbar-end">
+        <div className="adm-me">
           <span>{me.username}</span>
           <Badge value={me.role} tone="purple" />
         </div>
-        <button type="button" className="ad-icon-btn is-danger" onClick={signOut} aria-label="Log out" title="Log out">
+        <button type="button" className="adm-icon-btn is-danger" onClick={signOut} aria-label="Log out" title="Log out">
           <LogoutIcon />
         </button>
       </div>

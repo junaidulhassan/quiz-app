@@ -63,12 +63,12 @@ function SignedInShell() {
 
 export default function AdminApp() {
   useEffect(() => {
-    document.body.classList.add("ad-env");
-    return () => document.body.classList.remove("ad-env");
+    document.body.classList.add("adm-env");
+    return () => document.body.classList.remove("adm-env");
   }, []);
 
   return (
-    <div className="ad-root">
+    <div className="adm-root">
       <Routes>
         <Route path="login" element={<AdminLogin />} />
         <Route

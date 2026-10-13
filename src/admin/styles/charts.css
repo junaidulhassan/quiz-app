@@ -1,35 +1,35 @@
-.ad-chart {
+.adm-chart {
   position: relative;
 }
 
-.ad-chart svg {
+.adm-chart svg {
   display: block;
   width: 100%;
   height: auto;
   overflow: visible;
 }
 
-.ad-grid {
+.adm-grid {
   stroke: #0000000f;
   stroke-width: 1;
 }
 
-.ad-axis {
+.adm-axis {
   fill: var(--ad-gray);
   font-size: 11px;
 }
 
-.ad-bar {
+.adm-bar {
   fill: var(--ad-purple);
   opacity: 0.85;
   transition: opacity 0.12s ease;
 }
 
-.ad-bar.is-active {
+.adm-bar.is-active {
   opacity: 1;
 }
 
-.ad-line {
+.adm-line {
   fill: none;
   stroke: var(--ad-purple);
   stroke-width: 2;
@@ -37,23 +37,23 @@
   stroke-linecap: round;
 }
 
-.ad-area {
+.adm-area {
   fill: var(--ad-purple);
   opacity: 0.12;
 }
 
-.ad-crosshair {
+.adm-crosshair {
   stroke: #0000004d;
   stroke-dasharray: 3 3;
 }
 
-.ad-dot {
+.adm-dot {
   fill: var(--ad-purple);
   stroke: #ffffff;
   stroke-width: 2;
 }
 
-.ad-tooltip {
+.adm-tooltip {
   position: absolute;
   z-index: 5;
   display: flex;
@@ -68,11 +68,11 @@
   white-space: nowrap;
 }
 
-.ad-tooltip span {
+.adm-tooltip span {
   opacity: 0.75;
 }
 
-.ad-ranked {
+.adm-ranked {
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -81,26 +81,26 @@
   list-style: none;
 }
 
-.ad-ranked-head {
+.adm-ranked-head {
   display: flex;
   justify-content: space-between;
   margin-bottom: 6px;
   font-weight: 500;
 }
 
-.ad-ranked-head small {
+.adm-ranked-head small {
   font-weight: 400;
   color: var(--ad-gray);
 }
 
-.ad-ranked-track {
+.adm-ranked-track {
   height: 8px;
   overflow: hidden;
   background: #e4e4e7;
   border-radius: 99px;
 }
 
-.ad-ranked-track span {
+.adm-ranked-track span {
   display: block;
   height: 100%;
   background: var(--ad-purple);

@@ -35,22 +35,22 @@ export default function Sidebar({ open, onNavigate }) {
   const byKey = Object.fromEntries(SECTIONS.map((section) => [section.key, section]));
 
   return (
-    <aside className={`ad-sidebar${open ? " is-open" : ""}`}>
-      <div className="ad-brand">
+    <aside className={`adm-sidebar${open ? " is-open" : ""}`}>
+      <div className="adm-brand">
         <img src="/logo/hyeve.png" alt="" />
         <span>Hyeve</span>
         <small>Admin</small>
       </div>
       <nav aria-label="Admin sections">
         {GROUPS.map((group) => (
-          <div key={group.title} className="ad-nav-group">
+          <div key={group.title} className="adm-nav-group">
             <p>{group.title}</p>
             {group.keys.map((key) => {
               const section = byKey[key];
               const Icon = ICONS[key];
               if (!allowed.has(key)) {
                 return (
-                  <span key={key} className="ad-nav-link is-locked" title="Not available for your role">
+                  <span key={key} className="adm-nav-link is-locked" title="Not available for your role">
                     <Icon />
                     {section.label}
                   </span>
@@ -61,7 +61,7 @@ export default function Sidebar({ open, onNavigate }) {
                   key={key}
                   to={`/admin/${section.path}`}
                   onClick={onNavigate}
-                  className={({ isActive }) => `ad-nav-link${isActive ? " is-active" : ""}`}
+                  className={({ isActive }) => `adm-nav-link${isActive ? " is-active" : ""}`}
                 >
                   <Icon />
                   {section.label}

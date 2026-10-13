@@ -3,8 +3,8 @@ import { SearchIcon } from "./Icons.jsx";
 export default function FilterBar({ search, onSearch, filters, values, onFilter, onClear, placeholder = "Search…" }) {
   const active = Object.values(values).some(Boolean) || search;
   return (
-    <div className="ad-filterbar">
-      <label className="ad-search">
+    <div className="adm-filterbar">
+      <label className="adm-search">
         <SearchIcon width={16} height={16} />
         <input value={search} onChange={(event) => onSearch(event.target.value)} placeholder={placeholder} aria-label="Search" />
       </label>
@@ -24,7 +24,7 @@ export default function FilterBar({ search, onSearch, filters, values, onFilter,
         </select>
       ))}
       {active && (
-        <button type="button" className="ad-btn is-ghost" onClick={onClear}>
+        <button type="button" className="adm-btn is-ghost" onClick={onClear}>
           Clear
         </button>
       )}

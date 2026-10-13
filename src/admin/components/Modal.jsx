@@ -12,9 +12,9 @@ export default function Modal({ title, children, onClose, wide = false }) {
   }, [onClose]);
 
   return (
-    <div className="ad-overlay" onMouseDown={onClose}>
+    <div className="adm-overlay" onMouseDown={onClose}>
       <div
-        className={`ad-modal${wide ? " is-wide" : ""}`}
+        className={`adm-modal${wide ? " is-wide" : ""}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}

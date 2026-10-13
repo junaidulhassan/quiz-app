@@ -16,12 +16,12 @@ export default function ConfirmDialog({ title, body, confirmLabel, danger = true
 
   return (
     <Modal title={title} onClose={onClose}>
-      <p className="ad-modal-text">{body}</p>
-      <div className="ad-modal-actions">
-        <button type="button" className="ad-btn" onClick={onClose} disabled={busy}>
+      <p className="adm-modal-text">{body}</p>
+      <div className="adm-modal-actions">
+        <button type="button" className="adm-btn" onClick={onClose} disabled={busy}>
           Cancel
         </button>
-        <button type="button" className={`ad-btn ${danger ? "is-danger" : "is-primary"}`} onClick={run} disabled={busy}>
+        <button type="button" className={`adm-btn ${danger ? "is-danger" : "is-primary"}`} onClick={run} disabled={busy}>
           {busy && <Spinner light={!danger} />}
           {confirmLabel}
         </button>

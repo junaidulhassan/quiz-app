@@ -11,7 +11,7 @@ export default function RecordDetail({ title, row, columns, onClose }) {
 
   return (
     <Modal title={title} onClose={onClose} wide>
-      <dl className="ad-detail">
+      <dl className="adm-detail">
         {fields.map((field) => (
           <div key={field.field}>
             <dt>{field.label}</dt>
@@ -19,8 +19,8 @@ export default function RecordDetail({ title, row, columns, onClose }) {
           </div>
         ))}
       </dl>
-      <div className="ad-modal-actions">
-        <button type="button" className="ad-btn" onClick={onClose}>
+      <div className="adm-modal-actions">
+        <button type="button" className="adm-btn" onClick={onClose}>
           Close
         </button>
       </div>

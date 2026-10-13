@@ -95,7 +95,7 @@ export default function RecordsPage({ section, footer }) {
         {section.dataset && (
           <button
             type="button"
-            className="ad-btn"
+            className="adm-btn"
             onClick={exportCsv}
             disabled={!permissions.export || exporting}
             title={permissions.export ? undefined : "Not permitted for your role"}
@@ -107,7 +107,7 @@ export default function RecordsPage({ section, footer }) {
         {canInvite && (
           <button
             type="button"
-            className="ad-btn is-primary"
+            className="adm-btn is-primary"
             onClick={() => open("invite", null)}
             disabled={!permissions.perm}
             title={permissions.perm ? undefined : "Not permitted for your role"}
@@ -133,7 +133,7 @@ export default function RecordsPage({ section, footer }) {
         />
       )}
 
-      <div className="ad-card ad-table-card">
+      <div className="adm-card adm-table-card">
         {status === "loading" && <LoadingBlock />}
         {status === "error" && <ErrorBlock message={error} onRetry={reload} />}
         {showEmptyConfig && <EmptyBlock title={section.emptyTitle} text={section.emptyText} />}

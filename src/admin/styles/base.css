@@ -52,15 +52,15 @@
   --ad-font: "AdGoogleSans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
 
-body.ad-env {
+body.adm-env {
   background: var(--ad-bg);
 }
 
-body.ad-env .home-fab {
+body.adm-env .home-fab {
   display: none;
 }
 
-.ad-root {
+.adm-root {
   min-height: 100vh;
   background: var(--ad-bg);
   color: var(--ad-text);
@@ -71,39 +71,39 @@ body.ad-env .home-fab {
   -webkit-font-smoothing: antialiased;
 }
 
-.ad-root *,
-.ad-root *::before,
-.ad-root *::after {
+.adm-root *,
+.adm-root *::before,
+.adm-root *::after {
   box-sizing: border-box;
 }
 
-.ad-root button,
-.ad-root input,
-.ad-root select {
+.adm-root button,
+.adm-root input,
+.adm-root select {
   font-family: inherit;
   font-size: inherit;
   color: inherit;
 }
 
-.ad-root h1,
-.ad-root h2,
-.ad-root h3 {
+.adm-root h1,
+.adm-root h2,
+.adm-root h3 {
   margin: 0;
   font-family: "AdBricolage", var(--ad-font);
   font-weight: 600;
   letter-spacing: -0.01em;
 }
 
-.ad-root a {
+.adm-root a {
   color: var(--ad-purple);
 }
 
-.ad-root :focus-visible {
+.adm-root :focus-visible {
   outline: 2px solid var(--ad-purple);
   outline-offset: 2px;
 }
 
-.ad-sr-only {
+.adm-sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -112,17 +112,17 @@ body.ad-env .home-fab {
   white-space: nowrap;
 }
 
-.ad-muted {
+.adm-muted {
   color: var(--ad-faint);
 }
 
-.ad-hint {
+.adm-hint {
   margin: 0 0 12px;
   font-size: 12.5px;
   color: var(--ad-gray);
 }
 
-.ad-btn {
+.adm-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -138,55 +138,55 @@ body.ad-env .home-fab {
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
-.ad-btn:hover:not(:disabled) {
+.adm-btn:hover:not(:disabled) {
   border-color: #cfcfd2;
   background: #fafafa;
 }
 
-.ad-btn.is-primary {
+.adm-btn.is-primary {
   background: var(--ad-purple);
   border-color: var(--ad-purple);
   color: #ffffff;
   box-shadow: 0 2px 8px #774cff40;
 }
 
-.ad-btn.is-primary:hover:not(:disabled) {
+.adm-btn.is-primary:hover:not(:disabled) {
   background: var(--ad-purple-dark);
 }
 
-.ad-btn.is-danger {
+.adm-btn.is-danger {
   background: var(--ad-red-tint);
   border-color: #f6c6c6;
   color: var(--ad-red);
 }
 
-.ad-btn.is-danger:hover:not(:disabled) {
+.adm-btn.is-danger:hover:not(:disabled) {
   background: #fbdada;
 }
 
-.ad-btn.is-ghost {
+.adm-btn.is-ghost {
   background: transparent;
   border-color: transparent;
   color: var(--ad-gray);
 }
 
-.ad-btn.is-small {
+.adm-btn.is-small {
   height: 30px;
   padding: 0 10px;
   font-size: 13px;
 }
 
-.ad-btn.is-block {
+.adm-btn.is-block {
   width: 100%;
   margin-top: 8px;
 }
 
-.ad-btn:disabled {
+.adm-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
 
-.ad-icon-btn {
+.adm-icon-btn {
   width: 40px;
   height: 40px;
   display: inline-flex;
@@ -198,17 +198,17 @@ body.ad-env .home-fab {
   cursor: pointer;
 }
 
-.ad-icon-btn.is-danger {
+.adm-icon-btn.is-danger {
   background: var(--ad-red-tint);
   border-color: #f6c6c6;
   color: var(--ad-red);
 }
 
-.ad-input,
-.ad-root select,
-.ad-field input,
-.ad-global-search input,
-.ad-search input {
+.adm-input,
+.adm-root select,
+.adm-field input,
+.adm-global-search input,
+.adm-search input {
   height: 40px;
   padding: 0 12px;
   background: var(--ad-input);
@@ -218,35 +218,35 @@ body.ad-env .home-fab {
   max-width: 100%;
 }
 
-.ad-input:focus,
-.ad-root select:focus,
-.ad-field input:focus {
+.adm-input:focus,
+.adm-root select:focus,
+.adm-field input:focus {
   border-color: var(--ad-purple);
   box-shadow: 0 0 0 3px #774cff26;
 }
 
-.ad-field {
+.adm-field {
   display: block;
   margin-bottom: 14px;
 }
 
-.ad-field span {
+.adm-field span {
   display: block;
   margin-bottom: 6px;
   font-weight: 500;
 }
 
-.ad-field input,
-.ad-field select {
+.adm-field input,
+.adm-field select {
   width: 100%;
 }
 
-.ad-field input:disabled {
+.adm-field input:disabled {
   background: #f1f1f2;
   color: var(--ad-gray);
 }
 
-.ad-form-error {
+.adm-form-error {
   margin: 0 0 12px;
   padding: 10px 12px;
   background: var(--ad-red-tint);
@@ -255,29 +255,29 @@ body.ad-env .home-fab {
   font-size: 13px;
 }
 
-.ad-spinner {
+.adm-spinner {
   width: 16px;
   height: 16px;
   flex: 0 0 auto;
   border: 2.5px solid rgba(20, 20, 26, 0.15);
   border-top-color: var(--ad-purple);
   border-radius: 50%;
-  animation: ad-spin 700ms linear infinite;
+  animation: adm-spin 700ms linear infinite;
 }
 
-.ad-spinner.is-light {
+.adm-spinner.is-light {
   border-color: rgba(255, 255, 255, 0.4);
   border-top-color: #ffffff;
 }
 
-@keyframes ad-spin {
+@keyframes adm-spin {
   to {
     transform: rotate(360deg);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ad-root * {
+  .adm-root * {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }

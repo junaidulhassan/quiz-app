@@ -44,10 +44,10 @@ export default function Settings() {
   return (
     <>
       <PageHeader label="Settings" sub="Your admin account and access." />
-      <div className="ad-grid-2 is-top">
-        <div className="ad-card">
+      <div className="adm-grid-2 is-top">
+        <div className="adm-card">
           <h3>Your access</h3>
-          <dl className="ad-detail is-single">
+          <dl className="adm-detail is-single">
             <div>
               <dt>Username</dt>
               <dd>{me.username}</dd>
@@ -60,7 +60,7 @@ export default function Settings() {
             </div>
             <div>
               <dt>Can open</dt>
-              <dd className="ad-chips">
+              <dd className="adm-chips">
                 {me.permissions.view.map((key) => (
                   <span key={key}>{SECTION_BY_KEY[key]?.label || key}</span>
                 ))}
@@ -68,7 +68,7 @@ export default function Settings() {
             </div>
             <div>
               <dt>Can do</dt>
-              <dd className="ad-chips">
+              <dd className="adm-chips">
                 {ACTION_LABELS.filter(([key]) => me.permissions[key]).map(([key, label]) => (
                   <span key={key}>{label}</span>
                 ))}
@@ -77,27 +77,27 @@ export default function Settings() {
             </div>
           </dl>
         </div>
-        <form className="ad-card" onSubmit={submit} noValidate>
+        <form className="adm-card" onSubmit={submit} noValidate>
           <h3>Change password</h3>
-          <label className="ad-field">
+          <label className="adm-field">
             <span>Current password</span>
             <input type="password" value={form.current} onChange={set("current")} autoComplete="current-password" />
           </label>
-          <label className="ad-field">
+          <label className="adm-field">
             <span>New password</span>
             <input type="password" value={form.next} onChange={set("next")} autoComplete="new-password" />
           </label>
-          <label className="ad-field">
+          <label className="adm-field">
             <span>Confirm new password</span>
             <input type="password" value={form.confirm} onChange={set("confirm")} autoComplete="new-password" />
           </label>
-          <p className="ad-hint">At least 8 characters with upper and lower case letters and a special character.</p>
+          <p className="adm-hint">At least 8 characters with upper and lower case letters and a special character.</p>
           {error && (
-            <p className="ad-form-error" role="alert">
+            <p className="adm-form-error" role="alert">
               {error}
             </p>
           )}
-          <button type="submit" className="ad-btn is-primary" disabled={busy || !form.current || !form.next}>
+          <button type="submit" className="adm-btn is-primary" disabled={busy || !form.current || !form.next}>
             {busy && <Spinner light />}
             Update password
           </button>

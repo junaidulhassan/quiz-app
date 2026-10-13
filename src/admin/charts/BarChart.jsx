@@ -26,14 +26,14 @@ export default function BarChart({ data, title }) {
   const activeY = hovered === null ? 0 : PAD.top + innerHeight - (active.value / max) * innerHeight;
 
   return (
-    <div className="ad-chart">
+    <div className="adm-chart">
       <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} role="img" aria-label={title} onMouseLeave={() => setHovered(null)}>
         {ticks(max).map((tick) => {
           const y = PAD.top + innerHeight - (tick / max) * innerHeight;
           return (
             <g key={tick}>
-              <line className="ad-grid" x1={PAD.left} x2={WIDTH - PAD.right} y1={y} y2={y} />
-              <text className="ad-axis" x={PAD.left - 8} y={y + 4} textAnchor="end">
+              <line className="adm-grid" x1={PAD.left} x2={WIDTH - PAD.right} y1={y} y2={y} />
+              <text className="adm-axis" x={PAD.left - 8} y={y + 4} textAnchor="end">
                 {formatNumber(tick)}
               </text>
             </g>
@@ -46,11 +46,11 @@ export default function BarChart({ data, title }) {
             <g key={point.label} onMouseEnter={() => setHovered(index)}>
               <rect x={PAD.left + slot * index} y={PAD.top} width={slot} height={innerHeight} fill="transparent" />
               <path
-                className={`ad-bar${hovered === index ? " is-active" : ""}`}
+                className={`adm-bar${hovered === index ? " is-active" : ""}`}
                 d={barPath(x, PAD.top + innerHeight - height, barWidth, Math.max(point.value > 0 ? 2 : 0, height))}
               />
               {index % step === 0 && (
-                <text className="ad-axis" x={x + barWidth / 2} y={HEIGHT - 8} textAnchor="middle">
+                <text className="adm-axis" x={x + barWidth / 2} y={HEIGHT - 8} textAnchor="middle">
                   {shortLabel(point.label)}
                 </text>
               )}
