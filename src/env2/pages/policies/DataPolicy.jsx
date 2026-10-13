@@ -44,12 +44,41 @@ export default function DataPolicy() {
         </ul>
       </Section>
 
-      <Section title="3. How we use your information">
+      <Section title="3. Information we get from Google">
+        <p>
+          If you choose <strong>Sign in with Google</strong>, Google gives us your <strong>name</strong>, your{" "}
+          <strong>email address</strong> (which Google has already verified) and a <strong>unique Google account identifier</strong>.
+          We do not receive your Google password, and we do not ask for access to your Gmail, Google Drive, contacts, calendar or any
+          other Google service.
+        </p>
+        <p>
+          We use this information only to create your Hyeve account, to recognise you when you sign in, to connect the sign-in to an
+          existing Hyeve account that uses the same email address, and to contact you about your account. We store it in our database
+          with the rest of your account details. We do not sell it, we do not use it for advertising, and we do not share it with
+          anyone except the hosting and email providers that help us run Hyeve (see section 7).
+        </p>
+        <p>
+          Hyeve's use of information received from Google APIs follows the{" "}
+          <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer">
+            Google API Services User Data Policy
+          </a>
+          , including its Limited Use requirements.
+        </p>
+        <p>
+          You can stop using Google sign-in at any time by removing Hyeve in your{" "}
+          <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">
+            Google Account permissions
+          </a>
+          , and you can ask us to delete your Hyeve account and the Google details we hold, as described in section 10.
+        </p>
+      </Section>
+
+      <Section title="4. How we use your information">
         <ul>
           <li>To calculate and show your assessment result, and to email you a copy.</li>
           <li>To create and secure your account and to sign you in.</li>
           <li>
-            To let Hyeve account holders look up a profile and see the insights described in section 4, so landlords, property
+            To let Hyeve account holders look up a profile and see the insights described in section 5, so landlords, property
             managers, tenants and roommates can make better rental decisions.
           </li>
           <li>To prevent fraud, abuse and misuse, and to keep a record of administrative actions.</li>
@@ -61,7 +90,7 @@ export default function DataPolicy() {
         </p>
       </Section>
 
-      <Section title="4. Who can see your profile">
+      <Section title="5. Who can see your profile">
         <p>
           This is the most important thing to know about Hyeve. Anyone with a Hyeve account can search for you by your{" "}
           <strong>email address or Trust ID</strong>. When they find you, they can see:
@@ -85,18 +114,18 @@ export default function DataPolicy() {
         </p>
       </Section>
 
-      <Section title="5. Our legal basis">
+      <Section title="6. Our legal basis">
         <p>
           Under the Nigeria Data Protection Act 2023, we rely on your consent when you take the assessment and create an account, on
           the need to provide the service you asked for, and on our legitimate interests in keeping Hyeve safe and working. You can
-          withdraw your consent at any time as described in section 9.
+          withdraw your consent at any time as described in section 10.
         </p>
       </Section>
 
-      <Section title="6. Who we share it with">
+      <Section title="7. Who we share it with">
         <p>We share personal information only with the people and services that help us run Hyeve:</p>
         <ul>
-          <li>Hyeve account holders, as described in section 4.</li>
+          <li>Hyeve account holders, as described in section 5.</li>
           <li>Hosting and infrastructure providers that run our servers and keep protected backups.</li>
           <li>An email service provider that delivers your result and account emails.</li>
           <li>Google, if you choose to sign in with Google.</li>
@@ -108,7 +137,7 @@ export default function DataPolicy() {
         </p>
       </Section>
 
-      <Section title="7. How long we keep it">
+      <Section title="8. How long we keep it">
         <ul>
           <li>Assessment results and accounts stay until you ask us to delete them.</li>
           <li>Your recent searches are shown to you for 14 days.</li>
@@ -118,7 +147,7 @@ export default function DataPolicy() {
         </ul>
       </Section>
 
-      <Section title="8. How we protect it">
+      <Section title="9. How we protect it">
         <p>
           Passwords are stored hashed, sessions expire, sign-in attempts are limited, and access to administration tools is restricted
           by role with a record of what each administrator does. No online service can promise perfect security. If we learn of a
@@ -126,7 +155,7 @@ export default function DataPolicy() {
         </p>
       </Section>
 
-      <Section title="9. Your rights">
+      <Section title="10. Your rights">
         <p>You can ask us to:</p>
         <ul>
           <li>tell you what we hold about you and give you a copy;</li>
@@ -142,14 +171,14 @@ export default function DataPolicy() {
         </p>
       </Section>
 
-      <Section title="10. Children">
+      <Section title="11. Children">
         <p>
           Hyeve is for people aged 18 and over. We do not knowingly collect information from anyone younger. If you think a child has
           used Hyeve, please contact us and we will remove their information.
         </p>
       </Section>
 
-      <Section title="11. Cookies and similar storage">
+      <Section title="12. Cookies and similar storage">
         <p>
           We use your browser's local storage to keep you signed in and to remember your place in the quiz. We do not use advertising
           or tracking cookies. If you use Google sign-in, Google loads its own sign-in button, which is governed by Google's privacy
@@ -157,14 +186,14 @@ export default function DataPolicy() {
         </p>
       </Section>
 
-      <Section title="12. Changes to this policy">
+      <Section title="13. Changes to this policy">
         <p>
           We may update this policy as Hyeve changes. The date at the top shows the latest version, and we will make a clear notice if a
           change significantly affects you.
         </p>
       </Section>
 
-      <Section title="13. Contact us">
+      <Section title="14. Contact us">
         <p>
           {LEGAL.name}, {LEGAL.address}
           <br />
