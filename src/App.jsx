@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 import API_BASE_URL from "./api";
+import AccessCallout from "./AccessCallout.jsx";
 
 const QUIZ_IMAGE_PATH = "/25_QUIZZES_IMG_WEBP";
 const ARCHETYPE_IMAGE_PATH = "/8_ARCHETYPES_IMAGES";
@@ -404,6 +405,9 @@ export default function App() {
     <div className="shell" style={{ "--accent": accentColor }}>
       {view === "intro" && (
         <div id="intro-view">
+          <div className="intro-topbar">
+            <Link className="intro-login" to="/login">Log in</Link>
+          </div>
           <p className="intro-eyebrow">approx. 5 minutes</p>
           <h1 className="intro-title">
             Discover your <em>career strengths</em> based on who you are
@@ -430,6 +434,9 @@ export default function App() {
               View my results
             </button>
           </div>
+          <p className="intro-account">
+            Property manager, landlord or looking for a roommate? <Link to="/login">Log in to Hyeve</Link>
+          </p>
         </div>
       )}
 
@@ -674,6 +681,8 @@ export default function App() {
               <button className="res-cta" onClick={() => setPartnerShareOpen(true)}>✦ <span>Find Your Idea Partner</span></button>
             </div>
           </div>
+
+          <AccessCallout email={resultData.email || email} name={resultData.full_name || [fname, sname].filter(Boolean).join(" ")} />
 
           <div className="res-data-store">
             <p className="section-label">Trait breakdown</p>

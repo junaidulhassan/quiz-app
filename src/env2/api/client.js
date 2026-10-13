@@ -1,6 +1,7 @@
 import API_BASE_URL from "../../api.js";
 
 const SESSION_KEY = "hyeve_env2_session";
+export const SIGNUP_PREFILL_KEY = "hyeve_signup_prefill";
 
 export class ApiError extends Error {
   constructor(message, status, data) {

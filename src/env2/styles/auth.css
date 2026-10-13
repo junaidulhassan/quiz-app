@@ -533,3 +533,13 @@
     flex-direction: column;
   }
 }
+
+.hv-bottom-text.hv-subtle {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--hv-text-gray);
+}
+
+.hv-bottom-text.hv-subtle a {
+  font-weight: 500;
+}

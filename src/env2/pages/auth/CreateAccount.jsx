@@ -6,13 +6,36 @@ import { PasswordField, TextField } from "../../components/TextField.jsx";
 import useAuth from "../../hooks/useAuth.js";
 import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import { signup } from "../../api/auth.js";
+import { SIGNUP_PREFILL_KEY } from "../../api/client.js";
 import { isEmail, passwordProblem } from "../../utils/format.js";
+
+function readPrefill() {
+  try {
+    const value = JSON.parse(sessionStorage.getItem(SIGNUP_PREFILL_KEY) || "null");
+    if (!value) return {};
+    return {
+      full_name: typeof value.name === "string" ? value.name : "",
+      email: typeof value.email === "string" ? value.email : "",
+    };
+  } catch {
+    return {};
+  }
+}
+
+function clearPrefill() {
+  try {
+    sessionStorage.removeItem(SIGNUP_PREFILL_KEY);
+  } catch {
+    return;
+  }
+}
 
 export default function CreateAccount() {
   useDocumentTitle("Create Account — Hyeve");
   const { startSession } = useAuth();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ full_name: "", email: "", password: "" });
+  const [prefill] = useState(readPrefill);
+  const [form, setForm] = useState(() => ({ full_name: "", email: "", password: "", ...prefill }));
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -37,6 +60,7 @@ export default function CreateAccount() {
         email: form.email.trim(),
         password: form.password,
       });
+      clearPrefill();
       if (result.verification_required) {
         navigate(`/check-email?email=${encodeURIComponent(result.email)}`, { replace: true });
         return;
@@ -70,6 +94,7 @@ export default function CreateAccount() {
           onChange={update("email")}
           placeholder="Enter your email"
           autoComplete="email"
+          hint={prefill.email ? "Filled in from your assessment result." : undefined}
           error={errors.email}
           required
         />

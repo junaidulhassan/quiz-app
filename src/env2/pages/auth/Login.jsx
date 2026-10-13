@@ -83,6 +83,9 @@ export default function Login() {
       <p className="hv-bottom-text">
         Don't have an account? <Link to="/create-account">Create one</Link>
       </p>
+      <p className="hv-bottom-text hv-subtle">
+        Haven't taken the assessment yet? <Link to="/take-assessment">Take it first</Link>
+      </p>
     </AuthShell>
   );
 }
