@@ -1,7 +1,3 @@
 @import "./tokens.css";
-@import "./auth.css";
-@import "./shell.css";
-@import "./lookup.css";
-@import "./profile.css";
-@import "./account.css";
+@import "./base.css";
 @import "./policies.css";

@@ -1,21 +1,49 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth.js";
 import useToast from "../hooks/useToast.js";
-import Modal from "../components/Modal.jsx";
-import { CloseIcon, MenuIcon } from "../components/Icons.jsx";
+import ConfirmModal from "../components/lookup/ConfirmModal.jsx";
+import LogoMark from "../components/lookup/LogoMark.jsx";
+import { CloseIcon, HamburgerIcon } from "../components/LookupIcons.jsx";
+import Toast from "../components/Toast.jsx";
 import useIdleLogout from "../hooks/useIdleLogout.js";
 import { RequireOnboarded } from "../routes/guards.jsx";
 import { ModeProvider, MODES } from "./ModeContext.jsx";
-import Sidebar, { Brand, ModeSelector, NavList, SidebarFooter } from "./Sidebar.jsx";
+import { ScopeContext } from "./ScopeContext.js";
+import Sidebar, { ModeSelector, NavList, SidebarFooter } from "./Sidebar.jsx";
+import "../styles/pages/landlord.css";
+import "../styles/pages/roommate.css";
+
+const WELCOME_KEY = "hyeve_show_welcome_toast";
+const SECTIONS_KEPT_ON_SWITCH = ["search", "history", "qr-scan", "billing", "profile"];
 
 function Shell({ mode }) {
   const { logout } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const [scope, setScope] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [confirmingLogout, setConfirmingLogout] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem(WELCOME_KEY) !== "1") return;
+      sessionStorage.removeItem(WELCOME_KEY);
+      toast.show("Welcome to Hyeve! Your account is ready.", { icon: "success", duration: 5000 });
+    } catch {
+      return;
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    if (!drawerOpen) return undefined;
+    const onKey = (event) => {
+      if (event.key === "Escape") setDrawerOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [drawerOpen]);
 
   const handleLogout = useCallback(async () => {
     setConfirmingLogout(false);
@@ -35,66 +63,72 @@ function Shell({ mode }) {
   const selectMode = (next) => {
     if (next.key === mode.key) return;
     const section = location.pathname.split("/")[2];
-    const stays = ["search", "history", "qr-scan", "billing", "profile"].includes(section);
-    navigate(`${next.base}/${stays ? section : "search"}`);
+    navigate(`${next.base}/${SECTIONS_KEPT_ON_SWITCH.includes(section) ? section : "search"}`);
     setDrawerOpen(false);
+  };
+
+  const openLogout = () => {
+    setDrawerOpen(false);
+    setConfirmingLogout(true);
   };
 
   return (
     <ModeProvider value={mode}>
-      <div className="hv-app-shell">
-        <Sidebar onSelectMode={selectMode} onLogout={() => setConfirmingLogout(true)} />
-        <div className="hv-content-area">
-          <header className="hv-responsive-header">
-            <div className="hv-header-logo">
-              <img src="/logo/hyeve.png" alt="Hyeve" />
+      <div className={mode.scope} ref={setScope}>
+        <ScopeContext.Provider value={scope}>
+          <div className="app-shell">
+            <Sidebar onSelectMode={selectMode} onLogout={openLogout} />
+            <div className="content-area">
+              <header className="responsive-header">
+                <div className="header-logo">
+                  <LogoMark />
+                </div>
+                <ModeSelector onSelect={selectMode} />
+                <button type="button" className="header-hamburger" onClick={() => setDrawerOpen(true)} aria-label="Open navigation">
+                  <HamburgerIcon />
+                </button>
+              </header>
+              <main className="main-content">
+                <div className="route-outlet" id="route-outlet">
+                  <Outlet />
+                </div>
+              </main>
             </div>
-            <ModeSelector onSelect={selectMode} />
-            <button
-              type="button"
-              className="hv-header-hamburger"
-              onClick={() => setDrawerOpen(true)}
-              aria-label="Open navigation"
-            >
-              <MenuIcon width={18} height={18} />
-            </button>
-          </header>
-          <main className="hv-main-content">
-            <Outlet />
-          </main>
-        </div>
-        <div
-          className={`hv-drawer-overlay${drawerOpen ? " is-open" : ""}`}
-          onMouseDown={() => setDrawerOpen(false)}
-        >
-          <div className="hv-drawer" onMouseDown={(event) => event.stopPropagation()}>
-            <div className="hv-drawer-head">
-              <Brand />
-              <button
-                type="button"
-                className="hv-drawer-close"
-                onClick={() => setDrawerOpen(false)}
-                aria-label="Close navigation"
-              >
-                <CloseIcon width={16} height={16} />
-              </button>
-            </div>
-            <NavList onNavigate={() => setDrawerOpen(false)} />
-            <SidebarFooter onLogout={() => setConfirmingLogout(true)} />
           </div>
-        </div>
+
+          <div
+            className={`nav-drawer-overlay${drawerOpen ? " is-open" : ""}`}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setDrawerOpen(false);
+            }}
+          >
+            <div className="nav-drawer" role="dialog" aria-modal="true" aria-label="Navigation">
+              <div className="nav-drawer-head">
+                <div className="header-logo">
+                  <LogoMark />
+                </div>
+                <button type="button" className="nav-drawer-close" onClick={() => setDrawerOpen(false)} aria-label="Close navigation">
+                  <CloseIcon />
+                </button>
+              </div>
+              <NavList onNavigate={() => setDrawerOpen(false)} />
+              <SidebarFooter onLogout={openLogout} />
+            </div>
+          </div>
+
+          <ConfirmModal
+            prefix="logout-modal"
+            open={confirmingLogout}
+            heading="Leaving Hyeve already?"
+            subtext="You'll be signed out and can log back in anytime."
+            dismissLabel="Cancel"
+            confirmLabel="Log out"
+            onDismiss={() => setConfirmingLogout(false)}
+            onConfirm={handleLogout}
+          />
+          <Toast />
+        </ScopeContext.Provider>
       </div>
-      <Modal open={confirmingLogout} title="Leaving Hyeve already?" onClose={() => setConfirmingLogout(false)}>
-        <p className="hv-modal-text">You will need to log in again to look up profiles.</p>
-        <div className="hv-modal-actions">
-          <button type="button" className="hv-btn hv-btn-secondary" onClick={() => setConfirmingLogout(false)}>
-            Stay
-          </button>
-          <button type="button" className="hv-btn hv-btn-danger" onClick={handleLogout}>
-            Log out
-          </button>
-        </div>
-      </Modal>
     </ModeProvider>
   );
 }

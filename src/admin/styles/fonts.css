@@ -1,0 +1,27 @@
+@font-face {
+  font-family: "Hv Google Sans Flex";
+  src: url("/fonts/GoogleSansFlex_120pt-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Hv Google Sans Flex";
+  src: url("/fonts/GoogleSansFlex_120pt-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Hv Google Sans Flex";
+  src: url("/fonts/GoogleSansFlex_120pt-SemiBold.ttf") format("truetype");
+  font-weight: 600 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BricolageGrotesque-SemiBold";
+  src: url("/fonts/BricolageGrotesque-SemiBold.woff2") format("woff2"),
+    url("/fonts/BricolageGrotesque-SemiBold.woff") format("woff");
+  font-display: swap;
+}

@@ -1,36 +1,32 @@
 import { useCallback, useState } from "react";
 import { useOutletContext } from "react-router-dom";
-import { downloadDataset, fetchDatasets, fetchDeleted, purgeProfile, restoreProfile } from "../api/adminApi.js";
+import { downloadDataset, fetchCleanup, fetchDatasets, fetchDeleted, purgeProfile, restoreProfile } from "../api/adminApi.js";
 import ConfirmDialog from "../components/ConfirmDialog.jsx";
-import { DownloadIcon } from "../components/Icons.jsx";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "../components/StateBlock.jsx";
-import Spinner from "../components/Spinner.jsx";
 import useAdmin from "../hooks/useAdmin.js";
 import useFetch from "../hooks/useFetch.js";
 import { formatDate } from "../utils/format.js";
 import PageHeader from "./PageHeader.jsx";
 
-const TABS = ["Data Export", "Deleted Profiles", "Data Retention"];
-
+const TABS = ["Data Export", "Expired Profiles", "Deleted Profiles", "Archived Records", "Data Cleanup", "Data Retention"];
 const RETENTION = [
-  ["Deleted accounts", "Restorable for 30 days, then eligible for permanent removal."],
-  ["Search history", "Kept for 14 days for each user."],
-  ["Audit log", "Every admin action is recorded and can't be edited."],
-  ["Exports", "Contact details are masked unless a full export is chosen. Every export is audited."],
+  ["Expired profiles", "Auto-archive after 90 days"],
+  ["Deleted accounts", "Restorable for 30 days"],
+  ["Audit logs", "Kept 24 months"],
+  ["Payment records", "Kept 7 years (legal)"],
 ];
 
 function ExportTab({ permissions, toast }) {
   const loader = useCallback(() => fetchDatasets(), []);
   const { status, data, error, reload } = useFetch(loader);
   const [dataset, setDataset] = useState("users");
-  const [mask, setMask] = useState(true);
   const [busy, setBusy] = useState(false);
 
   const run = async () => {
     setBusy(true);
     try {
-      await downloadDataset(dataset, mask);
-      toast.show("Export downloaded.");
+      await downloadDataset(dataset, true);
+      toast.show(`${data.items.find((item) => item.key === dataset)?.label || dataset} exported as CSV`);
     } catch (failure) {
       toast.show(failure.message, "error");
     } finally {
@@ -40,11 +36,10 @@ function ExportTab({ permissions, toast }) {
 
   if (status === "loading") return <LoadingBlock />;
   if (status === "error") return <ErrorBlock message={error} onRetry={reload} />;
-
   return (
-    <div className="adm-card">
+    <div className="card">
       <h3>Export dataset</h3>
-      <div className="adm-export-row">
+      <div className="xr">
         <select value={dataset} onChange={(event) => setDataset(event.target.value)} aria-label="Dataset">
           {data.items.map((item) => (
             <option key={item.key} value={item.key}>
@@ -52,22 +47,20 @@ function ExportTab({ permissions, toast }) {
             </option>
           ))}
         </select>
-        <label className="adm-check">
-          <input type="checkbox" checked={mask} onChange={(event) => setMask(event.target.checked)} />
-          Mask emails and phone numbers
-        </label>
+        <select aria-label="Format" defaultValue="CSV">
+          <option>CSV</option>
+        </select>
         <button
           type="button"
-          className="adm-btn is-primary"
+          className="btn pr"
           onClick={run}
           disabled={!permissions.export || busy}
           title={permissions.export ? undefined : "Not permitted for your role"}
         >
-          {busy ? <Spinner light /> : <DownloadIcon width={16} height={16} />}
-          Export CSV
+          Export
         </button>
       </div>
-      <p className="adm-hint">Exports exclude passwords and quiz answers. Every export is written to the audit log.</p>
+      <p className="note">Exports exclude passwords, assessment answers and payment instruments.</p>
     </div>
   );
 }
@@ -79,14 +72,13 @@ function DeletedTab({ permissions, toast }) {
 
   if (status === "loading") return <LoadingBlock />;
   if (status === "error") return <ErrorBlock message={error} onRetry={reload} />;
-  if (!data.items.length) return <EmptyBlock title="No deleted profiles" text="Deleted users show up here for 30 days." />;
+  if (!data.items.length) return <EmptyBlock title="Nothing here" text="No deleted profiles to show." />;
 
   const finish = (message, tone = "success") => {
     setDialog(null);
     toast.show(message, tone);
     reload();
   };
-
   const run = (task, message) => async () => {
     try {
       await task();
@@ -97,44 +89,32 @@ function DeletedTab({ permissions, toast }) {
   };
 
   return (
-    <div className="adm-card adm-table-card">
-      <div className="adm-table-wrap">
-        <table className="adm-table">
+    <>
+      <div className="tw">
+        <table>
           <thead>
             <tr>
+              <th>Record</th>
               <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Deleted</th>
-              <th>Time left</th>
-              <th className="adm-actions-head">Actions</th>
+              <th>Date</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {data.items.map((row) => (
               <tr key={row.id}>
-                <td className="is-strong">{row.name}</td>
                 <td>{row.email}</td>
-                <td>{row.role}</td>
+                <td>{row.name}</td>
                 <td>{formatDate(row.deleted)}</td>
-                <td>{row.restorable ? `${row.days_left} days` : "Past restore window"}</td>
-                <td className="adm-actions">
-                  <button
-                    type="button"
-                    className="adm-btn is-small"
-                    disabled={!permissions.edit || !row.restorable}
-                    onClick={() => setDialog({ type: "restore", row })}
-                  >
-                    Restore
-                  </button>
-                  <button
-                    type="button"
-                    className="adm-btn is-small is-danger"
-                    disabled={!permissions.del}
-                    onClick={() => setDialog({ type: "purge", row })}
-                  >
-                    Remove permanently
-                  </button>
+                <td>
+                  <div className="acts">
+                    <button type="button" className="btn sm" disabled={!permissions.edit || !row.restorable} onClick={() => setDialog({ type: "restore", row })}>
+                      Restore
+                    </button>
+                    <button type="button" className="btn sm rd" disabled={!permissions.del} title={permissions.del ? undefined : "Super Admin only"} onClick={() => setDialog({ type: "purge", row })}>
+                      Delete forever
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
@@ -143,37 +123,77 @@ function DeletedTab({ permissions, toast }) {
       </div>
       {dialog?.type === "restore" && (
         <ConfirmDialog
-          title="Restore profile?"
-          body={`${dialog.row.name} will regain access to their account.`}
+          title="Restore record?"
+          body={`${dialog.row.name} (${dialog.row.email}) will be restored to active records.`}
           confirmLabel="Restore"
           danger={false}
           onClose={() => setDialog(null)}
-          onConfirm={run(() => restoreProfile(dialog.row.id), "Profile restored")}
+          onConfirm={run(() => restoreProfile(dialog.row.id), "Record restored")}
         />
       )}
       {dialog?.type === "purge" && (
         <ConfirmDialog
-          title="Remove permanently?"
-          body={`${dialog.row.name}'s account, history and settings will be erased for good. This can't be undone.`}
-          confirmLabel="Remove permanently"
+          title="Delete forever?"
+          body={`${dialog.row.name} (${dialog.row.email}) will be permanently erased. This cannot be undone.`}
+          confirmLabel="Delete forever"
           onClose={() => setDialog(null)}
-          onConfirm={run(() => purgeProfile(dialog.row.id), "Profile permanently removed")}
+          onConfirm={run(() => purgeProfile(dialog.row.id), "Record permanently deleted")}
         />
       )}
+    </>
+  );
+}
+
+function CleanupTab({ permissions, toast }) {
+  const loader = useCallback(() => fetchCleanup(), []);
+  const { status, data, error, reload } = useFetch(loader);
+  const [scanning, setScanning] = useState(false);
+
+  if (status === "loading" && !data) return <LoadingBlock />;
+  if (status === "error" && !data) return <ErrorBlock message={error} onRetry={reload} />;
+
+  const scan = () => {
+    setScanning(true);
+    reload();
+    window.setTimeout(() => {
+      setScanning(false);
+      toast.show(`Scan complete — ${data.items.reduce((sum, item) => sum + item.count, 0)} items need review`);
+    }, 900);
+  };
+
+  return (
+    <div className="card">
+      <h3>Data cleanup</h3>
+      <div className="list">
+        {data.items.map((item) => (
+          <div key={item.label}>
+            <span>{item.label}</span>
+            <small>{item.count}</small>
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 14 }}>
+        <button type="button" className="btn pr" onClick={scan} disabled={!permissions.edit || scanning}>
+          {scanning ? "Scanning…" : "Run scan"}
+        </button>
+      </div>
     </div>
   );
 }
 
-function RetentionTab() {
+function RetentionTab({ permissions }) {
   return (
-    <div className="adm-card adm-list">
+    <div className="card">
       <h3>Retention policy</h3>
       {RETENTION.map(([name, rule]) => (
-        <div key={name} className="adm-list-row">
+        <div key={name} className="sw">
           <span>
             {name}
             <small>{rule}</small>
           </span>
+          <select disabled={!permissions.perm} title={permissions.perm ? undefined : "Super Admin only"} aria-label={name} defaultValue="Default">
+            <option>Default</option>
+          </select>
         </div>
       ))}
     </div>
@@ -188,16 +208,19 @@ export default function DataManagement() {
   return (
     <>
       <PageHeader label="Data Management" sub="Every export and removal is audited. Personal data is minimised by default." />
-      <div className="adm-tabs" role="tablist">
+      <div className="ut" role="tablist">
         {TABS.map((name) => (
-          <button key={name} type="button" role="tab" aria-selected={tab === name} className={tab === name ? "is-on" : ""} onClick={() => setTab(name)}>
+          <button key={name} type="button" role="tab" className={name === tab ? "on" : ""} onClick={() => setTab(name)}>
             {name}
           </button>
         ))}
       </div>
       {tab === "Data Export" && <ExportTab permissions={me.permissions} toast={toast} />}
       {tab === "Deleted Profiles" && <DeletedTab permissions={me.permissions} toast={toast} />}
-      {tab === "Data Retention" && <RetentionTab />}
+      {tab === "Expired Profiles" && <EmptyBlock title="Nothing here" text="No expired profiles to show." />}
+      {tab === "Archived Records" && <EmptyBlock title="Nothing here" text="No archived records to show." />}
+      {tab === "Data Cleanup" && <CleanupTab permissions={me.permissions} toast={toast} />}
+      {tab === "Data Retention" && <RetentionTab permissions={me.permissions} />}
     </>
   );
 }

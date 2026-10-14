@@ -26,7 +26,7 @@ function HomeButton() {
       aria-label="Go back to start page"
       title="Go back to start page"
     >
-      <img src="/logo/hyeve.png" alt="Hyeve logo" className="home-fab-logo" />
+      <img src="/logo/hyeve-new-logo.png" alt="Hyeve logo" className="home-fab-logo" />
     </button>
   );
 }

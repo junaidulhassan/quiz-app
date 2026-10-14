@@ -1,0 +1,688 @@
+.pg-login {
+  all: initial;
+  display: block;
+}
+
+.pg-login *:not(svg, svg *, img),
+.pg-login *:not(svg, svg *, img)::before,
+.pg-login *:not(svg, svg *, img)::after {
+  all: revert;
+  box-sizing: border-box;
+}
+
+.pg-login {
+  --bg: #e9e9e9;
+  --card-bg: #f6f6f7;
+  --input-bg: #ffffff;
+  --input-border: #0000001f;
+  --border: #ffffff;
+  --border-hover: #cfcfd2;
+  --text-dark: #14141a;
+  --text-gray: #5b5d67;
+  --text-placeholder: #9a9aa2;
+  --purple: #7c5cfc;
+  --purple-hover: #6a49f2;
+  --purple-active: #5c3ce6;
+  --red: #ff3b30;
+
+  --radius-card: 16px;
+  --radius-field: 8px;
+  --radius-button: 12px;
+  --radius-logo: 16px;
+  --field-height: 40px;
+  --cta-height: 44px;
+
+  --font: "Google Sans Flex", "Hv Google Sans Flex", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+.pg-login button, .pg-login input, .pg-login select, .pg-login textarea {
+  font-family: inherit;
+}
+.pg-login * {
+  box-sizing: border-box;
+}
+
+.pg-login {
+  margin: 0;
+  padding: 0;
+}
+
+.pg-login {
+  background: var(--bg);
+  font-family: var(--font);
+  color: var(--text-dark);
+  font-variation-settings: "opsz" 120;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.pg-login .auth-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 36px 24px 80px;
+}
+
+.pg-login .auth-wrap {
+  width: 100%;
+  max-width: 432px;
+}
+
+.pg-login .back-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: var(--text-gray);
+  text-decoration: none;
+  transition: color .15s ease;
+}
+
+.pg-login .back-nav:hover {
+  color: var(--text-dark);
+}
+
+.pg-login .back-nav svg {
+  flex: 0 0 auto;
+}
+
+.pg-login .auth-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px 24px 36px;
+  text-align: center;
+  box-shadow: 0 1px 4px #0000000a;
+}
+
+.pg-login .logo-mark {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 20px;
+  background: #f6f6f7;
+  border-radius: var(--radius-logo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pg-login .logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.pg-login .heading {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-dark);
+  margin: 0 0 8px;
+}
+
+.pg-login .subtext {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-gray);
+  margin: 0 0 20px;
+}
+
+.pg-login .subtext a {
+  color: var(--purple);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.pg-login .subtext a:hover {
+  color: var(--purple-hover);
+}
+
+.pg-login .btn-google {
+  width: 100%;
+  height: var(--field-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-button);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.pg-login .btn-google:hover {
+  background: #fafafa;
+  border-color: var(--border-hover);
+}
+
+.pg-login .btn-google:active {
+  background: #f1f1f1;
+}
+
+.pg-login .btn-google:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.pg-login .btn-google .spinner {
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid rgba(20, 20, 26, 0.2);
+  border-top-color: var(--text-dark);
+  border-radius: 50%;
+  animation: pg-login-gsiSpin 700ms linear infinite;
+}
+
+@keyframes pg-login-gsiSpin {
+  to { transform: rotate(360deg); }
+}
+
+.pg-login .gsi-demo-overlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  background: rgba(20, 20, 26, 0.45);
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+.pg-login .gsi-demo-overlay.is-open {
+  display: flex;
+}
+
+.pg-login .gsi-demo-modal {
+  width: 100%;
+  max-width: 360px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 28px 24px 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+}
+
+.pg-login .gsi-demo-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.pg-login .gsi-demo-header svg {
+  width: 20px;
+  height: 20px;
+}
+
+.pg-login .gsi-demo-header span {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.pg-login .gsi-demo-note {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  background: #fff7e6;
+  border: 1px solid #f5deb0;
+  border-radius: 8px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #7a5b00;
+}
+
+.pg-login .gsi-demo-title {
+  margin: 0 0 16px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.pg-login .gsi-demo-account {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: none;
+  border: 1px solid #0000001f;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font);
+  transition: background-color .15s ease;
+}
+
+.pg-login .gsi-demo-account:hover {
+  background: #f5f5f7;
+}
+
+.pg-login .gsi-demo-avatar {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--purple);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pg-login .gsi-demo-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+}
+
+.pg-login .gsi-demo-email {
+  display: block;
+  font-size: 12.5px;
+  color: var(--text-gray);
+}
+
+.pg-login .gsi-demo-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.pg-login .gsi-demo-tag {
+  flex: 0 0 auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pg-login .gsi-demo-tag-new {
+  background: #e6f4ea;
+  color: #1e7b34;
+}
+
+.pg-login .gsi-demo-tag-existing {
+  background: #eae6fb;
+  color: var(--purple-hover);
+}
+
+.pg-login .gsi-demo-cancel {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px;
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-gray);
+  cursor: pointer;
+  text-align: center;
+}
+
+.pg-login .gsi-demo-cancel:hover {
+  color: var(--text-dark);
+}
+
+.pg-login .divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  color: var(--text-gray);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pg-login .divider::before,
+.pg-login .divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #00000014;
+}
+
+.pg-login form {
+  text-align: left;
+}
+
+.pg-login .field {
+  margin-bottom: 20px;
+}
+
+.pg-login .field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.pg-login .req {
+  color: var(--red);
+  margin-left: 2px;
+}
+
+.pg-login input[type="text"],
+.pg-login input[type="email"],
+.pg-login input[type="password"] {
+  width: 100%;
+  height: var(--field-height);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-field);
+  padding: 0 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-dark);
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.pg-login input::placeholder {
+  color: var(--text-placeholder);
+  font-weight: 400;
+}
+
+.pg-login input:hover {
+  border-color: var(--border-hover);
+}
+
+.pg-login input:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(124, 92, 252, 0.15);
+}
+.pg-login .field.invalid input {
+  border-color: var(--red);
+}
+
+.pg-login .field.invalid input:focus {
+  box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.15);
+}
+
+.pg-login .error-msg {
+  display: none;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--red);
+}
+
+.pg-login .field.invalid .error-msg {
+  display: block;
+}
+
+.pg-login .password-wrap {
+  position: relative;
+}
+
+.pg-login .password-wrap input {
+  padding-right: 44px;
+}
+
+.pg-login .toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background: none;
+  border: none;
+  color: #6b6b74;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.pg-login .toggle-password:hover {
+  color: var(--text-dark);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.pg-login .toggle-password svg.is-hidden {
+  display: none;
+}
+
+.pg-login .field-meta {
+  display: flex;
+  justify-content: flex-end;
+  margin: 16px 0 0;
+}
+
+.pg-login .field-meta a {
+  font-size: 13px;
+  color: var(--purple);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.pg-login .field-meta a:hover {
+  color: var(--purple-hover);
+}
+
+.pg-login .btn-primary {
+  width: 100%;
+  height: var(--cta-height);
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--purple);
+  border: none;
+  border-radius: var(--radius-button);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color .15s ease, transform .05s ease;
+  box-shadow: 0 2px 8px #774cff40;
+}
+
+.pg-login .btn-primary:hover {
+  background: var(--purple-hover);
+}
+
+.pg-login .btn-primary:active {
+  background: var(--purple-active);
+  transform: scale(0.99);
+}
+
+.pg-login .btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.pg-login .btn-primary .spinner {
+  width: 17px;
+  height: 17px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: pg-login-loginSpin 700ms linear infinite;
+}
+
+@keyframes pg-login-loginSpin {
+  to { transform: rotate(360deg); }
+}
+
+.pg-login .login-text {
+  margin: 20px 0 0;
+  font-size: 14px;
+  color: var(--text-dark);
+  text-align: center;
+}
+
+.pg-login .login-text a {
+  color: var(--purple);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.pg-login .login-text a:hover {
+  color: var(--purple-hover);
+}
+
+.pg-login a:focus-visible,
+.pg-login button:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+.pg-login input:focus-visible {
+  outline: none;
+}
+
+.pg-login .toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(12px);
+  width: calc(100% - 40px);
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--text-dark);
+  color: #ffffff;
+  padding: 14px 14px 14px 18px;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 2000;
+}
+
+.pg-login .toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.pg-login .toast-message {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.pg-login .toast-action {
+  flex: 0 0 auto;
+  background: var(--purple);
+  color: #ffffff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color .15s ease;
+}
+
+.pg-login .toast-action:hover {
+  background: var(--purple-hover);
+}
+
+.pg-login .toast-action[hidden] {
+  display: none;
+}
+
+.pg-login .toast-close {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.pg-login .toast-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 420px) {
+  .pg-login .toast {
+    flex-wrap: wrap;
+    padding: 14px 16px;
+  }
+
+  .pg-login .toast-action {
+    width: 100%;
+    text-align: center;
+    order: 3;
+  }
+}
+
+@media (max-width: 600px) {
+  .pg-login .auth-page {
+    padding: 36px 16px 24px;
+  }
+
+  .pg-login .auth-card {
+    padding: 32px 24px 28px;
+  }
+
+  .pg-login .logo-mark {
+    width: 58px;
+    height: 58px;
+  }
+
+  .pg-login .subtext {
+    margin-bottom: 32px;
+  }
+
+  .pg-login .btn-google {
+    margin-bottom: 24px;
+  }
+
+  .pg-login .divider {
+    margin-bottom: 28px;
+  }
+
+  .pg-login .field {
+    margin-bottom: 24px;
+  }
+
+  .pg-login .field-meta {
+    margin-top: 12px;
+  }
+
+  .pg-login .btn-primary {
+    margin-top: 28px;
+  }
+
+  .pg-login .login-text {
+    margin-top: 24px;
+  }
+}

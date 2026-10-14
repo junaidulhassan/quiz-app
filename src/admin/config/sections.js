@@ -12,7 +12,6 @@ export const SECTIONS = [
     label: "Users",
     path: "users",
     api: "users",
-    sub: "Everyone with a Hyeve account, across both roles.",
     dataset: "users",
     filters: [
       { name: "role", label: "Role", options: ["Tenant", "Property Manager", "Unassigned"] },
@@ -21,12 +20,12 @@ export const SECTIONS = [
     columns: [
       { label: "Name", field: "name", strong: true },
       { label: "Email", field: "email" },
-      { label: "Contact", field: "phone" },
+      { label: "Contact Number", field: "phone" },
       { label: "Role", field: "role" },
       { label: "Trust ID", field: "trust_id", mono: true },
       { label: "Status", field: "status", type: "badge" },
       { label: "Joined", field: "joined", type: "date" },
-      { label: "Last active", field: "last_active", type: "relative" },
+      { label: "Last Active", field: "last_active", type: "relative" },
     ],
     actions: ["view", "edit", "toggle", "delete"],
   },
@@ -35,7 +34,6 @@ export const SECTIONS = [
     label: "Tenants",
     path: "tenants",
     api: "tenants",
-    sub: "People who completed the Hyeve assessment and can be looked up.",
     dataset: "tenants",
     filters: [{ name: "archetype", label: "Archetype", options: ARCHETYPES }],
     columns: [
@@ -53,7 +51,6 @@ export const SECTIONS = [
     label: "Property Managers",
     path: "property-managers",
     api: "property-managers",
-    sub: "Property managers, their verification state and property setup.",
     dataset: "property-managers",
     filters: [
       { name: "verification", label: "Verification", options: VERIFICATION_OPTIONS },
@@ -62,13 +59,13 @@ export const SECTIONS = [
     columns: [
       { label: "Name", field: "name", strong: true },
       { label: "Email", field: "email" },
-      { label: "Contact", field: "phone" },
+      { label: "Contact Number", field: "phone" },
       { label: "Verification", field: "verification", type: "badge" },
       { label: "Property", field: "property" },
       { label: "Rooms", field: "rooms" },
       { label: "Status", field: "status", type: "badge" },
       { label: "Joined", field: "joined", type: "date" },
-      { label: "Last active", field: "last_active", type: "relative" },
+      { label: "Last Active", field: "last_active", type: "relative" },
     ],
     actions: ["view", "verify", "toggle"],
   },
@@ -77,7 +74,6 @@ export const SECTIONS = [
     label: "Properties",
     path: "properties",
     api: "properties",
-    sub: "Properties registered during property manager setup.",
     dataset: "properties",
     filters: [
       { name: "state", label: "State", optionsFrom: "states" },
@@ -100,7 +96,6 @@ export const SECTIONS = [
     label: "Assessments",
     path: "assessments",
     api: "assessments",
-    sub: "Completed quiz assessments and their archetype results.",
     dataset: "assessments",
     filters: [{ name: "archetype", label: "Archetype", options: ARCHETYPES }],
     columns: [
@@ -120,7 +115,6 @@ export const SECTIONS = [
     label: "Searches & Activity",
     path: "activity",
     api: "activity",
-    sub: "Sign-ins, profile searches and account changes. Flag anything unusual.",
     dataset: "activity",
     filters: [
       { name: "type", label: "Activity", options: ACTIVITY_TYPES },
@@ -135,12 +129,12 @@ export const SECTIONS = [
     ],
     actions: ["view", "flag"],
   },
+  { key: "netintel", label: "Network Intelligence", path: "network-intelligence", sub: "Consent-based network performance observations. Demonstration data is always labelled." },
   {
     key: "billing",
     label: "Billing & Payments",
     path: "billing",
     api: "billing",
-    sub: "Payments and subscriptions.",
     emptyTitle: "No payments yet",
     emptyText: "Payments haven't been enabled, so there are no transactions to show. They will appear here once a payment provider is connected.",
     filters: [],
@@ -152,7 +146,6 @@ export const SECTIONS = [
     label: "Support",
     path: "support",
     api: "support",
-    sub: "Support tickets raised by users.",
     emptyTitle: "No support tickets",
     emptyText: "Users can't raise tickets from the app yet. Tickets will appear here once that flow is added.",
     filters: [],
@@ -160,13 +153,12 @@ export const SECTIONS = [
     actions: [],
   },
   { key: "reports", label: "Reports & Analytics", path: "reports" },
-  { key: "data", label: "Data Management", path: "data" },
+  { key: "data", label: "Data Management", path: "data", sub: "Every export and removal is audited. Personal data is minimised by default." },
   {
     key: "admins",
     label: "Admin Management",
     path: "admins",
     api: "admins",
-    sub: "Admin accounts, their roles and the audit trail of everything they do.",
     filters: [
       { name: "role", label: "Role", options: ["Super Admin", "Admin", "Support Admin"] },
       { name: "status", label: "Status", options: ["Active", "Deactivated"] },
@@ -175,7 +167,7 @@ export const SECTIONS = [
       { label: "Admin", field: "name", strong: true },
       { label: "Role", field: "role" },
       { label: "Status", field: "status", type: "badge" },
-      { label: "Last active", field: "last_active", type: "relative" },
+      { label: "Last Active", field: "last_active", type: "relative" },
       { label: "Added", field: "added", type: "date" },
     ],
     actions: ["role", "deactivate"],
@@ -187,8 +179,10 @@ export const SECTION_BY_KEY = Object.fromEntries(SECTIONS.map((section) => [sect
 export const SECTION_BY_PATH = Object.fromEntries(SECTIONS.map((section) => [section.path, section]));
 
 export const REPORT_RANGES = [
-  { key: "7d", label: "7 days" },
-  { key: "30d", label: "30 days" },
-  { key: "90d", label: "90 days" },
-  { key: "year", label: "This year" },
+  { key: "today", label: "Today" },
+  { key: "7d", label: "7 Days" },
+  { key: "30d", label: "30 Days" },
+  { key: "90d", label: "90 Days" },
+  { key: "year", label: "This Year" },
+  { key: "custom", label: "Custom Range" },
 ];

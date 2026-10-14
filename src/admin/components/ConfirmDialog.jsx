@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Modal from "./Modal.jsx";
-import Spinner from "./Spinner.jsx";
 
 export default function ConfirmDialog({ title, body, confirmLabel, danger = true, onConfirm, onClose }) {
   const [busy, setBusy] = useState(false);
@@ -16,13 +15,12 @@ export default function ConfirmDialog({ title, body, confirmLabel, danger = true
 
   return (
     <Modal title={title} onClose={onClose}>
-      <p className="adm-modal-text">{body}</p>
-      <div className="adm-modal-actions">
-        <button type="button" className="adm-btn" onClick={onClose} disabled={busy}>
+      <p>{body}</p>
+      <div className="ft">
+        <button type="button" className="btn" onClick={onClose} disabled={busy}>
           Cancel
         </button>
-        <button type="button" className={`adm-btn ${danger ? "is-danger" : "is-primary"}`} onClick={run} disabled={busy}>
-          {busy && <Spinner light={!danger} />}
+        <button type="button" className={`btn ${danger ? "dg" : "pr"}`} onClick={run} disabled={busy}>
           {confirmLabel}
         </button>
       </div>

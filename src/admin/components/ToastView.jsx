@@ -1,11 +1,11 @@
-export default function ToastView({ toast, onClose }) {
-  if (!toast) return null;
+export default function ToastView({ toast }) {
   return (
-    <div className={`adm-toast is-${toast.tone}`} role="status" aria-live="polite">
-      <span>{toast.message}</span>
-      <button type="button" onClick={onClose} aria-label="Dismiss">
-        &times;
-      </button>
+    <div id="toasts" role="status" aria-live="polite">
+      {toast && (
+        <div key={toast.id} className={`toast${toast.tone === "error" ? " e" : ""}`}>
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 }

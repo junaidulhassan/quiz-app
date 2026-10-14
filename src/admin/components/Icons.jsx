@@ -112,3 +112,10 @@ export const SettingsIcon = icon(
 );
 export const DownloadIcon = icon(<path d="M12 3v12m0 0-4-4m4 4 4-4M4 20h16" />);
 export const PlusIcon = icon(<path d="M12 5v14M5 12h14" />);
+export const NetworkIcon = icon(
+  <>
+    <path d="M5 12.5a10 10 0 0 1 14 0M8.2 15.5a5.5 5.5 0 0 1 7.6 0" />
+    <path d="M2 9.2a14.5 14.5 0 0 1 20 0" />
+    <path d="M12 19h.01" />
+  </>
+);

@@ -1,0 +1,213 @@
+@keyframes pg-admin-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pg-admin-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes pg-admin-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes pg-admin-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pg-admin-toast {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.pg-admin #view > * {
+  animation: pg-admin-rise 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.pg-admin #view > :nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+.pg-admin #view > :nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+.pg-admin #view > :nth-child(4) {
+  animation-delay: 0.12s;
+}
+
+.pg-admin #view > :nth-child(n + 5) {
+  animation-delay: 0.16s;
+}
+
+.pg-admin .grid > .card {
+  animation: pg-admin-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.pg-admin .grid > .card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+.pg-admin .grid > .card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.pg-admin .grid > .card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+.pg-admin .grid > .card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+.pg-admin .grid > .card:nth-child(n + 5) {
+  animation-delay: 0.25s;
+}
+
+.pg-admin .card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.pg-admin .stat:hover {
+  box-shadow: 0 8px 24px #14141a14;
+  transform: translateY(-2px);
+}
+
+.pg-admin .bars u {
+  transform-origin: bottom;
+  animation: pg-admin-grow 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  transition: opacity 0.2s ease;
+}
+
+.pg-admin .bars div:hover u {
+  opacity: 1;
+}
+
+.pg-admin .bars div:nth-child(2) u {
+  animation-delay: 0.05s;
+}
+
+.pg-admin .bars div:nth-child(3) u {
+  animation-delay: 0.1s;
+}
+
+.pg-admin .bars div:nth-child(4) u {
+  animation-delay: 0.15s;
+}
+
+.pg-admin .bars div:nth-child(5) u {
+  animation-delay: 0.2s;
+}
+
+.pg-admin .bars div:nth-child(6) u {
+  animation-delay: 0.25s;
+}
+
+.pg-admin .nibar i {
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pg-admin .ov.on {
+  animation: pg-admin-fade 0.2s ease;
+}
+
+.pg-admin .ov.on .md {
+  animation: pg-admin-pop 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pg-admin .toast {
+  animation: pg-admin-toast 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.pg-admin nav a {
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.pg-admin nav a:hover {
+  transform: translateX(2px);
+}
+
+.pg-admin nav a svg {
+  flex: 0 0 auto;
+  opacity: 0.85;
+}
+
+.pg-admin .btn {
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.pg-admin .btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.pg-admin .tag {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.pg-admin .tabs button,
+.pg-admin .ut button {
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.pg-admin aside {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-admin *,
+  .pg-admin *::before,
+  .pg-admin *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.pg-admin .card.list > div {
+  transition: background-color 0.15s ease;
+}
+
+.pg-admin .ins {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+  background: var(--purple-tint);
+  border-color: #d9d0ff;
+  color: var(--purple-dark);
+  font-weight: 500;
+}
+
+.pg-admin .ins b {
+  font: 400 26px "BricolageGrotesque-SemiBold";
+  color: var(--purple);
+}

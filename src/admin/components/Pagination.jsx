@@ -1,23 +1,16 @@
-import { formatNumber } from "../utils/format.js";
-
 export default function Pagination({ page, pageSize, total, onChange }) {
   const pages = Math.max(1, Math.ceil(total / pageSize));
-  const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
-  const to = Math.min(total, page * pageSize);
-
   return (
-    <div className="adm-pagination">
-      <span>
-        {formatNumber(from)}–{formatNumber(to)} of {formatNumber(total)}
-      </span>
-      <div>
-        <button type="button" className="adm-btn is-small" disabled={page <= 1} onClick={() => onChange(page - 1)}>
-          Previous
+    <div className="pg">
+      <span>{total} records</span>
+      <div className="acts">
+        <button type="button" className="btn sm" disabled={page < 2} onClick={() => onChange(page - 1)}>
+          Prev
         </button>
-        <span className="adm-page-label">
-          Page {page} of {pages}
+        <span>
+          {page} / {pages}
         </span>
-        <button type="button" className="adm-btn is-small" disabled={page >= pages} onClick={() => onChange(page + 1)}>
+        <button type="button" className="btn sm" disabled={page >= pages} onClick={() => onChange(page + 1)}>
           Next
         </button>
       </div>

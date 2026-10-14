@@ -1,9 +1,8 @@
 import { useCallback, useState } from "react";
 import { fetchAuditOptions, fetchList } from "../../api/adminApi.js";
-import Badge from "../../components/Badge.jsx";
 import Pagination from "../../components/Pagination.jsx";
 import RecordTable from "../../components/RecordTable.jsx";
-import { EmptyBlock, ErrorBlock, LoadingBlock } from "../../components/StateBlock.jsx";
+import { ErrorBlock, LoadingBlock } from "../../components/StateBlock.jsx";
 import useDebounced from "../../hooks/useDebounced.js";
 import useFetch from "../../hooks/useFetch.js";
 
@@ -36,20 +35,17 @@ export default function AuditLog() {
   };
 
   return (
-    <div className="adm-card adm-table-card adm-audit">
-      <div className="adm-card-head">
-        <h3>Audit log</h3>
-        <Badge value="Read only" tone="gray" />
-      </div>
-      <div className="adm-filterbar is-inline">
+    <div className="card" style={{ marginTop: 16 }}>
+      <h3>Audit log</h3>
+      <div className="tb">
         <input
-          className="adm-input"
+          className="in"
           value={search}
           onChange={(event) => {
             setSearch(event.target.value);
             setPage(1);
           }}
-          placeholder="Search the audit log…"
+          placeholder="Search…"
           aria-label="Search the audit log"
         />
         <select value={admin} onChange={change(setAdmin)} aria-label="Admin">
@@ -67,7 +63,7 @@ export default function AuditLog() {
       </div>
       {status === "loading" && !data && <LoadingBlock />}
       {status === "error" && <ErrorBlock message={error} onRetry={reload} />}
-      {data && data.items.length === 0 && <EmptyBlock title="No matching audit entries" />}
+      {data && data.items.length === 0 && <div className="state">No matching audit entries.</div>}
       {data && data.items.length > 0 && (
         <>
           <RecordTable columns={COLUMNS} rows={data.items} />

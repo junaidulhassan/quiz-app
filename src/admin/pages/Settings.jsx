@@ -1,26 +1,48 @@
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { changePassword } from "../api/adminApi.js";
-import Badge from "../components/Badge.jsx";
-import Spinner from "../components/Spinner.jsx";
-import { SECTION_BY_KEY } from "../config/sections.js";
 import useAdmin from "../hooks/useAdmin.js";
 import PageHeader from "./PageHeader.jsx";
 
-const ACTION_LABELS = [
-  ["edit", "Edit records"],
-  ["del", "Delete users"],
-  ["perm", "Manage admins"],
-  ["export", "Export data"],
-];
+const GROUPS = {
+  "Platform Settings": ["Maintenance mode", "Allow new registrations"],
+  Notifications: ["Email alerts for new tickets", "Weekly platform report"],
+  Security: ["Require 2FA for admins", "Auto-logout after 15 min idle"],
+  Permissions: ["Support Admins can reply to tickets", "Admins can edit properties"],
+  "Data & Privacy": ["Mask emails in exports", "Log all profile views"],
+  "Billing Configuration": ["Send payment receipts", "Auto-flag repeated failures"],
+};
+const STORAGE_KEY = "hyeve_admin_settings";
+const DEFAULTS = { "Allow new registrations": true, "Mask emails in exports": true, "Log all profile views": true, "Send payment receipts": true };
+
+function loadSettings() {
+  try {
+    return { ...DEFAULTS, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") };
+  } catch {
+    return DEFAULTS;
+  }
+}
 
 export default function Settings() {
   const { me } = useAdmin();
   const { toast } = useOutletContext();
+  const [settings, setSettings] = useState(loadSettings);
   const [form, setForm] = useState({ current: "", next: "", confirm: "" });
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const set = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
+
+  const toggle = (name, value) => {
+    const next = { ...settings, [name]: value };
+    setSettings(next);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      toast.show("Setting updated for this session only");
+      return;
+    }
+    toast.show("Setting updated");
+  };
 
   const submit = async (event) => {
     event.preventDefault();
@@ -43,64 +65,43 @@ export default function Settings() {
 
   return (
     <>
-      <PageHeader label="Settings" sub="Your admin account and access." />
-      <div className="adm-grid-2 is-top">
-        <div className="adm-card">
-          <h3>Your access</h3>
-          <dl className="adm-detail is-single">
-            <div>
-              <dt>Username</dt>
-              <dd>{me.username}</dd>
-            </div>
-            <div>
-              <dt>Role</dt>
-              <dd>
-                <Badge value={me.role} tone="purple" />
-              </dd>
-            </div>
-            <div>
-              <dt>Can open</dt>
-              <dd className="adm-chips">
-                {me.permissions.view.map((key) => (
-                  <span key={key}>{SECTION_BY_KEY[key]?.label || key}</span>
-                ))}
-              </dd>
-            </div>
-            <div>
-              <dt>Can do</dt>
-              <dd className="adm-chips">
-                {ACTION_LABELS.filter(([key]) => me.permissions[key]).map(([key, label]) => (
-                  <span key={key}>{label}</span>
-                ))}
-                {!ACTION_LABELS.some(([key]) => me.permissions[key]) && <span>View only</span>}
-              </dd>
-            </div>
-          </dl>
-        </div>
-        <form className="adm-card" onSubmit={submit} noValidate>
+      <PageHeader label="Settings" />
+      <p style={{ color: "var(--gray)" }}>Credentials and API keys are managed on the server and are never shown here.</p>
+      <div className="grid g2">
+        {Object.entries(GROUPS).map(([group, names]) => (
+          <div key={group} className="card">
+            <h3>{group}</h3>
+            {names.map((name) => (
+              <label key={name} className="sw">
+                {name}
+                <input type="checkbox" checked={Boolean(settings[name])} onChange={(event) => toggle(name, event.target.checked)} />
+              </label>
+            ))}
+          </div>
+        ))}
+        <form className="card" onSubmit={submit} noValidate>
           <h3>Change password</h3>
-          <label className="adm-field">
-            <span>Current password</span>
-            <input type="password" value={form.current} onChange={set("current")} autoComplete="current-password" />
+          <label className="fl">Current password</label>
+          <input className="in fi" type="password" value={form.current} onChange={set("current")} autoComplete="current-password" />
+          <label className="fl" style={{ marginTop: 16 }}>
+            New password
           </label>
-          <label className="adm-field">
-            <span>New password</span>
-            <input type="password" value={form.next} onChange={set("next")} autoComplete="new-password" />
+          <input className="in fi" type="password" value={form.next} onChange={set("next")} autoComplete="new-password" />
+          <label className="fl" style={{ marginTop: 16 }}>
+            Confirm new password
           </label>
-          <label className="adm-field">
-            <span>Confirm new password</span>
-            <input type="password" value={form.confirm} onChange={set("confirm")} autoComplete="new-password" />
-          </label>
-          <p className="adm-hint">At least 8 characters with upper and lower case letters and a special character.</p>
+          <input className="in fi" type="password" value={form.confirm} onChange={set("confirm")} autoComplete="new-password" />
+          <p className="note">At least 8 characters with upper and lower case letters and a special character.</p>
           {error && (
-            <p className="adm-form-error" role="alert">
+            <p role="alert" style={{ color: "var(--red)", fontSize: 13, margin: "8px 0 0" }}>
               {error}
             </p>
           )}
-          <button type="submit" className="adm-btn is-primary" disabled={busy || !form.current || !form.next}>
-            {busy && <Spinner light />}
-            Update password
-          </button>
+          <div className="ft">
+            <button type="submit" className="btn pr" disabled={busy || !form.current || !form.next}>
+              Update password
+            </button>
+          </div>
         </form>
       </div>
     </>

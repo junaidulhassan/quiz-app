@@ -23,7 +23,7 @@ function loadScript() {
   return scriptPromise;
 }
 
-export default function GoogleButton({ onCredential, onError, text = "continue_with" }) {
+export default function GoogleButton({ onCredential, onError, text = "continue_with", className = "hv-google" }) {
   const holder = useRef(null);
   const handlers = useRef({ onCredential, onError });
 
@@ -60,5 +60,5 @@ export default function GoogleButton({ onCredential, onError, text = "continue_w
   }, [text]);
 
   if (!GOOGLE_CLIENT_ID) return null;
-  return <div className="hv-google" ref={holder} />;
+  return <div className={className} ref={holder} />;
 }

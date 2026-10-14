@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import { downloadDataset, fetchList } from "../../api/adminApi.js";
-import { DownloadIcon, PlusIcon } from "../../components/Icons.jsx";
 import FilterBar from "../../components/FilterBar.jsx";
 import Pagination from "../../components/Pagination.jsx";
 import RecordTable from "../../components/RecordTable.jsx";
+import TopStats from "./TopStats.jsx";
 import { EmptyBlock, ErrorBlock, LoadingBlock } from "../../components/StateBlock.jsx";
 import useAdmin from "../../hooks/useAdmin.js";
 import useDebounced from "../../hooks/useDebounced.js";
@@ -95,29 +95,28 @@ export default function RecordsPage({ section, footer }) {
         {section.dataset && (
           <button
             type="button"
-            className="adm-btn"
+            className="btn"
             onClick={exportCsv}
             disabled={!permissions.export || exporting}
             title={permissions.export ? undefined : "Not permitted for your role"}
           >
-            <DownloadIcon width={16} height={16} />
             Export CSV
           </button>
         )}
         {canInvite && (
           <button
             type="button"
-            className="adm-btn is-primary"
+            className="btn pr"
             onClick={() => open("invite", null)}
             disabled={!permissions.perm}
             title={permissions.perm ? undefined : "Not permitted for your role"}
           >
-            <PlusIcon width={16} height={16} />
-            Add admin
+            Invite admin
           </button>
         )}
       </PageHeader>
 
+      <TopStats sectionKey={section.key} total={data ? data.total : 0} />
       {section.columns.length > 0 && (
         <FilterBar
           search={searchText}
@@ -125,36 +124,42 @@ export default function RecordsPage({ section, footer }) {
           filters={filters}
           values={filterValues}
           onFilter={(name, value) => update({ [name]: value, page: "" })}
-          onClear={() => {
-            setSearchText("");
-            setParams({}, { replace: true });
-          }}
           placeholder={`Search ${section.label.toLowerCase()}…`}
         />
       )}
 
-      <div className="adm-card adm-table-card">
-        {status === "loading" && <LoadingBlock />}
-        {status === "error" && <ErrorBlock message={error} onRetry={reload} />}
-        {showEmptyConfig && <EmptyBlock title={section.emptyTitle} text={section.emptyText} />}
-        {status === "ready" && !section.emptyTitle && !hasRows && (
-          <EmptyBlock
-            title="No matching records"
-            text={query || Object.values(filterValues).some(Boolean) ? "Try a different search or clear the filters." : "Nothing to show here yet."}
+      {status === "loading" && <LoadingBlock />}
+      {status === "error" && <ErrorBlock message={error} onRetry={reload} />}
+      {showEmptyConfig && <EmptyBlock title={section.emptyTitle} text={section.emptyText} />}
+      {status === "ready" && !section.emptyTitle && !hasRows && (
+        <EmptyBlock
+          title="No results"
+          text="Try changing your search or filters."
+          action={
+            <button
+              type="button"
+              className="btn"
+              onClick={() => {
+                setSearchText("");
+                setParams({}, { replace: true });
+              }}
+            >
+              Clear filters
+            </button>
+          }
+        />
+      )}
+      {hasRows && (
+        <>
+          <RecordTable
+            columns={section.columns}
+            rows={data.items}
+            onRowClick={(row) => open("view", row)}
+            actions={section.actions.length ? (row) => buildActions(section, row, permissions, open) : null}
           />
-        )}
-        {hasRows && (
-          <>
-            <RecordTable
-              columns={section.columns}
-              rows={data.items}
-              onRowClick={(row) => open("view", row)}
-              actions={section.actions.length ? (row) => buildActions(section, row, permissions, open) : null}
-            />
-            <Pagination page={page} pageSize={PAGE_SIZE} total={data.total} onChange={(next) => update({ page: next > 1 ? String(next) : "" })} />
-          </>
-        )}
-      </div>
+          <Pagination page={page} pageSize={PAGE_SIZE} total={data.total} onChange={(next) => update({ page: next > 1 ? String(next) : "" })} />
+        </>
+      )}
 
       {footer}
 

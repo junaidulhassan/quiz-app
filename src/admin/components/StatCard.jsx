@@ -1,10 +1,11 @@
 import { formatNumber } from "../utils/format.js";
 
-export default function StatCard({ label, value }) {
+export default function StatCard({ label, value, caption }) {
   return (
-    <div className="adm-card adm-stat">
+    <div className="card stat">
       <span>{label}</span>
-      <b>{formatNumber(value)}</b>
+      <b>{typeof value === "number" ? formatNumber(value) : value}</b>
+      {caption && <em>{caption}</em>}
     </div>
   );
 }

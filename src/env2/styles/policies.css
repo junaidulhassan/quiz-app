@@ -100,3 +100,34 @@
   font-size: 15px;
   font-weight: 600;
 }
+
+.hv-back-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+  font-size: 14px;
+  color: var(--hv-text-gray);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.hv-back-nav:hover {
+  color: var(--hv-text-dark);
+}
+
+.hv-logo-mark {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 20px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hv-logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}

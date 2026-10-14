@@ -1,7 +1,6 @@
 import { useState } from "react";
 import ConfirmDialog from "../../components/ConfirmDialog.jsx";
 import Modal from "../../components/Modal.jsx";
-import Spinner from "../../components/Spinner.jsx";
 import {
   createAdmin, deleteUser, flagActivity, setAdminActive, setAdminRole, setUserStatus, setVerification, updateUser,
 } from "../../api/adminApi.js";
@@ -31,16 +30,15 @@ function FormDialog({ title, onClose, onSubmit, submitLabel, children }) {
       <form onSubmit={submit} noValidate>
         {children}
         {error && (
-          <p className="adm-form-error" role="alert">
+          <p role="alert" style={{ color: "var(--red)", fontSize: 13, margin: "8px 0 0" }}>
             {error}
           </p>
         )}
-        <div className="adm-modal-actions">
-          <button type="button" className="adm-btn" onClick={onClose} disabled={busy}>
+        <div className="ft">
+          <button type="button" className="btn" onClick={onClose} disabled={busy}>
             Cancel
           </button>
-          <button type="submit" className="adm-btn is-primary" disabled={busy}>
-            {busy && <Spinner light />}
+          <button type="submit" className="btn pr" disabled={busy}>
             {submitLabel}
           </button>
         </div>
@@ -49,10 +47,10 @@ function FormDialog({ title, onClose, onSubmit, submitLabel, children }) {
   );
 }
 
-function Field({ label, children }) {
+function Field({ label, first = false, children }) {
   return (
-    <label className="adm-field">
-      <span>{label}</span>
+    <label className="fl" style={first ? undefined : { marginTop: 16 }}>
+      {label}
       {children}
     </label>
   );
@@ -71,14 +69,14 @@ export function EditUserDialog({ row, onClose, onDone }) {
         onDone("User updated");
       }}
     >
-      <Field label="Full name">
-        <input value={name} onChange={(event) => setName(event.target.value)} maxLength={120} />
+      <Field label="Name" first>
+        <input className="in fi" value={name} onChange={(event) => setName(event.target.value)} maxLength={120} />
       </Field>
       <Field label="Email address">
-        <input value={row.email} disabled />
+        <input className="in fi" value={row.email} disabled />
       </Field>
       <Field label="Contact number">
-        <input value={phone} onChange={(event) => setPhone(event.target.value)} inputMode="tel" placeholder="08012345678" />
+        <input className="in fi" value={phone} onChange={(event) => setPhone(event.target.value)} inputMode="tel" placeholder="08012345678" />
       </Field>
     </FormDialog>
   );
@@ -96,9 +94,9 @@ export function VerificationDialog({ row, onClose, onDone }) {
         onDone("Verification updated");
       }}
     >
-      <p className="adm-modal-text">Set the verification state for {row.name}.</p>
-      <Field label="Verification">
-        <select value={value} onChange={(event) => setValue(event.target.value)}>
+      <p>Set the verification state for {row.name}.</p>
+      <Field label="Verification" first>
+        <select className="fi" value={value} onChange={(event) => setValue(event.target.value)}>
           {VERIFICATION.map((option) => (
             <option key={option} value={option}>
               {option.charAt(0).toUpperCase() + option.slice(1)}
@@ -122,11 +120,11 @@ export function RoleDialog({ row, onClose, onDone }) {
         onDone("Role updated");
       }}
     >
-      <p className="adm-modal-text">
+      <p>
         {row.name} is currently <strong>{row.role}</strong>. Role changes take effect immediately and are recorded in the audit log.
       </p>
-      <Field label="Role">
-        <select value={role} onChange={(event) => setRole(event.target.value)}>
+      <Field label="Role" first>
+        <select className="fi" value={role} onChange={(event) => setRole(event.target.value)}>
           {ROLES.map((option) => (
             <option key={option}>{option}</option>
           ))}
@@ -141,7 +139,7 @@ export function InviteAdminDialog({ onClose, onDone }) {
   const set = (field) => (event) => setForm((current) => ({ ...current, [field]: event.target.value }));
   return (
     <FormDialog
-      title="Add admin"
+      title="Invite admin"
       submitLabel="Create admin"
       onClose={onClose}
       onSubmit={async () => {
@@ -149,15 +147,15 @@ export function InviteAdminDialog({ onClose, onDone }) {
         onDone("Admin created");
       }}
     >
-      <Field label="Username">
-        <input value={form.username} onChange={set("username")} autoComplete="off" maxLength={50} />
+      <Field label="Username" first>
+        <input className="in fi" value={form.username} onChange={set("username")} autoComplete="off" maxLength={50} />
       </Field>
       <Field label="Temporary password">
-        <input type="password" value={form.password} onChange={set("password")} autoComplete="new-password" />
+        <input className="in fi" type="password" value={form.password} onChange={set("password")} autoComplete="new-password" />
       </Field>
-      <p className="adm-hint">At least 8 characters with upper and lower case letters and a special character.</p>
-      <Field label="Role">
-        <select value={form.role} onChange={set("role")}>
+      <p className="note">At least 8 characters with upper and lower case letters and a special character.</p>
+      <Field label="Role" first>
+        <select className="fi" value={form.role} onChange={set("role")}>
           {ROLES.map((option) => (
             <option key={option}>{option}</option>
           ))}

@@ -12,14 +12,14 @@ export default function Modal({ title, children, onClose, wide = false }) {
   }, [onClose]);
 
   return (
-    <div className="adm-overlay" onMouseDown={onClose}>
-      <div
-        className={`adm-modal${wide ? " is-wide" : ""}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        onMouseDown={(event) => event.stopPropagation()}
-      >
+    <div
+      className="ov on"
+      id="ov"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
+    >
+      <div className={`md${wide ? " wide" : ""}`} id="md" role="dialog" aria-modal="true" aria-labelledby={titleId}>
         <h2 id={titleId}>{title}</h2>
         {children}
       </div>

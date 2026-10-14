@@ -1,4 +1,4 @@
-@import "./base.css";
-@import "./layout.css";
-@import "./components.css";
-@import "./charts.css";
+@import "./fonts.css";
+@import "./login.css";
+@import "./admin.css";
+@import "./motion.css";

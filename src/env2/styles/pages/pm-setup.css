@@ -1,0 +1,548 @@
+.pg-pm-setup {
+  all: initial;
+  display: block;
+}
+
+.pg-pm-setup *:not(svg, svg *, img),
+.pg-pm-setup *:not(svg, svg *, img)::before,
+.pg-pm-setup *:not(svg, svg *, img)::after {
+  all: revert;
+  box-sizing: border-box;
+}
+
+.pg-pm-setup {
+  --bg: #e9e9e9;
+  --card-bg: #f6f6f7;
+  --card-border: #ffffff;
+  --input-bg: #ffffff;
+  --input-border: #0000001f;
+  --border-hover: #cfcfd2;
+  --text-dark: #14141a;
+  --text-gray: #5b5d67;
+  --text-placeholder: #9a9aa2;
+  --purple: #774cff;
+  --purple-hover: #6539f0;
+  --purple-active: #5a2fe0;
+  --badge-bg: #ede9fe;
+  --progress-track: #dddddd;
+  --red: #ff3b30;
+
+  --radius-card: 16px;
+  --radius-logo: 18px;
+  --radius-field: 8px;
+  --radius-button: 12px;
+  --radius-pill: 999px;
+  --field-height: 40px;
+  --cta-height: 44px;
+
+  --font: "Google Sans Flex", "Hv Google Sans Flex", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+.pg-pm-setup button, .pg-pm-setup input, .pg-pm-setup select, .pg-pm-setup textarea {
+  font-family: inherit;
+}
+
+.pg-pm-setup * {
+  box-sizing: border-box;
+}
+
+.pg-pm-setup {
+  margin: 0;
+  padding: 0;
+}
+
+.pg-pm-setup {
+  background: var(--bg);
+  font-family: var(--font);
+  color: var(--text-dark);
+  font-variation-settings: "opsz" 120;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.pg-pm-setup .auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px;
+}
+
+.pg-pm-setup .logo-mark {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 28px;
+  background: #e9e9e9;
+  border-radius: var(--radius-logo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pg-pm-setup .logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.pg-pm-setup .auth-wrap {
+  width: 100%;
+  max-width: 432px;
+}
+
+.pg-pm-setup .auth-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: var(--radius-card);
+  padding: 32px 24px 20px;
+  box-shadow: 0 1px 4px #0000000a;
+}
+
+.pg-pm-setup .progress-track {
+  display: flex;
+  justify-content: flex-end;
+  gap: 3px;
+  margin-bottom: 28px;
+}
+
+.pg-pm-setup .progress-segment {
+  width: 16px;
+  height: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--progress-track);
+}
+
+.pg-pm-setup .progress-segment.is-active {
+  background: var(--purple);
+}
+
+.pg-pm-setup .role-badge {
+  display: inline-block;
+  padding: 6px 8px;
+  margin-bottom: 12px;
+  background: var(--badge-bg);
+  color: var(--purple);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 6px;
+}
+
+.pg-pm-setup .heading {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-dark);
+  margin: 0 0 8px;
+}
+
+.pg-pm-setup .subtext {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-gray);
+  margin: 0 0 20px;
+}
+
+.pg-pm-setup .divider {
+  border: none;
+  border-top: 1.5px dashed #d4d4d4;
+  margin: 0 0 20px;
+}
+
+.pg-pm-setup form {
+  text-align: left;
+}
+
+.pg-pm-setup .field {
+  margin-bottom: 20px;
+}
+
+.pg-pm-setup .field label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+}
+
+.pg-pm-setup .req {
+  color: var(--red);
+  margin-left: 2px;
+}
+
+.pg-pm-setup .optional {
+  color: var(--text-gray);
+  font-weight: 400;
+  margin-left: 2px;
+}
+
+.pg-pm-setup .field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.pg-pm-setup input[type="text"],
+.pg-pm-setup input[type="tel"] {
+  width: 100%;
+  height: var(--field-height);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-field);
+  padding: 0 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-dark);
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.pg-pm-setup input::placeholder {
+  color: var(--text-placeholder);
+  font-weight: 400;
+}
+
+.pg-pm-setup input:hover:not(:disabled) {
+  border-color: var(--border-hover);
+}
+
+.pg-pm-setup input:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(119, 76, 255, 0.15);
+}
+
+.pg-pm-setup input:disabled {
+  background: #f4f4f5;
+  color: var(--text-placeholder);
+  cursor: not-allowed;
+}
+
+.pg-pm-setup .field.invalid input,
+.pg-pm-setup .field.invalid .combobox-input {
+  border-color: var(--red);
+}
+
+.pg-pm-setup .field.invalid input:focus {
+  box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.15);
+}
+
+.pg-pm-setup .error-msg {
+  display: none;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--red);
+}
+
+.pg-pm-setup .field.invalid .error-msg {
+  display: block;
+}
+
+.pg-pm-setup .field-hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--text-gray);
+}
+
+.pg-pm-setup .combobox {
+  position: relative;
+}
+
+.pg-pm-setup .combobox-input {
+  width: 100%;
+  height: var(--field-height);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-field);
+  padding: 0 34px 0 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--text-dark);
+  outline: none;
+  cursor: pointer;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.pg-pm-setup .combobox-input::placeholder {
+  color: var(--text-placeholder);
+  font-weight: 400;
+}
+
+.pg-pm-setup .combobox-input:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px rgba(119, 76, 255, 0.15);
+  cursor: text;
+}
+
+.pg-pm-setup .combobox-input:disabled {
+  background: #f4f4f5;
+  color: var(--text-placeholder);
+  cursor: not-allowed;
+}
+
+.pg-pm-setup .combobox-arrow {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: var(--text-gray);
+  display: flex;
+}
+.pg-pm-setup .combobox-trigger {
+  text-align: left;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 100%;
+}
+
+.pg-pm-setup .combobox-trigger.is-placeholder {
+  color: var(--text-placeholder);
+}
+
+.pg-pm-setup .combobox-trigger:focus {
+  cursor: pointer;
+}
+
+.pg-pm-setup .combobox-list {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-field);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  padding: 6px;
+  margin: 0;
+  list-style: none;
+}
+
+.pg-pm-setup .combobox-list[hidden] {
+  display: none;
+}
+
+.pg-pm-setup .combobox-option {
+  padding: 9px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: var(--text-dark);
+  cursor: pointer;
+}
+
+.pg-pm-setup .combobox-option:hover,
+.pg-pm-setup .combobox-option.is-active {
+  background: var(--badge-bg);
+}
+
+.pg-pm-setup .combobox-option.is-selected {
+  font-weight: 600;
+  color: var(--purple);
+}
+
+.pg-pm-setup .combobox-empty {
+  padding: 10px;
+  font-size: 13px;
+  color: var(--text-gray);
+}
+
+.pg-pm-setup .price-wrap {
+  position: relative;
+}
+
+.pg-pm-setup .price-wrap input {
+  padding-right: 148px;
+}
+
+.pg-pm-setup .frequency-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 2px;
+  background: var(--card-bg);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+}
+
+.pg-pm-setup .frequency-option {
+  border: none;
+  background: none;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-gray);
+  cursor: pointer;
+}
+
+.pg-pm-setup .frequency-option.is-selected {
+  background: var(--purple);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.pg-pm-setup .frequency-option:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+.pg-pm-setup .btn-primary {
+  width: 100%;
+  height: var(--cta-height);
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--purple);
+  border: none;
+  border-radius: var(--radius-button);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color .15s ease, transform .05s ease, opacity .15s ease;
+}
+
+.pg-pm-setup .btn-primary:hover:not(:disabled) {
+  background: var(--purple-hover);
+}
+
+.pg-pm-setup .btn-primary:active:not(:disabled) {
+  background: var(--purple-active);
+  transform: scale(0.99);
+}
+
+.pg-pm-setup .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pg-pm-setup .btn-primary .spinner {
+  width: 17px;
+  height: 17px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: pg-pm-setup-pmSpin 700ms linear infinite;
+}
+
+@keyframes pg-pm-setup-pmSpin {
+  to { transform: rotate(360deg); }
+}
+
+.pg-pm-setup button:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+.pg-pm-setup input:focus-visible {
+  outline: none;
+}
+
+.pg-pm-setup .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pg-pm-setup .toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(12px);
+  width: calc(100% - 40px);
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--text-dark);
+  color: #ffffff;
+  padding: 14px 18px;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 2000;
+}
+
+.pg-pm-setup .toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.pg-pm-setup .toast-message {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.pg-pm-setup .toast-close {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.pg-pm-setup .toast-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 600px) {
+  .pg-pm-setup .auth-page {
+    justify-content: flex-start;
+    padding: 36px 16px 24px;
+  }
+
+  .pg-pm-setup .logo-mark {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 24px;
+  }
+
+  .pg-pm-setup .auth-card {
+    padding: 24px 16px 24px;
+  }
+
+  .pg-pm-setup .heading {
+    font-size: 24px;
+  }
+
+  .pg-pm-setup .field {
+    margin-bottom: 24px;
+  }
+
+  .pg-pm-setup .btn-primary {
+    margin-top: 32px;
+  }
+}

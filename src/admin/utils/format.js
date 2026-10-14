@@ -47,18 +47,32 @@ export function shortLabel(label) {
   return label;
 }
 
-export function badgeTone(value) {
-  const map = {
-    Active: "green",
-    Verified: "green",
-    Completed: "green",
-    Success: "green",
-    Pending: "amber",
-    Deactivated: "red",
-    Suspended: "red",
-    Rejected: "red",
-    Flagged: "red",
-    Failed: "red",
-  };
-  return map[value] || "gray";
+const TONE_CLASS = { green: "ok", amber: "wn", red: "er", purple: "pu", gray: "" };
+
+const BADGE_TONES = {
+  Active: "green",
+  Verified: "green",
+  Completed: "green",
+  Success: "green",
+  Successful: "green",
+  Listed: "green",
+  Resolved: "green",
+  Pending: "amber",
+  Open: "amber",
+  Incomplete: "amber",
+  Expired: "amber",
+  Medium: "amber",
+  "Waiting for User": "amber",
+  "In Progress": "purple",
+  Refunded: "purple",
+  Deactivated: "red",
+  Suspended: "red",
+  Rejected: "red",
+  Flagged: "red",
+  Failed: "red",
+  High: "red",
+};
+
+export function badgeClass(value, tone) {
+  return TONE_CLASS[tone || BADGE_TONES[value] || "gray"];
 }

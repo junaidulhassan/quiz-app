@@ -10,17 +10,20 @@ export default function RecordDetail({ title, row, columns, onClose }) {
   const fields = [...columns, ...extras];
 
   return (
-    <Modal title={title} onClose={onClose} wide>
-      <dl className="adm-detail">
+    <Modal title={title} onClose={onClose}>
+      <div className="kv">
         {fields.map((field) => (
           <div key={field.field}>
-            <dt>{field.label}</dt>
-            <dd>{renderCell(field, row[field.field])}</dd>
+            <span>{field.label}</span>
+            {renderCell(field, row[field.field])}
           </div>
         ))}
-      </dl>
-      <div className="adm-modal-actions">
-        <button type="button" className="adm-btn" onClick={onClose}>
+      </div>
+      <p style={{ color: "var(--gray)", fontSize: 12 }}>
+        Sensitive data (passwords, card numbers, raw assessment answers) is never shown to admins.
+      </p>
+      <div className="ft">
+        <button type="button" className="btn" onClick={onClose}>
           Close
         </button>
       </div>

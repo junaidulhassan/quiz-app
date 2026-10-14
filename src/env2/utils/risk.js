@@ -1,27 +1,31 @@
+const CATEGORY_VARS = {
+  property_changes: "--category-property",
+  delay_payments: "--category-payments",
+  maintenance: "--category-maintenance",
+  lifestyle: "--category-lifestyle",
+  arguments: "--category-arguments",
+  bill_sharing: "--category-bill-sharing",
+  hygiene: "--category-hygiene",
+  noise: "--category-noise",
+  privacy: "--category-privacy",
+};
+
+export function categoryColor(key) {
+  return `var(${CATEGORY_VARS[key]})`;
+}
+
 export function riskColor(level, key) {
-  if (key === "lifestyle" && level === "high") return "var(--hv-risk-lifestyle-high)";
-  if (key === "noise" && level === "high") return "var(--hv-risk-lifestyle-high)";
-  return `var(--hv-risk-${level})`;
+  if (key === "lifestyle" && level === "high") return "var(--risk-lifestyle-high)";
+  if (key === "noise" && level === "high") return "var(--risk-noise-high)";
+  return `var(--risk-${level})`;
 }
 
 export function riskBackground(level, key) {
-  if ((key === "lifestyle" || key === "noise") && level === "high") return "var(--hv-risk-medium-bg)";
-  return `var(--hv-risk-${level}-bg)`;
+  if ((key === "lifestyle" || key === "noise") && level === "high") return "var(--risk-medium-bg)";
+  return `var(--risk-${level}-bg)`;
 }
 
-export const CATEGORY_COLORS = {
-  property_changes: "var(--hv-cat-property)",
-  delay_payments: "var(--hv-cat-payments)",
-  maintenance: "var(--hv-cat-maintenance)",
-  lifestyle: "var(--hv-cat-lifestyle)",
-  arguments: "var(--hv-cat-arguments)",
-  bill_sharing: "var(--hv-cat-bills)",
-  hygiene: "var(--hv-cat-hygiene)",
-  noise: "var(--hv-cat-noise)",
-  privacy: "var(--hv-cat-privacy)",
-};
-
-export const HOBBY_COLOR_GROUPS = [
+const HOBBY_COLOR_GROUPS = [
   { color: "#ECBECE", hobbies: ["Arts & Design", "Music", "Reading", "Travel", "Writing", "Photography", "Exploring", "Experimenting"] },
   { color: "#BAD1EB", hobbies: ["Exercise", "Journaling", "Building Projects", "Strategy games", "Planning", "Learning", "Certification study", "Habit tracking", "Fixing things"] },
   { color: "#EEDABA", hobbies: ["Sports", "Travel", "Party / Events", "Acting", "Networking", "Group activities", "Nightlife & bars", "Fashion", "Dancing"] },
@@ -38,5 +42,5 @@ HOBBY_COLOR_GROUPS.forEach(({ color, hobbies }) => {
 });
 
 export function hobbyColor(name) {
-  return HOBBY_COLORS[name] || "#E5E7EB";
+  return HOBBY_COLORS[name] || "var(--badge-bg)";
 }

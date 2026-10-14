@@ -1,44 +1,29 @@
 import { NavLink } from "react-router-dom";
+import LogoMark from "../components/lookup/LogoMark.jsx";
+import { BillingIcon, BuildingIcon, HistoryIcon, LogoutIcon, ProfileIcon, QrScanIcon, SearchIdIcon } from "../components/LookupIcons.jsx";
 import useAuth from "../hooks/useAuth.js";
-import { BillingIcon, HistoryIcon, LogoutIcon, ProfileIcon, QrIcon, SearchIcon } from "../components/Icons.jsx";
-import { initials } from "../utils/format.js";
 import { MODES, useMode } from "./ModeContext.jsx";
 
 const NAV_ITEMS = [
-  { path: "search", label: "Search ID", Icon: SearchIcon },
+  { path: "search", label: "Search ID", Icon: SearchIdIcon },
   { path: "history", label: "History", Icon: HistoryIcon },
-  { path: "qr-scan", label: "QR Scan", Icon: QrIcon },
+  { path: "qr-scan", label: "QR Scan", Icon: QrScanIcon },
   { path: "billing", label: "Billing", Icon: BillingIcon },
   { path: "profile", label: "Profile", Icon: ProfileIcon },
 ];
 
 const ROLE_LABELS = { property_manager: "Property Manager", tenant: "Tenant" };
 
-export function Brand() {
-  return (
-    <div className="hv-brand">
-      <div className="hv-brand-icon">
-        <img src="/logo/hyeve.png" alt="" />
-      </div>
-      <div className="hv-brand-text">
-        <span className="hv-brand-name">Hyeve</span>
-        <span className="hv-brand-tagline">Protect Your Space</span>
-      </div>
-    </div>
-  );
-}
-
 export function ModeSelector({ onSelect }) {
   const mode = useMode();
   return (
-    <div className="hv-mode-selector" role="tablist" aria-label="Lookup type">
+    <div className="mode-selector" role="group" aria-label="Lookup type">
       {Object.values(MODES).map((item) => (
         <button
           key={item.key}
           type="button"
-          role="tab"
-          aria-selected={item.key === mode.key}
-          className={`hv-mode-option${item.key === mode.key ? " is-selected" : ""}`}
+          className={`mode-option${item.key === mode.key ? " is-selected" : ""}`}
+          aria-pressed={item.key === mode.key}
           onClick={() => onSelect(item)}
         >
           {item.label}
@@ -51,17 +36,17 @@ export function ModeSelector({ onSelect }) {
 export function NavList({ onNavigate }) {
   const mode = useMode();
   return (
-    <nav aria-label="Main">
-      <ul className="hv-sidebar-nav">
+    <nav aria-label="Primary">
+      <ul className="sidebar-nav">
         {NAV_ITEMS.map(({ path, label, Icon }) => (
-          <li key={path}>
+          <li key={path} className="nav-item">
             <NavLink
               to={`${mode.base}/${path}`}
               onClick={onNavigate}
-              className={({ isActive }) => `hv-nav-link${isActive ? " is-active" : ""}`}
+              className={({ isActive }) => `nav-link${isActive ? " is-active" : ""}`}
             >
               <Icon />
-              {label}
+              <span>{label}</span>
             </NavLink>
           </li>
         ))}
@@ -73,14 +58,16 @@ export function NavList({ onNavigate }) {
 export function SidebarFooter({ onLogout }) {
   const { account } = useAuth();
   return (
-    <div className="hv-sidebar-footer">
-      <div className="hv-footer-avatar">{initials(account.full_name)}</div>
-      <div className="hv-footer-identity">
-        <span className="hv-footer-name">{account.full_name}</span>
-        <span className="hv-footer-role">{ROLE_LABELS[account.role]}</span>
+    <div className="sidebar-footer">
+      <div className="footer-avatar">
+        <BuildingIcon />
       </div>
-      <button type="button" className="hv-footer-logout" onClick={onLogout} aria-label="Log out">
-        <LogoutIcon width={18} height={18} />
+      <div className="footer-identity">
+        <span className="footer-name">{account.full_name}</span>
+        <span className="footer-role">{ROLE_LABELS[account.role]}</span>
+      </div>
+      <button type="button" className="footer-logout" onClick={onLogout} aria-label="Log out">
+        <LogoutIcon />
       </button>
     </div>
   );
@@ -88,12 +75,25 @@ export function SidebarFooter({ onLogout }) {
 
 export default function Sidebar({ onSelectMode, onLogout }) {
   return (
-    <aside className="hv-sidebar">
-      <Brand />
-      <hr className="hv-sidebar-divider" />
+    <aside className="sidebar">
+      <div className="brand">
+        <div className="brand-icon">
+          <LogoMark />
+        </div>
+        <div className="brand-text">
+          <span className="brand-name">Hyeve</span>
+          <span className="brand-tagline">Protect Your Space</span>
+        </div>
+      </div>
+
+      <hr className="sidebar-divider" />
+
       <ModeSelector onSelect={onSelectMode} />
-      <hr className="hv-sidebar-divider" />
+
+      <hr className="sidebar-divider" />
+
       <NavList />
+
       <SidebarFooter onLogout={onLogout} />
     </aside>
   );

@@ -1,0 +1,358 @@
+.pg-select-role {
+  all: initial;
+  display: block;
+}
+
+.pg-select-role *:not(svg, svg *, img),
+.pg-select-role *:not(svg, svg *, img)::before,
+.pg-select-role *:not(svg, svg *, img)::after {
+  all: revert;
+  box-sizing: border-box;
+}
+
+.pg-select-role {
+  --bg: #e9e9e9;
+  --card-bg: #f6f6f7;
+  --card-border: #ffffff;
+  --role-card-bg: #ffffff;
+  --role-card-bg-selected: #ede9fe;
+  --role-card-border: #d6d3d1;
+  --role-card-border-selected: #774cff;
+  --progress-track: #dddddd;
+  --text-dark: #14141a;
+  --text-gray: #5b5d67;
+  --purple: #774cff;
+  --purple-hover: #6539f0;
+  --purple-active: #5a2fe0;
+
+  --radius-card: 16px;
+  --radius-logo: 18px;
+  --radius-role-card: 14px;
+  --radius-button: 12px;
+  --cta-height: 44px;
+
+  --font: "Google Sans Flex", "Hv Google Sans Flex", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+.pg-select-role button, .pg-select-role input, .pg-select-role select, .pg-select-role textarea {
+  font-family: inherit;
+}
+
+.pg-select-role * {
+  box-sizing: border-box;
+}
+
+.pg-select-role {
+  margin: 0;
+  padding: 0;
+}
+
+.pg-select-role {
+  background: var(--bg);
+  font-family: var(--font);
+  color: var(--text-dark);
+  font-variation-settings: "opsz" 120;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.pg-select-role .auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 24px;
+}
+
+.pg-select-role .logo-mark {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 28px;
+  background: #e9e9e9;
+  border-radius: var(--radius-logo);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pg-select-role .logo-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.pg-select-role .auth-wrap {
+  width: 100%;
+  max-width: 432px;
+}
+
+.pg-select-role .auth-card {
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: var(--radius-card);
+  padding: 32px 24px 24px;
+  box-shadow: 0 1px 4px #0000000a;
+}
+
+.pg-select-role .progress-track {
+  display: flex;
+  justify-content: flex-end;
+  gap: 3px;
+  margin-bottom: 28px;
+}
+
+.pg-select-role .progress-segment {
+  width: 16px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--progress-track);
+}
+
+.pg-select-role .progress-segment.is-active {
+  background: var(--purple);
+}
+
+.pg-select-role .heading {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-dark);
+  margin: 0 0 8px;
+}
+
+.pg-select-role .subtext {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-gray);
+  margin: 0 0 20px;
+}
+
+.pg-select-role .divider {
+  border: none;
+  border-top: 1.5px dashed #d4d4d4;
+  margin: 0 0 20px;
+}
+
+.pg-select-role .role-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.pg-select-role .role-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 16px;
+  background: var(--role-card-bg);
+  border: 1.5px solid var(--role-card-border);
+  border-radius: var(--radius-role-card);
+  font-family: var(--font);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color .15s ease, background-color .15s ease, box-shadow .15s ease;
+}
+
+.pg-select-role .role-card:hover:not(:disabled) {
+  border-color: #B7A1FB;
+}
+
+.pg-select-role .role-card.is-selected {
+  background: var(--role-card-bg-selected);
+  border-color: var(--role-card-border-selected);
+}
+
+.pg-select-role .role-card:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+.pg-select-role .role-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.pg-select-role .role-icon {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dark);
+}
+
+.pg-select-role .role-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.pg-select-role .role-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.pg-select-role .role-title {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.pg-select-role .role-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-gray);
+}
+
+.pg-select-role .btn-primary {
+  width: 100%;
+  height: var(--cta-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--purple);
+  border: none;
+  border-radius: var(--radius-button);
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color .15s ease, transform .05s ease, opacity .15s ease;
+}
+
+.pg-select-role .btn-primary:hover:not(:disabled) {
+  background: var(--purple-hover);
+}
+
+.pg-select-role .btn-primary:active:not(:disabled) {
+  background: var(--purple-active);
+  transform: scale(0.99);
+}
+
+.pg-select-role .btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pg-select-role .btn-primary .spinner {
+  width: 17px;
+  height: 17px;
+  border: 2.5px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: pg-select-role-roleSpin 700ms linear infinite;
+}
+
+@keyframes pg-select-role-roleSpin {
+  to { transform: rotate(360deg); }
+}
+
+.pg-select-role button:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+.pg-select-role .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pg-select-role .toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(12px);
+  width: calc(100% - 40px);
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--text-dark);
+  color: #ffffff;
+  padding: 14px 18px;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 2000;
+}
+
+.pg-select-role .toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.pg-select-role .toast-message {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.pg-select-role .toast-close {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.pg-select-role .toast-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 600px) {
+  .pg-select-role .auth-page {
+    justify-content: flex-start;
+    padding: 36px 16px 24px;
+  }
+
+  .pg-select-role .logo-mark {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 24px;
+  }
+
+  .pg-select-role .auth-card {
+    padding: 24px 16px 20px;
+  }
+
+  .pg-select-role .heading {
+    font-size: 24px;
+  }
+
+  .pg-select-role .role-group {
+    gap: 16px;
+  }
+
+  .pg-select-role .role-card {
+    padding: 16px 14px;
+  }
+}

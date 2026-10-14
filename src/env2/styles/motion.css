@@ -1,0 +1,213 @@
+@keyframes hv-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hv-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hv-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hv-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hv-shake {
+  0%,
+  100% {
+    transform: none;
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(5px);
+  }
+  60% {
+    transform: translateX(-3px);
+  }
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+@keyframes hv-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 #774cff00;
+  }
+  50% {
+    box-shadow: 0 0 0 8px #774cff1f;
+  }
+}
+
+:is(.pg-login, .pg-create-account, .pg-forgot-password, .pg-check-email, .pg-new-password, .pg-select-role, .pg-pm-setup) .auth-card {
+  animation: hv-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+:is(.pg-login, .pg-create-account, .pg-select-role, .pg-pm-setup) .logo-mark,
+:is(.pg-forgot-password, .pg-check-email, .pg-new-password) .icon-box,
+.pg-error .brand-mark {
+  animation: hv-pop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s backwards;
+}
+
+:is(.pg-login, .pg-create-account, .pg-forgot-password, .pg-new-password, .pg-pm-setup) .field {
+  animation: hv-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+:is(.pg-login, .pg-create-account, .pg-forgot-password, .pg-new-password, .pg-pm-setup) .field:nth-of-type(1) {
+  animation-delay: 0.2s;
+}
+
+:is(.pg-login, .pg-create-account, .pg-forgot-password, .pg-new-password, .pg-pm-setup) .field:nth-of-type(2) {
+  animation-delay: 0.27s;
+}
+
+:is(.pg-login, .pg-create-account, .pg-new-password, .pg-pm-setup) .field:nth-of-type(n + 3) {
+  animation-delay: 0.34s;
+}
+
+:is(.pg-login, .pg-create-account, .pg-forgot-password, .pg-new-password, .pg-pm-setup, .pg-select-role) .btn-primary {
+  animation: hv-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.4s backwards;
+}
+
+:is(.pg-login, .pg-create-account, .pg-forgot-password, .pg-new-password, .pg-pm-setup) .field.invalid input {
+  animation: hv-shake 0.4s ease;
+}
+
+.pg-select-role .role-card {
+  animation: hv-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.pg-select-role .role-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.pg-select-role .role-card:hover {
+  transform: translateY(-2px);
+}
+
+.pg-select-role .role-card.is-selected {
+  animation: hv-glow 1.6s ease 1;
+}
+
+.pg-error .error-card {
+  animation: hv-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+:is(.pg-landlord, .pg-roommate) .route-outlet > * {
+  animation: hv-rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+:is(.pg-landlord, .pg-roommate) :is(.search-card, .profile-card, .history-record-card, .history-card, .assessment-card, .how-card, .billing-plans-row > *) {
+  animation: hv-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+:is(.pg-landlord, .pg-roommate) .search-social-proof {
+  animation: hv-slide-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) 0.05s backwards;
+}
+
+:is(.pg-landlord, .pg-roommate) :is(.profile-card, .history-record-card, .how-card):nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+:is(.pg-landlord, .pg-roommate) :is(.profile-card, .history-record-card, .how-card):nth-child(3) {
+  animation-delay: 0.16s;
+}
+
+:is(.pg-landlord, .pg-roommate) :is(.profile-card, .history-record-card, .how-card):nth-child(n + 4) {
+  animation-delay: 0.24s;
+}
+
+:is(.pg-landlord, .pg-roommate) .tenant-id-action-card,
+:is(.pg-landlord, .pg-roommate) .history-record-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+:is(.pg-landlord, .pg-roommate) .tenant-id-action-card:hover,
+:is(.pg-landlord, .pg-roommate) .history-record-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px #14141a14;
+}
+
+:is(.pg-landlord, .pg-roommate) :is(.tenant-id-trait-chip, .tenant-id-change-chip, .roommate-hobby-chip, .compatibility-trait-pill) {
+  animation: hv-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+:is(.pg-landlord, .pg-roommate) :is(.tenant-id-trait-chip, .tenant-id-change-chip, .roommate-hobby-chip, .compatibility-trait-pill):nth-child(2) {
+  animation-delay: 0.04s;
+}
+
+:is(.pg-landlord, .pg-roommate) :is(.tenant-id-trait-chip, .tenant-id-change-chip, .roommate-hobby-chip, .compatibility-trait-pill):nth-child(3) {
+  animation-delay: 0.08s;
+}
+
+:is(.pg-landlord, .pg-roommate) :is(.tenant-id-trait-chip, .tenant-id-change-chip, .roommate-hobby-chip, .compatibility-trait-pill):nth-child(4) {
+  animation-delay: 0.12s;
+}
+
+:is(.pg-landlord, .pg-roommate) :is(.tenant-id-trait-chip, .tenant-id-change-chip, .roommate-hobby-chip, .compatibility-trait-pill):nth-child(n + 5) {
+  animation-delay: 0.16s;
+}
+
+:is(.pg-landlord, .pg-roommate) .compatibility-card > * {
+  animation: hv-fade 0.45s ease backwards;
+}
+
+:is(.pg-landlord, .pg-roommate) .search-progress-item {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+:is(.pg-landlord, .pg-roommate) .search-progress-item.is-complete {
+  animation: hv-slide-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+:is(.pg-landlord, .pg-roommate) .nav-link {
+  transition: background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+:is(.pg-landlord, .pg-roommate) .nav-link:hover {
+  transform: translateX(3px);
+}
+
+:is(.pg-landlord, .pg-roommate) :is(.search-submit, .profile-save-button, .qr-btn-primary, .history-record-see-more, .assessment-action-btn):active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(.pg-login, .pg-create-account, .pg-forgot-password, .pg-check-email, .pg-new-password, .pg-select-role, .pg-pm-setup, .pg-error, .pg-landlord, .pg-roommate),
+  :is(.pg-login, .pg-create-account, .pg-forgot-password, .pg-check-email, .pg-new-password, .pg-select-role, .pg-pm-setup, .pg-error, .pg-landlord, .pg-roommate) * {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    transition-duration: 0.01ms !important;
+  }
+}

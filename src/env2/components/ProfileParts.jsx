@@ -1,138 +1,110 @@
-import { ArrowLeftIcon } from "./Icons.jsx";
-import { CATEGORY_COLORS, hobbyColor, riskBackground, riskColor } from "../utils/risk.js";
+import { ArrowLeftIcon } from "./LookupIcons.jsx";
+import { categoryColor, riskBackground, riskColor } from "../utils/risk.js";
 
 export function BackButton({ onClick }) {
   return (
-    <button type="button" className="hv-back-button" onClick={onClick}>
-      <ArrowLeftIcon width={18} height={18} />
+    <button type="button" className="tenant-id-back" onClick={onClick}>
+      <ArrowLeftIcon />
       Go Back
     </button>
   );
 }
 
-export function ProfileHeader({ name, badge, email, trustId }) {
+export function ProfileHeader({ name, badge, email }) {
   return (
     <>
-      <h1 className="hv-profile-name">{name}</h1>
-      <div className="hv-profile-meta">
-        <span className="hv-role-badge">{badge}</span>
-        <span className="hv-meta-dot" />
+      <h1 className="tenant-id-name">{name}</h1>
+      <div className="tenant-id-meta">
+        <span className="tenant-id-role-badge">{badge}</span>
+        <span className="tenant-id-meta-dot" />
         <span>{email}</span>
-        <span className="hv-meta-dot" />
-        <span className="hv-trust-id">ID {trustId}</span>
       </div>
     </>
   );
 }
 
-export function Notice({ children }) {
-  return <div className="hv-notice">{children}</div>;
+export function Disclaimer() {
+  return (
+    <div className="tenant-id-notice">
+      <strong>Disclaimer:</strong> For personal use only! Verify all information independently, as errors may occur. We assume no
+      liability for data leaks caused by data sharing, misuse, or user error.
+    </div>
+  );
 }
 
-export function Card({ className = "", children }) {
-  return <div className={`hv-card ${className}`}>{children}</div>;
+export function InsightsNotice() {
+  return (
+    <div className="tenant-id-notice">
+      Insights may contain errors and must not be used to exclude applicants based on disability, health, age, family status,
+      ethnicity, or financial situation.
+    </div>
+  );
 }
 
 export function CardLabel({ children }) {
-  return <p className="hv-card-label">{children}</p>;
+  return <p className="tenant-id-card-label">{children}</p>;
 }
 
-export function TraitChips({ items }) {
+function Tag({ section, children }) {
   return (
-    <div className="hv-trait-chips">
-      {items.map((item) => (
-        <span key={item} className="hv-trait-chip">
-          {item}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-export function HobbyChips({ items }) {
-  if (!items.length) return <p className="hv-muted-text">No hobbies to show for this profile.</p>;
-  return (
-    <div className="hv-hobby-chips">
-      {items.map((item) => (
-        <span key={item} className="hv-hobby-chip" style={{ background: hobbyColor(item) }}>
-          {item}
-        </span>
-      ))}
-    </div>
-  );
-}
-
-export function TodoBox({ text }) {
-  return (
-    <div className="hv-todo-box">
-      <p className="hv-todo-label">What to Do:</p>
-      <p className="hv-todo-text">{text}</p>
-    </div>
-  );
-}
-
-export function RiskPill({ risk, sectionKey, children }) {
-  return (
-    <span
-      className="hv-risk-pill"
-      style={{ background: riskBackground(risk, sectionKey), color: riskColor(risk, sectionKey) }}
-    >
+    <div className="tenant-id-tag-full" style={{ background: riskBackground(section.risk, section.key), color: riskColor(section.risk, section.key) }}>
       {children}
-    </span>
+    </div>
+  );
+}
+
+function CardHead({ section }) {
+  return (
+    <>
+      <div className="tenant-id-action-label-row">
+        <span className="tenant-id-action-dot" style={{ background: categoryColor(section.key) }} />
+        {section.title}
+      </div>
+      <h3 className="tenant-id-verdict" style={{ color: riskColor(section.risk, section.key) }}>
+        {section.verdict}
+      </h3>
+    </>
   );
 }
 
 export function ActionCard({ section }) {
   const color = riskColor(section.risk, section.key);
   return (
-    <Card className="hv-action-card">
-      <div className="hv-action-label">
-        <span className="hv-dot" style={{ background: CATEGORY_COLORS[section.key] }} />
-        {section.title}
-      </div>
-      <h3 className="hv-verdict" style={{ color }}>
-        {section.verdict}
-      </h3>
-      {section.pill && (
-        <RiskPill risk={section.risk} sectionKey={section.key}>
-          {section.pill}
-        </RiskPill>
-      )}
+    <div className="profile-card tenant-id-action-card">
+      <CardHead section={section} />
       {section.chips && (
         <>
-          <p className="hv-action-subheading">Possible changes</p>
-          <div className="hv-change-chips">
+          <p className="tenant-id-action-subheading">Possible Changes by Tenant:</p>
+          <div className="tenant-id-change-chips">
             {section.chips.map((chip) => (
-              <span key={chip} className="hv-change-chip">
+              <span key={chip} className="tenant-id-change-chip">
                 {chip}
               </span>
             ))}
           </div>
+          <Tag section={section}>{section.tag}</Tag>
         </>
       )}
-      {section.description && <p className="hv-action-description">{section.description}</p>}
-      {section.subletting && (
-        <>
-          <hr className="hv-rule" />
-          <p className="hv-sublet-label">Possible Subletting</p>
-          <p className="hv-sublet-value">{section.subletting.label}</p>
-          <div
-            className="hv-tag-full"
-            style={{ background: riskBackground(section.risk, section.key), color }}
-          >
-            {section.subletting.tag}
-          </div>
-        </>
+      {section.pill && (
+        <span className="tenant-id-risk-pill" style={{ background: riskBackground(section.risk, section.key), color }}>
+          {section.pill}
+        </span>
       )}
-      {section.tag && (
-        <div
-          className="hv-tag-full"
-          style={{ background: riskBackground(section.risk, section.key), color }}
-        >
-          {section.tag}
+      {section.description && <p className="tenant-id-action-description">{section.description}</p>}
+      {section.todo && (
+        <div className="tenant-id-todo-box">
+          <p className="tenant-id-todo-label">What to Do:</p>
+          <p className="tenant-id-todo-text">{section.todo}</p>
         </div>
       )}
-      {section.todo && <TodoBox text={section.todo} />}
-    </Card>
+      {section.subletting && (
+        <>
+          <hr className="tenant-id-sublet-divider" />
+          <p className="tenant-id-sublet-label">Possible Subletting</p>
+          <p className="tenant-id-sublet-value">{section.subletting.label}</p>
+          <Tag section={section}>{section.subletting.tag}</Tag>
+        </>
+      )}
+    </div>
   );
 }

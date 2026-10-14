@@ -8,6 +8,7 @@ import AccountProfile from "../pages/account/Profile.jsx";
 import CheckEmail from "../pages/auth/CheckEmail.jsx";
 import CreateAccount from "../pages/auth/CreateAccount.jsx";
 import CreateNewPassword from "../pages/auth/CreateNewPassword.jsx";
+import ErrorPage from "../pages/auth/ErrorPage.jsx";
 import ForgotPassword from "../pages/auth/ForgotPassword.jsx";
 import Login from "../pages/auth/Login.jsx";
 import NotFound from "../pages/auth/NotFound.jsx";
@@ -21,8 +22,10 @@ import QrScan from "../pages/lookup/QrScan.jsx";
 import RoommateProfile from "../pages/lookup/RoommateProfile.jsx";
 import Search from "../pages/lookup/Search.jsx";
 import TenantProfile from "../pages/lookup/TenantProfile.jsx";
+import useGoogleSansFlex from "../hooks/useGoogleSansFlex.js";
 import { GuestOnly, RequireAuth } from "./guards.jsx";
 import "../styles/index.css";
+import "../styles/motion.css";
 
 function lookupRoutes(profilePath, ProfilePage) {
   return (
@@ -39,6 +42,8 @@ function lookupRoutes(profilePath, ProfilePage) {
 }
 
 export default function Env2App() {
+  useGoogleSansFlex();
+
   useEffect(() => {
     document.body.classList.add("hv-env2");
     return () => document.body.classList.remove("hv-env2");
@@ -55,6 +60,7 @@ export default function Env2App() {
             {POLICIES.map((policy) => (
               <Route key={policy.path} path={policy.path} element={<PolicyPage policy={policy} />} />
             ))}
+            <Route path="error" element={<ErrorPage />} />
             <Route path="check-email" element={<CheckEmail />} />
             <Route path="verify-email" element={<VerifyEmail />} />
             <Route path="create-new-password" element={<CreateNewPassword />} />

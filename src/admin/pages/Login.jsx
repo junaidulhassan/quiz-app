@@ -35,7 +35,7 @@ export default function AdminLogin() {
   return (
     <main className="adm-login">
       <form className="adm-login-card" onSubmit={submit} noValidate>
-        <img src="/logo/hyeve.png" alt="Hyeve" />
+        <img src="/logo/hyeve-new-logo.png" alt="Hyeve" />
         <h1>Admin sign in</h1>
         <p>Use your Hyeve admin account to continue.</p>
         <label className="adm-field">

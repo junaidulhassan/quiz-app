@@ -48,3 +48,18 @@ export function passwordProblem(value) {
   if (!/[A-Za-z]/.test(value) || !/\d/.test(value)) return "Include at least one letter and one number.";
   return "";
 }
+
+export function compactCount(value) {
+  const units = [
+    { size: 1e9, suffix: "B" },
+    { size: 1e6, suffix: "M" },
+    { size: 1e3, suffix: "K" },
+  ];
+  for (const { size, suffix } of units) {
+    if (value >= size) {
+      const scaled = Math.round((value / size) * 10) / 10;
+      return (scaled % 1 === 0 ? String(scaled) : scaled.toFixed(1)) + suffix;
+    }
+  }
+  return String(value);
+}

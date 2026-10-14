@@ -1,36 +1,31 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ToastContext } from "./toastContext.js";
+import { ToastContext, ToastStateContext } from "./toastContext.js";
+
+const IDLE = { message: "", icon: null, action: null, visible: false };
 
 export function ToastProvider({ children }) {
-  const [message, setMessage] = useState("");
-  const [visible, setVisible] = useState(false);
+  const [state, setState] = useState(IDLE);
   const timer = useRef(null);
 
   const hide = useCallback(() => {
     clearTimeout(timer.current);
-    setVisible(false);
+    setState((current) => ({ ...current, visible: false }));
   }, []);
 
-  const show = useCallback((text) => {
+  const show = useCallback((message, { duration = 5000, icon = null, action = null } = {}) => {
     clearTimeout(timer.current);
-    setMessage(text);
-    setVisible(true);
-    timer.current = setTimeout(() => setVisible(false), 5000);
+    setState({ message, icon, action, visible: true });
+    timer.current = setTimeout(() => setState((current) => ({ ...current, visible: false })), duration);
   }, []);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
-  const value = useMemo(() => ({ show, hide }), [show, hide]);
+  const api = useMemo(() => ({ show, hide }), [show, hide]);
+  const view = useMemo(() => ({ ...state, hide }), [state, hide]);
 
   return (
-    <ToastContext.Provider value={value}>
-      {children}
-      <div className={`hv-toast${visible ? " is-visible" : ""}`} role="status" aria-live="polite">
-        <p className="hv-toast-message">{message}</p>
-        <button type="button" className="hv-toast-close" onClick={hide} aria-label="Dismiss notification">
-          &times;
-        </button>
-      </div>
+    <ToastContext.Provider value={api}>
+      <ToastStateContext.Provider value={view}>{children}</ToastStateContext.Provider>
     </ToastContext.Provider>
   );
 }

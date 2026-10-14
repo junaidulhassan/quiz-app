@@ -11,12 +11,15 @@ import DataManagement from "../pages/DataManagement.jsx";
 import AdminLogin from "../pages/Login.jsx";
 import Overview from "../pages/Overview.jsx";
 import RecordsPage from "../pages/records/RecordsPage.jsx";
+import NetworkIntelligence from "../pages/NetworkIntelligence.jsx";
 import Reports from "../pages/Reports.jsx";
 import Settings from "../pages/Settings.jsx";
+import useGoogleSansFlex from "../../env2/hooks/useGoogleSansFlex.js";
 import "../styles/index.css";
 
 const CUSTOM_PAGES = {
   overview: Overview,
+  netintel: NetworkIntelligence,
   reports: Reports,
   data: DataManagement,
   admins: Admins,
@@ -26,12 +29,7 @@ const CUSTOM_PAGES = {
 function Allowed({ section, children }) {
   const { me } = useAdmin();
   if (!me.permissions.view.includes(section.key)) {
-    return (
-      <EmptyBlock
-        title="Access restricted"
-        text={`Your role (${me.role}) cannot open ${section.label}. Ask a Super Admin if you need access.`}
-      />
-    );
+    return <EmptyBlock title="Access restricted" text={`Your role (${me.role}) cannot open this section.`} />;
   }
   return children;
 }
@@ -62,15 +60,24 @@ function SignedInShell() {
 }
 
 export default function AdminApp() {
+  useGoogleSansFlex();
+
   useEffect(() => {
     document.body.classList.add("adm-env");
     return () => document.body.classList.remove("adm-env");
   }, []);
 
   return (
-    <div className="adm-root">
+    <>
       <Routes>
-        <Route path="login" element={<AdminLogin />} />
+        <Route
+          path="login"
+          element={
+            <div className="adm-root">
+              <AdminLogin />
+            </div>
+          }
+        />
         <Route
           element={
             <SessionGate>
@@ -92,6 +99,6 @@ export default function AdminApp() {
           <Route path="*" element={<EmptyBlock title="Page not found" text="That admin page doesn't exist." />} />
         </Route>
       </Routes>
-    </div>
+    </>
   );
 }

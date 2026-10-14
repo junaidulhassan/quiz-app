@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeftIcon } from "../../components/Icons.jsx";
+import { ArrowLeftIcon } from "../../components/LookupIcons.jsx";
 import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import { LEGAL } from "../../config/company.js";
 import { POLICY_LINKS } from "./content/index.js";
@@ -23,7 +23,7 @@ export default function PolicyLayout({ title, children }) {
           Back to Hyeve
         </Link>
         <div className="hv-logo-mark is-left">
-          <img src="/logo/hyeve.png" alt="Hyeve" />
+          <img src="/logo/hyeve-new-logo.png" alt="Hyeve" />
         </div>
         <h1>{title}</h1>
         <p className="hv-policy-updated">Last updated: {LEGAL.updated}</p>

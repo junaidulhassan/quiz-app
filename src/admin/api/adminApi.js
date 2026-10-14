@@ -21,7 +21,9 @@ const post = (path, body) => json(path, { method: "POST", body: body ? JSON.stri
 
 export const fetchMe = () => json("/me");
 export const fetchOverview = () => json("/overview");
-export const fetchReports = (range) => json(`/reports${query({ range })}`);
+export const fetchReports = (params) => json(`/reports${query(params)}`);
+export const fetchNetworkIntelligence = () => json("/network-intelligence");
+export const fetchCleanup = () => json("/data/cleanup");
 export const fetchList = (path, params) => json(`/${path}${query(params)}`);
 export const fetchAuditOptions = () => json("/audit/options");
 export const fetchDatasets = () => json("/datasets");

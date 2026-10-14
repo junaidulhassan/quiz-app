@@ -1,0 +1,259 @@
+.pg-check-email {
+  all: initial;
+  display: block;
+}
+
+.pg-check-email *:not(svg, svg *, img),
+.pg-check-email *:not(svg, svg *, img)::before,
+.pg-check-email *:not(svg, svg *, img)::after {
+  all: revert;
+  box-sizing: border-box;
+}
+
+.pg-check-email {
+  --bg: #e9e9e9;
+  --card-bg: #f6f6f7;
+  --card-border: #ffffff;
+  --text-dark: #14141a;
+  --text-gray: #5b5d67;
+  --purple: #774cff;
+  --purple-hover: #6539f0;
+  --green: #16a34a;
+  --green-bg: #e2efe8;
+  --secondary-bg: #f1f1f1;
+  --secondary-border: #0000001f;
+
+  --radius-card: 16px;
+  --radius-icon: 16px;
+  --radius-button: 12px;
+  --cta-height: 44px;
+
+  --font: "Google Sans Flex", "Hv Google Sans Flex", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+}
+
+.pg-check-email button, .pg-check-email input, .pg-check-email select, .pg-check-email textarea {
+  font-family: inherit;
+}
+
+.pg-check-email * {
+  box-sizing: border-box;
+}
+
+.pg-check-email {
+  margin: 0;
+  padding: 0;
+}
+
+.pg-check-email {
+  background: var(--bg);
+  font-family: var(--font);
+  color: var(--text-dark);
+  font-variation-settings: "opsz" 120;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.pg-check-email .auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+}
+
+.pg-check-email .auth-card {
+  width: 100%;
+  max-width: 432px;
+  background: var(--card-bg);
+  border: 1.5px solid var(--card-border);
+  border-radius: var(--radius-card);
+  padding: 32px 24px 32px;
+  box-shadow: 0 1px 4px #0000000a;
+  text-align: center;
+}
+
+.pg-check-email .icon-box {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-bg);
+  border-radius: var(--radius-icon);
+  color: var(--green);
+}
+
+.pg-check-email .icon-box svg {
+  width: 28px;
+  height: 28px;
+}
+
+.pg-check-email .heading {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--text-dark);
+  margin: 0 0 12px;
+}
+
+.pg-check-email .subtext {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-gray);
+  margin: 0 0 28px;
+}
+
+.pg-check-email .subtext strong {
+  font-weight: 600;
+  color: var(--text-dark);
+  overflow-wrap: anywhere;
+}
+
+.pg-check-email .resend-text {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-dark);
+}
+
+.pg-check-email .resend-text button.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--purple);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.pg-check-email .resend-text button.link-btn:hover {
+  color: var(--purple-hover);
+}
+
+.pg-check-email .resend-text button.link-btn:disabled {
+  color: #8c8f9f;
+  cursor: not-allowed;
+  text-decoration: none;
+}
+
+.pg-check-email .btn-secondary {
+  width: 100%;
+  height: var(--cta-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--secondary-bg);
+  border: 1px solid var(--secondary-border);
+  border-radius: var(--radius-button);
+  font-family: var(--font);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dark);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+
+.pg-check-email .btn-secondary:hover {
+  background: #e9e9e9;
+  border-color: var(--secondary-border);
+}
+
+.pg-check-email .btn-secondary:active {
+  background: #e2e2e2;
+}
+
+.pg-check-email a:focus-visible,
+.pg-check-email button:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+.pg-check-email .toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(12px);
+  width: calc(100% - 40px);
+  max-width: 420px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--text-dark);
+  color: #ffffff;
+  padding: 14px 18px;
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease, transform .25s ease;
+  z-index: 2000;
+}
+
+.pg-check-email .toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+.pg-check-email .toast-message {
+  flex: 1 1 auto;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+.pg-check-email .toast-close {
+  flex: 0 0 auto;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.pg-check-email .toast-close:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 600px) {
+  .pg-check-email .auth-page {
+    padding: 24px 20px;
+  }
+
+  .pg-check-email .auth-card {
+    padding: 20px 16px 20px;
+  }
+
+  .pg-check-email .icon-box {
+    width: 54px;
+    height: 54px;
+    margin-bottom: 28px;
+  }
+
+  .pg-check-email .icon-box svg {
+    width: 26px;
+    height: 26px;
+  }
+
+  .pg-check-email .subtext {
+    margin-bottom: 36px;
+  }
+
+  .pg-check-email .resend-text {
+    margin-bottom: 20px;
+  }
+}

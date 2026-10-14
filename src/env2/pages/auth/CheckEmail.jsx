@@ -1,57 +1,73 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import AuthShell from "../../components/AuthShell.jsx";
-import { MailIcon } from "../../components/Icons.jsx";
-import useToast from "../../hooks/useToast.js";
+import { CheckCircleIcon } from "../../components/AuthIcons.jsx";
+import Toast from "../../components/Toast.jsx";
 import useCooldown from "../../hooks/useCooldown.js";
 import useDocumentTitle from "../../hooks/useDocumentTitle.js";
-import { forgotPassword, resendVerification } from "../../api/auth.js";
+import useToast from "../../hooks/useToast.js";
+import { resendVerification } from "../../api/auth.js";
 import { formatCooldown } from "../../utils/format.js";
+import "../../styles/pages/check-email.css";
+
+const RESEND_COOLDOWNS = [60, 300, 1800];
 
 export default function CheckEmail() {
   useDocumentTitle("Check your email — Hyeve");
   const [params] = useSearchParams();
-  const email = params.get("email") || "";
-  const isReset = params.get("type") === "reset";
+  const email = (params.get("email") || "").trim();
   const toast = useToast();
   const [seconds, startCooldown] = useCooldown();
   const [sending, setSending] = useState(false);
+  const clicks = useRef(0);
 
   const resend = async () => {
     if (!email || sending || seconds > 0) return;
     setSending(true);
     try {
-      await (isReset ? forgotPassword(email) : resendVerification(email));
-      toast.show("Email sent. Check your inbox.");
-      startCooldown(60);
+      await resendVerification(email);
+      startCooldown(RESEND_COOLDOWNS[Math.min(clicks.current, RESEND_COOLDOWNS.length - 1)]);
+      clicks.current += 1;
+      toast.show("Verification email sent.");
     } catch (error) {
-      if (error.status === 429 && error.data?.retry_after) startCooldown(error.data.retry_after);
-      toast.show(error.message);
+      if (error.status === 429) {
+        startCooldown(error.data?.retry_after || RESEND_COOLDOWNS[Math.min(clicks.current, RESEND_COOLDOWNS.length - 1)]);
+        clicks.current += 1;
+        toast.show("Please wait before requesting another email.");
+      } else {
+        toast.show("Something went wrong. Please try again.");
+      }
     } finally {
       setSending(false);
     }
   };
 
   return (
-    <AuthShell backTo="/login" backLabel="Back to login">
-      <div className="hv-icon-badge">
-        <MailIcon width={26} height={26} />
-      </div>
-      <h1 className="hv-heading">Check your email</h1>
-      <p className="hv-subtext">
-        {isReset ? "If an account exists for " : "We sent a verification link to "}
-        <strong>{email || "your email address"}</strong>
-        {isReset ? ", a reset link is on its way." : ". Open it to activate your account."}
-      </p>
-      <p className="hv-subtext">
-        Didn't get it?{" "}
-        <button type="button" className="hv-link-button" onClick={resend} disabled={sending || seconds > 0}>
-          {seconds > 0 ? `Resend email (${formatCooldown(seconds)})` : "resend email"}
-        </button>
-      </p>
-      <p className="hv-bottom-text">
-        <Link to="/login">Back to login</Link>
-      </p>
-    </AuthShell>
+    <div className="pg-check-email">
+      <main className="auth-page">
+        <div className="auth-card">
+          <div className="icon-box" aria-hidden="true">
+            <CheckCircleIcon />
+          </div>
+
+          <h1 className="heading">Check your email</h1>
+          <p className="subtext">
+            We sent a verification link to <strong id="user-email">{email || "your email address"}</strong>. Click it to confirm your
+            account, then you’ll be asked to choose your role.
+          </p>
+
+          <p className="resend-text" aria-live="polite">
+            Didn't receive it? Check your spam folder or{" "}
+            <button type="button" className="link-btn" id="resend-btn" onClick={resend} disabled={sending || seconds > 0}>
+              {seconds > 0 ? `Resend email (${formatCooldown(seconds)})` : "resend email"}
+            </button>
+          </p>
+
+          <Link to="/login" className="btn-secondary">
+            Back to Login
+          </Link>
+        </div>
+      </main>
+      <Toast />
+    </div>
   );
 }

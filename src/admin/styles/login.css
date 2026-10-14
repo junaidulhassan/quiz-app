@@ -53,6 +53,8 @@
 }
 
 body.adm-env {
+  margin: 0;
+  padding: 0;
   background: var(--ad-bg);
 }
 
@@ -281,4 +283,37 @@ body.adm-env .home-fab {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+.adm-login {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.adm-login-card {
+  width: 100%;
+  max-width: 400px;
+  padding: 32px 28px;
+  background: var(--ad-card);
+  border: 1.5px solid var(--ad-card-border);
+  border-radius: 20px;
+  box-shadow: 0 1px 4px #0000000a;
+}
+
+.adm-login-card img {
+  width: 52px;
+  height: 52px;
+  margin-bottom: 16px;
+}
+
+.adm-login-card h1 {
+  font-size: 26px;
+}
+
+.adm-login-card p {
+  margin: 6px 0 20px;
+  color: var(--ad-gray);
 }

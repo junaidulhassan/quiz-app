@@ -1,33 +1,42 @@
-import Spinner from "./Spinner.jsx";
-
-export function LoadingBlock({ label = "Loading…" }) {
+export function LoadingBlock() {
   return (
-    <div className="adm-state" role="status">
-      <Spinner />
-      <span>{label}</span>
+    <div role="status" aria-label="Loading">
+      <div className="sk" />
+      <div className="sk" style={{ width: "60%" }} />
+      <div className="sk" />
     </div>
   );
 }
 
 export function EmptyBlock({ title, text, action }) {
   return (
-    <div className="adm-state">
+    <div className="state card">
       <h3>{title}</h3>
-      {text && <p>{text}</p>}
-      {action}
+      {text}
+      {action && (
+        <>
+          <br />
+          <br />
+          {action}
+        </>
+      )}
     </div>
   );
 }
 
 export function ErrorBlock({ message, onRetry }) {
   return (
-    <div className="adm-state is-error" role="alert">
+    <div className="state card" role="alert">
       <h3>Something went wrong</h3>
-      <p>{message}</p>
+      {message}
       {onRetry && (
-        <button type="button" className="adm-btn" onClick={onRetry}>
-          Try again
-        </button>
+        <>
+          <br />
+          <br />
+          <button type="button" className="btn" onClick={onRetry}>
+            Try again
+          </button>
+        </>
       )}
     </div>
   );

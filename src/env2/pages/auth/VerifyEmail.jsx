@@ -1,62 +1,48 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import AuthShell from "../../components/AuthShell.jsx";
-import { AlertIcon, CheckIcon } from "../../components/Icons.jsx";
-import Spinner from "../../components/Spinner.jsx";
+import { CheckCircleIcon } from "../../components/AuthIcons.jsx";
+import ErrorScreen from "../../components/ErrorScreen.jsx";
 import useDocumentTitle from "../../hooks/useDocumentTitle.js";
 import { verifyEmail } from "../../api/auth.js";
+import "../../styles/pages/check-email.css";
 
 export default function VerifyEmail() {
   useDocumentTitle("Verify email — Hyeve");
   const [params] = useSearchParams();
   const token = params.get("token");
-  const [state, setState] = useState(token ? { status: "pending" } : { status: "failed", message: "This verification link is invalid." });
+  const [state, setState] = useState(token ? { status: "pending" } : { status: "failed" });
 
   useEffect(() => {
     if (!token) return undefined;
     let active = true;
     verifyEmail(token)
       .then(() => active && setState({ status: "verified" }))
-      .catch((error) => active && setState({ status: "failed", message: error.message }));
+      .catch(() => active && setState({ status: "failed" }));
     return () => {
       active = false;
     };
   }, [token]);
 
+  if (state.status === "failed") return <ErrorScreen type="generic" />;
+
   return (
-    <AuthShell>
-      {state.status === "pending" && (
-        <>
-          <div className="hv-icon-badge">
-            <Spinner dark />
+    <div className="pg-check-email">
+      <main className="auth-page">
+        <div className="auth-card">
+          <div className="icon-box" aria-hidden="true">
+            {state.status === "pending" ? <span className="hv-spinner is-dark" /> : <CheckCircleIcon />}
           </div>
-          <h1 className="hv-heading">Verifying your email…</h1>
-        </>
-      )}
-      {state.status === "verified" && (
-        <>
-          <div className="hv-icon-badge is-success">
-            <CheckIcon width={26} height={26} />
-          </div>
-          <h1 className="hv-heading">Email verified</h1>
-          <p className="hv-subtext">Your account is ready. Log in to continue.</p>
-          <Link to="/login" className="hv-btn hv-btn-primary hv-btn-block">
-            Continue to login
-          </Link>
-        </>
-      )}
-      {state.status === "failed" && (
-        <>
-          <div className="hv-icon-badge is-danger">
-            <AlertIcon width={26} height={26} />
-          </div>
-          <h1 className="hv-heading">Link not valid</h1>
-          <p className="hv-subtext">{state.message}</p>
-          <Link to="/login" className="hv-btn hv-btn-primary hv-btn-block">
-            Back to login
-          </Link>
-        </>
-      )}
-    </AuthShell>
+          <h1 className="heading">{state.status === "pending" ? "Verifying your email…" : "Email verified"}</h1>
+          {state.status === "verified" && (
+            <>
+              <p className="subtext">Your account is ready. Log in to continue.</p>
+              <Link to="/login" className="btn-secondary">
+                Continue to Login
+              </Link>
+            </>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
