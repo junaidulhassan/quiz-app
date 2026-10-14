@@ -559,10 +559,6 @@ export default function App() {
             <div className="gate-error" style={{ display: errEmail ? "block" : "none" }}>{emailErrMsg}</div>
           </div>
 
-          <p className="gate-consent">
-            You understand that Hyeve account holders can look you up by your email or Trust ID and see your result insights.
-          </p>
-
           <button className="gate-submit" onClick={submitGate} disabled={submitting}>
             {submitting ? "Submitting…" : "Get result  →"}
           </button>
