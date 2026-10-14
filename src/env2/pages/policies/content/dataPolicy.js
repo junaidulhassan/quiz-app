@@ -124,7 +124,6 @@ export default {
         {
           list: [
             `If you do not submit your name and email after taking the assessment, your answers are not saved.`,
-            `Your recent searches are shown to you for 14 days.`,
             `If an account is deleted, we can restore it for 30 days and then remove it permanently.`,
             `Server logs rotate automatically and are kept for a limited time. Protected backups are rotated and can hold older copies for up to about 12 months before they are overwritten.`,
           ],

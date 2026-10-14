@@ -152,8 +152,6 @@ export default function History() {
         <h1 className="history-heading">History</h1>
         <p className="history-subtext">Profiles you've recently looked up.</p>
 
-        <div className="tenant-id-notice">Profiles are automatically deleted after 14 days to protect data and support privacy requirements.</div>
-
         <div className="history-record-grid" id="history-record-grid">
           {items.map((entry) =>
             entry.type === "tenant" ? (
