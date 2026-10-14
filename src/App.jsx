@@ -405,9 +405,6 @@ export default function App() {
     <div className="shell" style={{ "--accent": accentColor }}>
       {view === "intro" && (
         <div id="intro-view">
-          <div className="intro-topbar">
-            <Link className="intro-login" to="/login">Log in</Link>
-          </div>
           <p className="intro-eyebrow">approx. 5 minutes</p>
           <h1 className="intro-title">
             Discover your <em>career strengths</em> based on who you are
@@ -434,12 +431,6 @@ export default function App() {
               View my results
             </button>
           </div>
-          <p className="intro-account">
-            Property manager, landlord or looking for a roommate? <Link to="/login">Log in to Hyeve</Link>
-          </p>
-          <p className="intro-legal">
-            <Link to="/privacy">Privacy Policy</Link> · <Link to="/terms">Terms of Service</Link>
-          </p>
         </div>
       )}
 
