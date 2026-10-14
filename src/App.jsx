@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 import API_BASE_URL from "./api";
 import AccessCallout from "./AccessCallout.jsx";
@@ -560,7 +560,6 @@ export default function App() {
           </div>
 
           <p className="gate-consent">
-            By continuing, you agree to our <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link>.
             You understand that Hyeve account holders can look you up by your email or Trust ID and see your result insights.
           </p>
 
