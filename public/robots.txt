@@ -1,2 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /lsysadmin
+Disallow: /dashboard
+Disallow: /take-assessment/active
+Disallow: /take-assessment/results
+
+Sitemap: https://hyeve.net/sitemap.xml

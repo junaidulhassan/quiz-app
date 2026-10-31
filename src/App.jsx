@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./index.css";
 import API_BASE_URL from "./api";
 import AccessCallout from "./AccessCallout.jsx";
+import useSeo from "./useSeo.js";
 
 const QUIZ_IMAGE_PATH = "/25_QUIZZES_IMG_WEBP";
 const ARCHETYPE_IMAGE_PATH = "/8_ARCHETYPES_IMAGES";
@@ -96,6 +97,7 @@ export default function App() {
   const savedState = useRef(loadStoredState());
   const navigate = useNavigate();
   const location = useLocation();
+  useSeo(location.pathname);
 
   // The bare home URL always starts fresh — cached mid-quiz/results progress
   // must never hijack an intentional visit to hyeve.net, nor be silently
